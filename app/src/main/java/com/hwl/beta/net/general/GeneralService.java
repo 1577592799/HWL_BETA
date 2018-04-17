@@ -1,0 +1,50 @@
+package com.hwl.beta.net.general;
+
+import com.hwl.beta.net.RequestBase;
+import com.hwl.beta.net.ResponseBase;
+import com.hwl.beta.net.RetrofitUtils;
+import com.hwl.beta.net.general.body.SendEmailRequest;
+import com.hwl.beta.net.general.body.SendEmailResponse;
+import com.hwl.beta.net.general.body.SendSMSRequest;
+import com.hwl.beta.net.general.body.SendSMSResponse;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+
+/**
+ * Created by Administrator on 2018/1/14.
+ */
+
+public class GeneralService {
+
+    public static Observable<ResponseBase<SendEmailResponse>> sendEmail(String email) {
+        SendEmailRequest requestBody = new SendEmailRequest();
+        requestBody.setEmail(email);
+        Observable<ResponseBase<SendEmailResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
+                .sendEmail(new RequestBase(requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
+    public static Observable<ResponseBase<SendSMSResponse>> sendSMS(String mobile) {
+        SendSMSRequest requestBody = new SendSMSRequest();
+        requestBody.setMobile(mobile);
+        Observable<ResponseBase<SendSMSResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
+                .sendSMS(new RequestBase(requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
+    public interface IGenericService {
+        @POST("api/SendEmail")
+        Observable<ResponseBase<SendEmailResponse>> sendEmail(@Body RequestBase<SendEmailRequest> request);
+
+        @POST("api/SendSMS")
+        Observable<ResponseBase<SendSMSResponse>> sendSMS(@Body RequestBase<SendSMSRequest> request);
+    }
+}

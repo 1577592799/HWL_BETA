@@ -1,0 +1,77 @@
+package com.hwl.beta.db;
+
+
+import com.hwl.beta.HWLApp;
+import com.hwl.beta.db.manage.ChatGroupMessageManager;
+import com.hwl.beta.db.manage.ChatRecordMessageManager;
+import com.hwl.beta.db.manage.ChatUserMessageManager;
+import com.hwl.beta.db.manage.FriendManager;
+import com.hwl.beta.db.manage.FriendRequestManager;
+import com.hwl.beta.db.manage.GroupInfoManager;
+import com.hwl.beta.db.manage.GroupUserInfoManager;
+import com.hwl.beta.db.manage.NearCircleManager;
+
+/**
+ * Created by adminstrator on 2016/6/16.
+ */
+public class DaoUtils {
+    private static FriendManager friendManager;
+    private static FriendRequestManager friendRequestManager;
+    private static ChatUserMessageManager chatUserMessageManager;
+    private static ChatRecordMessageManager chatRecordMessageManager;
+    private static ChatGroupMessageManager chatGroupMessageManager;
+    private static GroupInfoManager groupInfoManager;
+    private static GroupUserInfoManager groupUserInfoManager;
+    private static NearCircleManager nearCircleManager;
+
+    public static synchronized NearCircleManager getNearCircleManagerInstance() {
+        if (nearCircleManager == null) {
+            nearCircleManager = new NearCircleManager(HWLApp.getContext());
+        }
+        return nearCircleManager;
+    }
+
+    public static synchronized ChatGroupMessageManager getChatGroupMessageManagerInstance() {
+        if (chatGroupMessageManager == null) {
+            chatGroupMessageManager = new ChatGroupMessageManager(HWLApp.getContext());
+        }
+        return chatGroupMessageManager;
+    }
+
+    public static synchronized FriendManager getFriendManagerInstance() {
+        if (friendManager == null) {
+            friendManager = new FriendManager(HWLApp.getContext());
+        }
+        return friendManager;
+    }
+    public static synchronized FriendRequestManager getFriendRequestManagerInstance() {
+        if (friendRequestManager == null) {
+            friendRequestManager = new FriendRequestManager(HWLApp.getContext());
+        }
+        return friendRequestManager;
+    }
+    public static synchronized ChatUserMessageManager getChatUserMessageManagerInstance() {
+        if (chatUserMessageManager == null) {
+            chatUserMessageManager = new ChatUserMessageManager(HWLApp.getContext());
+        }
+        return chatUserMessageManager;
+    }
+    public static synchronized ChatRecordMessageManager getChatRecordMessageManagerInstance() {
+        if (chatRecordMessageManager == null) {
+            chatRecordMessageManager = new ChatRecordMessageManager(HWLApp.getContext());
+        }
+        return chatRecordMessageManager;
+    }
+    public static synchronized GroupInfoManager getGroupInfoManagerInstance() {
+        if (groupInfoManager== null) {
+            groupInfoManager = new GroupInfoManager(HWLApp.getContext());
+        }
+        return groupInfoManager;
+    }
+    public static synchronized GroupUserInfoManager getGroupUserInfoManagerInstance() {
+        if (groupUserInfoManager == null) {
+            groupUserInfoManager = new GroupUserInfoManager(HWLApp.getContext());
+        }
+        return groupUserInfoManager;
+    }
+}

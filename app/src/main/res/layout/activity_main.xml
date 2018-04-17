@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="mainBean"
+            type="com.hwl.beta.ui.entry.bean.MainBean"></variable>
+
+        <variable
+            name="action"
+            type="com.hwl.beta.ui.entry.action.IMainListener"></variable>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_background"
+        android:orientation="vertical">
+
+        <com.hwl.beta.ui.widget.TitleBar
+            android:id="@+id/tb_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <!--bottom popup_menumenu-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/layout_border"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/rl_tab_message"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="@{(view)->action.onTabMessageClick()}">
+
+                <LinearLayout
+                    android:id="@+id/ll_tab_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/messages" />
+
+                    <TextView
+                        android:id="@+id/tv_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="消息"
+                        android:textColor="#727270"
+                        android:textSize="10dp" />
+
+                </LinearLayout>
+
+                <com.hwl.beta.ui.widget.TipNumberView
+                    android:id="@+id/tnv_msg_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/ll_tab_message"
+                    android:gravity="center"
+                    android:text="@{mainBean.chatMessageCountDesc}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_13"
+                    android:visibility='@{mainBean.chatMessageCountDesc.equals("0")?View.GONE : View.VISIBLE}' />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_tab_near"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="@{(view)->action.onTabNearClick()}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/img_near"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/near" />
+
+                <TextView
+                    android:id="@+id/tv_near"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="附近"
+                    android:textSize="10dp" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_tab_friends"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="@{(view)->action.onTabFriendClick()}">
+
+                <LinearLayout
+                    android:id="@+id/ll_tab_friends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/img_friends"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/friends" />
+
+                    <TextView
+                        android:id="@+id/tv_friend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="好友"
+                        android:textSize="10dp" />
+
+                </LinearLayout>
+
+                <com.hwl.beta.ui.widget.TipNumberView
+                    android:id="@+id/tnv_friend_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/ll_tab_friends"
+                    android:gravity="center"
+                    android:text="@{mainBean.friendRequestCountDesc}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_13"
+                    android:visibility='@{mainBean.friendRequestCountDesc.equals("0")?View.GONE : View.VISIBLE}' />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_tab_me"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="@{(view)->action.onTabMeClick()}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/img_me"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/me" />
+
+                <TextView
+                    android:id="@+id/tv_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="我"
+                    android:textSize="10dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

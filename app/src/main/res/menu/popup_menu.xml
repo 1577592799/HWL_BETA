@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/pop_near_group"
+        android:title="我的附近"/>
+    <item
+        android:id="@+id/pop_near_publish"
+        android:title="发布信息"/>
+    <item
+        android:id="@+id/pop_add_user"
+        android:title="查找用户"/>
+
+</menu>
