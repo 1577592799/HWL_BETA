@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.hwl.beta.R;
 import com.hwl.beta.utils.ScreenUtils;
 
 import java.util.List;
-
-/**
- * Created by Administrator on 2018/3/11.
- */
 
 public class MultiImageView extends ViewGroup {
 
@@ -34,7 +31,7 @@ public class MultiImageView extends ViewGroup {
 
     public MultiImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        screenWidth = ScreenUtils.getScreenWidth(context) - (120*2);
+        screenWidth = ScreenUtils.getScreenWidth(context) - (120 * 2);
         screenHeight = ScreenUtils.getScreenHeight(context);
         this.context = context;
     }
@@ -66,7 +63,10 @@ public class MultiImageView extends ViewGroup {
 
         for (int i = 0; i < childrenCount; i++) {
             ImageView childrenView = (ImageView) getChildAt(i);
-            Glide.with(context).load(images.get(i).path).into(childrenView);
+            Glide.with(context).load(images.get(i).path)
+                    .placeholder(R.drawable.empty_photo)
+                    .error(R.drawable.empty_photo)
+                    .into(childrenView);
             int[] position = findPosition(i);
             int left = (singleWidth + gap) * position[1];
             int top = (singleHeight + gap) * position[0];
@@ -132,8 +132,6 @@ public class MultiImageView extends ViewGroup {
      * 7	   3	3
      * 8	   3	3
      * 9	   3	3
-     *
-     * @param length
      */
     private void generateChildrenLayout(int length) {
         if (length <= 3) {
@@ -157,7 +155,7 @@ public class MultiImageView extends ViewGroup {
         iv.setBackgroundColor(Color.parseColor("#f5f5f5"));
 
         if (isCalc && image.width > 0 && image.height > 0) {
-            double fixWidth = screenWidth / 1;
+            double fixWidth = screenWidth;
             double fixHeight = screenHeight / 3;
             calcSize(fixWidth, fixHeight, image.width, image.height);
 
@@ -173,23 +171,23 @@ public class MultiImageView extends ViewGroup {
     private int showHeight;
 
     private void calcSize(double maxWidth, double maxHeight, int Width, int Height) {
-        double w = 0.0;
-        double h = 0.0;
-        double sw = Width;
-        double sh = Height;
-        double mw = maxWidth;
-        double mh = maxHeight;
+        double w = 0;
+        double h = 0;
+//        double sw = Width;
+//        double sh = Height;
+//        double mw = maxWidth;
+//        double mh = maxHeight;
 
-        if (sw < mw && sh < mh)//如果maxWidth和maxHeight大于源图像，则缩略图的长和高不变
+        if (Width < maxWidth && Height < maxHeight)//如果maxWidth和maxHeight大于源图像，则缩略图的长和高不变
         {
-            w = sw;
-            h = sh;
-        } else if ((sw / sh) > (mw / mh)) {
+            w = Width;
+            h = Height;
+        } else if ((Width / Height) > (maxWidth / maxHeight)) {
             w = maxWidth;
-            h = (w * sh) / sw;
+            h = (w * Height) / Width;
         } else {
             h = maxHeight;
-            w = (h * sw) / sh;
+            w = (h * Width) / Height;
         }
         showWidth = (int) w;
         showHeight = (int) h;
