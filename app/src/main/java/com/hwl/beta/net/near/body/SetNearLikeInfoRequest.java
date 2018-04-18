@@ -1,9 +1,5 @@
 package com.hwl.beta.net.near.body;
 
-/**
- * Created by Administrator on 2018/3/14.
- */
-
 public class SetNearLikeInfoRequest {
 
     /// <summary>
@@ -13,8 +9,8 @@ public class SetNearLikeInfoRequest {
     /// <summary>
     /// 点赞的用户id
     /// </summary>
-    private int LikeUserId;
-    private int NearCircleId;
+    private long LikeUserId;
+    private long NearCircleId;
 
     public int getActionType() {
         return ActionType;
@@ -24,19 +20,19 @@ public class SetNearLikeInfoRequest {
         ActionType = actionType;
     }
 
-    public int getLikeUserId() {
+    public long getLikeUserId() {
         return LikeUserId;
     }
 
-    public void setLikeUserId(int likeUserId) {
+    public void setLikeUserId(long likeUserId) {
         LikeUserId = likeUserId;
     }
 
-    public int getNearCircleId() {
+    public long getNearCircleId() {
         return NearCircleId;
     }
 
-    public void setNearCircleId(int nearCircleId) {
+    public void setNearCircleId(long nearCircleId) {
         NearCircleId = nearCircleId;
     }
 }

@@ -1,19 +1,15 @@
 package com.hwl.beta.net.near.body;
 
-/**
- * Created by Administrator on 2018/3/20.
- */
-
 public class GetNearCommentsRequest {
-    private int NearCircleId;
+    private long NearCircleId;
     private int Count;
     private int LastCommentId;
 
-    public int getNearCircleId() {
+    public long getNearCircleId() {
         return NearCircleId;
     }
 
-    public void setNearCircleId(int nearCircleId) {
+    public void setNearCircleId(long nearCircleId) {
         NearCircleId = nearCircleId;
     }
 
