@@ -281,7 +281,7 @@ public class FragmentNear extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         showResult();
                     }
 

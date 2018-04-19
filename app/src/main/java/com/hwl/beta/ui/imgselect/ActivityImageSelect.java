@@ -187,7 +187,10 @@ public class ActivityImageSelect extends FragmentActivity {
         @Override
         public void onInit() {
             Cursor cursor = getImageCursor();
-            if (cursor == null || cursor.getCount() <= 0) return;
+            if (cursor == null || cursor.getCount() <= 0) {
+                setCamera();
+                return;
+            }
             String firstImage = null;
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));// 获取图片的路径
@@ -219,7 +222,9 @@ public class ActivityImageSelect extends FragmentActivity {
             }
             cursor.close();
             dirPaths.clear();
+        }
 
+        private void setCamera() {
             if (selectBean.getSelectType() == ImageSelectType.USER_HEAD) {
                 images.add(0, new ImageBean());
             }

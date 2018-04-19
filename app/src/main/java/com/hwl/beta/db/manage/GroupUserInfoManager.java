@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -78,14 +79,14 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
                         if (get(groupUserInfo.getGroupGuid(), groupUserInfo.getUserId()) == null) {
                             return groupUserInfo;
                         }
-                        return null;
+                        return new GroupUserInfo();
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<GroupUserInfo>() {
                     @Override
                     public void accept(GroupUserInfo userInfo) throws Exception {
-                        if (userInfo != null)
+                        if (userInfo != null && userInfo.getUserId() > 0)
                             daoSession.getGroupUserInfoDao().insertInTx(userInfo);
                     }
                 });

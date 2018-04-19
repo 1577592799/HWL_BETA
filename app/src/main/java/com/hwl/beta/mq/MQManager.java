@@ -30,7 +30,7 @@ public class MQManager {
 
     private static ConnectionFactory defaultConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.1.4");
+        factory.setHost("192.168.16.1");
         factory.setPort(5672);
         factory.setUsername("liyang");
         factory.setPassword("ya.li.4321");
