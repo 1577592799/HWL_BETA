@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/autolayout/autolayout.iml" filepath="$PROJECT_DIR$/autolayout/autolayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/emotion/emotion.iml" filepath="$PROJECT_DIR$/emotion/emotion.iml" />
-      <module fileurl="file://$PROJECT_DIR$/swiperefresh/swiperefresh.iml" filepath="$PROJECT_DIR$/swiperefresh/swiperefresh.iml" />
     </modules>
   </component>
 </project>
