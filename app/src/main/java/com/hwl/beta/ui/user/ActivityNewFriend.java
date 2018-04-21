@@ -18,6 +18,7 @@ import com.hwl.beta.db.entity.ChatUserMessage;
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.FriendRequest;
 import com.hwl.beta.mq.MQConstant;
+import com.hwl.beta.mq.send.ChatMessageSend;
 import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.NetUserInfo;
@@ -139,7 +140,7 @@ public class ActivityNewFriend extends FragmentActivity {
         private void sendSuccessMessage(final Friend friend) {
 
             final String content = "我们已经成为好友了";
-            UserMessageSend.sendFriendRequestMessage(friend.getId(), content).subscribe(new MQDefaultObserver() {
+            ChatMessageSend.sendChatFriendRequestMessage(friend.getId(), content).subscribe(new MQDefaultObserver() {
                 @Override
                 protected void onSuccess() {
                     //发送成功后，将这条消息更新到自己的本地数据库中

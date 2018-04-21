@@ -28,10 +28,6 @@ public interface INearCircleItemListener {
 
     void onMoreCommentClick(NearCircle info);
 
-    void onLikeClick(int position);
-
-    void onCommentClick(int position);
-
     void onDeleteClick(NearCircle info);
 
     void onPublishClick();

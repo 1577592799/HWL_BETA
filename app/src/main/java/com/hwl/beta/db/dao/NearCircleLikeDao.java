@@ -28,7 +28,7 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
         public final static Property LikeUserId = new Property(1, long.class, "likeUserId", false, "LIKE_USER_ID");
         public final static Property LikeUserName = new Property(2, String.class, "likeUserName", false, "LIKE_USER_NAME");
         public final static Property LikeUserImage = new Property(3, String.class, "likeUserImage", false, "LIKE_USER_IMAGE");
-        public final static Property LikeTime = new Property(4, String.class, "likeTime", false, "LIKE_TIME");
+        public final static Property LikeTime = new Property(4, java.util.Date.class, "likeTime", false, "LIKE_TIME");
     }
 
 
@@ -48,7 +48,7 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
                 "\"LIKE_USER_ID\" INTEGER NOT NULL ," + // 1: likeUserId
                 "\"LIKE_USER_NAME\" TEXT," + // 2: likeUserName
                 "\"LIKE_USER_IMAGE\" TEXT," + // 3: likeUserImage
-                "\"LIKE_TIME\" TEXT);"); // 4: likeTime
+                "\"LIKE_TIME\" INTEGER);"); // 4: likeTime
     }
 
     /** Drops the underlying database table. */
@@ -73,9 +73,9 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
             stmt.bindString(4, likeUserImage);
         }
  
-        String likeTime = entity.getLikeTime();
+        java.util.Date likeTime = entity.getLikeTime();
         if (likeTime != null) {
-            stmt.bindString(5, likeTime);
+            stmt.bindLong(5, likeTime.getTime());
         }
     }
 
@@ -95,9 +95,9 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
             stmt.bindString(4, likeUserImage);
         }
  
-        String likeTime = entity.getLikeTime();
+        java.util.Date likeTime = entity.getLikeTime();
         if (likeTime != null) {
-            stmt.bindString(5, likeTime);
+            stmt.bindLong(5, likeTime.getTime());
         }
     }
 
@@ -113,7 +113,7 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
             cursor.getLong(offset + 1), // likeUserId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // likeUserName
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // likeUserImage
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // likeTime
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)) // likeTime
         );
         return entity;
     }
@@ -124,7 +124,7 @@ public class NearCircleLikeDao extends AbstractDao<NearCircleLike, Void> {
         entity.setLikeUserId(cursor.getLong(offset + 1));
         entity.setLikeUserName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setLikeUserImage(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLikeTime(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setLikeTime(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
      }
     
     @Override

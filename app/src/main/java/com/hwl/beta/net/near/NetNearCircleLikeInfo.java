@@ -1,5 +1,7 @@
 package com.hwl.beta.net.near;
 
+import java.util.Date;
+
 /**
  * Created by Administrator on 2018/3/17.
  */
@@ -10,7 +12,7 @@ public class NetNearCircleLikeInfo {
     private int LikeUserId ;
     private String LikeUserName ;
     private String LikeUserImage;
-    private String LikeTime ;
+    private Date LikeTime ;
 
     public int getLikeId() {
         return LikeId;
@@ -52,11 +54,11 @@ public class NetNearCircleLikeInfo {
         LikeUserImage = likeUserImage;
     }
 
-    public String getLikeTime() {
+    public Date getLikeTime() {
         return LikeTime;
     }
 
-    public void setLikeTime(String likeTime) {
+    public void setLikeTime(Date likeTime) {
         LikeTime = likeTime;
     }
 }

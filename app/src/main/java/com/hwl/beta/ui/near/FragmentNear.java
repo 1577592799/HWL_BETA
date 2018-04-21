@@ -26,10 +26,13 @@ import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.NetNearCircleInfo;
 import com.hwl.beta.net.near.body.GetNearCircleInfosResponse;
+import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
+import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBNearCircleAction;
 import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleAdapter;
@@ -69,6 +72,7 @@ public class FragmentNear extends BaseFragment {
     NearCircleAdapter nearCircleAdapter;
     boolean isDataChange = false;
     int pageCount = 5;
+    long myUserId;
 
     @Nullable
     @Override
@@ -76,6 +80,7 @@ public class FragmentNear extends BaseFragment {
         activity = getActivity();
         nearCircles = new ArrayList<>();
         nearCircleAdapter = new NearCircleAdapter(activity, nearCircles, new NearCircleItemListener());
+        myUserId = UserSP.getUserId();
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_near, container, false);
 
@@ -305,6 +310,7 @@ public class FragmentNear extends BaseFragment {
     private class NearCircleItemListener implements INearCircleItemListener {
 
         private CircleActionMorePop mMorePopupWindow;
+        boolean isRuning = false;
 
         @Override
         public void onUserHeadClick(NearCircle info) {
@@ -338,6 +344,8 @@ public class FragmentNear extends BaseFragment {
 
         @Override
         public void onMoreActionClick(final View view, int position) {
+            final NearCircleExt info = nearCircles.get(position);
+            if (info == null) return;
             if (mMorePopupWindow == null) {
                 mMorePopupWindow = new CircleActionMorePop(activity);
             }
@@ -347,21 +355,73 @@ public class FragmentNear extends BaseFragment {
                     view.setVisibility(View.VISIBLE);
                 }
             });
-            mMorePopupWindow.show(position, view);
+            mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
+                @Override
+                public void onCommentClick(int position) {
+
+                }
+
+                @Override
+                public void onLikeClick(int position) {
+                    setLikeInfo(position, info);
+                }
+            });
+            mMorePopupWindow.show(position, view, info.getInfo().getIsLiked());
+        }
+
+        private void setLikeInfo(final int position, final NearCircleExt info) {
+            if (isRuning || info == null || info.getInfo() == null || info.getInfo().getNearCircleId() <= 0)
+                return;
+            isRuning = true;
+            final boolean isLiked = info.getInfo().getIsLiked();
+            NearCircleService.setNearLikeInfo(isLiked ? 0 : 1, info.getInfo().getNearCircleId())
+                    .subscribe(new NetDefaultObserver<SetNearLikeInfoResponse>() {
+                        @Override
+                        protected void onSuccess(SetNearLikeInfoResponse response) {
+                            isRuning = false;
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                NearCircleLike likeInfo = new NearCircleLike();
+                                likeInfo.setNearCircleId(info.getInfo().getNearCircleId());
+                                likeInfo.setLikeUserId(myUserId);
+                                likeInfo.setLikeUserName(UserSP.getUserName());
+                                likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
+                                likeInfo.setLikeTime(new Date());
+                                if (info.getLikes() == null) {
+                                    info.setLikes(new ArrayList<NearCircleLike>());
+                                }
+
+                                if (isLiked) {
+                                    //取消点赞
+                                    info.getInfo().setIsLiked(false);
+                                    for (int i = 0; i < info.getLikes().size(); i++) {
+                                        if (info.getLikes().get(i).getLikeUserId() == myUserId) {
+                                            info.getLikes().remove(i);
+                                            nearCircleAdapter.notifyItemChanged(position);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    //点赞
+                                    info.getInfo().setIsLiked(true);
+                                    info.getLikes().add(info.getLikes().size(), likeInfo);
+                                    nearCircleAdapter.notifyItemChanged(position);
+                                }
+                            } else {
+                                onError("操作失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            isRuning = false;
+
+                        }
+                    });
         }
 
         @Override
         public void onMoreCommentClick(NearCircle info) {
-
-        }
-
-        @Override
-        public void onLikeClick(int position) {
-
-        }
-
-        @Override
-        public void onCommentClick(int position) {
 
         }
 

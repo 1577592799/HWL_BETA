@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 public class ChatMessageSend {
     //组消息格式：byte[]={chat-message-type,chat-send-user-id-length(byte),chat-group-guid-lenght(byte),chat-send-user-id(byte[]),chat-group-guid(byte[]),chat-message-content(byte[])}
 
-    public static Observable<Boolean> sendChatFriendRequestMessage(int friendId, String content) {
+    public static Observable<Boolean> sendChatFriendRequestMessage(long friendId, String content) {
         final ChatFriendRequestBean message = new ChatFriendRequestBean();
         message.setFromUserId(UserSP.getUserId());
         message.setFromUserSymbol(UserSP.getUserSymbol());

@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -19,10 +20,10 @@ import com.hwl.beta.autolayout.utils.AutoUtils;
 public class CircleActionMorePop extends PopupWindow {
     private int mShowMorePopupWindowWidth;
     private int mShowMorePopupWindowHeight;
-    private LinearLayout llShowMoreLike;
-    private LinearLayout llShowMoreComment;
-    private LinearLayout llShowMoreClose;
+    private LinearLayout llLikeConatiner;
+    private LinearLayout llCommentContainer;
     private TextView tvLikeItem;
+    private ImageView ivLikeItem;
 
     private IActionMoreListener actionMoreListener;
 
@@ -45,10 +46,11 @@ public class CircleActionMorePop extends PopupWindow {
         mShowMorePopupWindowHeight = conentView.getMeasuredHeight();
 
         View parent = getContentView();
-//        tvLikeItem = (TextView) parent.findViewById(R.id.tv_like_item);
-//        llShowMoreLike = (LinearLayout) parent.findViewById(R.id.ll_like_container);
-//        llShowMoreComment = (LinearLayout) parent.findViewById(R.id.ll_comment_item);
-        parent.findViewById(R.id.ll_item_close).setOnClickListener(new View.OnClickListener() {
+        llLikeConatiner = parent.findViewById(R.id.ll_like_container);
+        llCommentContainer = parent.findViewById(R.id.ll_comment_container);
+        tvLikeItem = parent.findViewById(R.id.tv_like_item);
+        ivLikeItem = parent.findViewById(R.id.iv_like_item);
+        parent.findViewById(R.id.ll_close_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();
@@ -56,32 +58,38 @@ public class CircleActionMorePop extends PopupWindow {
         });
     }
 
-    public void show(final int position,View moreActionView) {
+    public void show(int position, View moreActionView) {
+        show(position, moreActionView, false);
+    }
+
+    public void show(final int position, View moreActionView, boolean isLike) {
         if (isShowing()) {
             dismiss();
         } else {
-//            //已经点过赞
-//            if (circleNewInfo.getIsLike() == 1) {
-//                tvShowMoreLike.setText("取消");
-//            } else {
-//                tvShowMoreLike.setText("点赞");
-//            }
-//            //点赞按钮
-//            llShowMoreLike.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    dgyCircleListener.onLikeDgyCircleNew(position, circleNewInfo);
-//                    dismiss();
-//                }
-//            });
-//            //评论按钮
-//            llShowMoreReply.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    dgyCircleListener.onCommentDgyCircleNew(position, circleNewInfo, null);
-//                    dismiss();
-//                }
-//            });
+            //已经点过赞
+            if (isLike) {
+                tvLikeItem.setText("取消");
+                ivLikeItem.setImageResource(R.drawable.ic_like);
+            } else {
+                tvLikeItem.setText("点赞");
+                ivLikeItem.setImageResource(R.drawable.ic_like_border);
+            }
+            //点赞按钮
+            llLikeConatiner.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    actionMoreListener.onLikeClick(position);
+                    dismiss();
+                }
+            });
+            //评论按钮
+            llCommentContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    actionMoreListener.onCommentClick(position);
+                    dismiss();
+                }
+            });
 
             int heightMoreBtnView = moreActionView.getHeight();
             int widthMoreBtnView = moreActionView.getWidth();
@@ -93,7 +101,7 @@ public class CircleActionMorePop extends PopupWindow {
 
     public interface IActionMoreListener {
 
-        void onDeleteClick(int position);
+//        void onDeleteClick(int position);
 
         void onCommentClick(int position);
 

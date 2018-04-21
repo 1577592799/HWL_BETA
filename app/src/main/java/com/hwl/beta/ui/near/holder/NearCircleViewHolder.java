@@ -5,7 +5,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.hwl.beta.databinding.NearItemBinding;
 import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
@@ -17,6 +19,7 @@ import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleCommentAdapter;
 import com.hwl.beta.ui.near.adp.NearCircleLikeAdapter;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
+import com.hwl.beta.utils.DisplayUtils;
 
 import java.util.List;
 
@@ -57,19 +60,21 @@ public class NearCircleViewHolder extends RecyclerView.ViewHolder {
         if (likes != null && likes.size() > 0) {
             isShowActionContainer = true;
             this.itemBinding.rlLikeContainer.setVisibility(View.VISIBLE);
-            Context context = this.itemBinding.rvLikes.getContext();
-            this.itemBinding.rvLikes.setAdapter(
-                    new NearCircleLikeAdapter(
-                            context,
-                            likes,
-                            new NearCircleLikeAdapter.ILikeItemListener() {
-                                @Override
-                                public void onLikeUserClick(NearCircleLike like) {
-                                    itemListener.onLikeUserHeadClick(like);
-                                }
-                            })
-            );
-            this.itemBinding.rvLikes.setLayoutManager(new GridLayoutManager(context, 5));
+            this.setLikeViews(likes, itemListener);
+
+//            Context context = this.itemBinding.rvLikes.getContext();
+//            this.itemBinding.rvLikes.setAdapter(
+//                    new NearCircleLikeAdapter(
+//                            context,
+//                            likes,
+//                            new NearCircleLikeAdapter.ILikeItemListener() {
+//                                @Override
+//                                public void onLikeUserClick(NearCircleLike like) {
+//                                    itemListener.onLikeUserHeadClick(like);
+//                                }
+//                            })
+//            );
+//            this.itemBinding.rvLikes.setLayoutManager(new GridLayoutManager(context, 5));
         } else {
             this.itemBinding.rlLikeContainer.setVisibility(View.GONE);
         }
@@ -109,6 +114,29 @@ public class NearCircleViewHolder extends RecyclerView.ViewHolder {
             this.itemBinding.llActionContainer.setVisibility(View.VISIBLE);
         } else {
             this.itemBinding.llActionContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void setLikeViews(final List<NearCircleLike> likes, final INearCircleItemListener itemListener) {
+        if (likes == null || likes.size() <= 0) return;
+        this.itemBinding.fblLikeContainer.removeAllViews();
+        Context context = this.itemBinding.rlLikeContainer.getContext();
+        int size = DisplayUtils.dp2px(context, 20);
+        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
+        params.rightMargin = 2;
+        params.bottomMargin = 2;
+        ImageView ivLikeUser;
+        for (int i = 0; i < likes.size(); i++) {
+            final NearCircleLike like = likes.get(i);
+            ivLikeUser = new ImageView(context);
+            ImageViewBean.loadImage(ivLikeUser, like.getLikeUserImage());
+            ivLikeUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemListener.onLikeUserHeadClick(like);
+                }
+            });
+            this.itemBinding.fblLikeContainer.addView(ivLikeUser, params);
         }
     }
 

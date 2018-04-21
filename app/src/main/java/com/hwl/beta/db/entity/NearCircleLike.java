@@ -4,6 +4,8 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.util.Date;
+
 /**
  * Created by Administrator on 2018/4/14.
  */
@@ -15,10 +17,10 @@ public class NearCircleLike {
     private String likeUserName;
     private String likeUserImage;
     @OrderBy("likeTime desc")
-    private String likeTime;
-    @Generated(hash = 504663597)
+    private Date likeTime;
+    @Generated(hash = 684760537)
     public NearCircleLike(long nearCircleId, long likeUserId, String likeUserName,
-            String likeUserImage, String likeTime) {
+            String likeUserImage, Date likeTime) {
         this.nearCircleId = nearCircleId;
         this.likeUserId = likeUserId;
         this.likeUserName = likeUserName;
@@ -52,10 +54,10 @@ public class NearCircleLike {
     public void setLikeUserImage(String likeUserImage) {
         this.likeUserImage = likeUserImage;
     }
-    public String getLikeTime() {
+    public Date getLikeTime() {
         return this.likeTime;
     }
-    public void setLikeTime(String likeTime) {
+    public void setLikeTime(Date likeTime) {
         this.likeTime = likeTime;
     }
 }

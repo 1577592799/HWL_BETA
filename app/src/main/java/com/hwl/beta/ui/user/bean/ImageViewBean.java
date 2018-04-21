@@ -35,6 +35,7 @@ public class ImageViewBean {
         Glide.with(view.getContext()).load(imageUrl)
                 .placeholder(R.drawable.empty_photo)
                 .error(R.drawable.empty_photo)
+                .dontAnimate()
                 .into(view);
     }
 

@@ -9,7 +9,7 @@
     android:paddingRight="12dp">
 
     <LinearLayout
-        android:id="@+id/ll_comment_item"
+        android:id="@+id/ll_comment_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -53,7 +53,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ll_item_close"
+        android:id="@+id/ll_close_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

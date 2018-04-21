@@ -157,12 +157,23 @@
                     android:layout_alignParentStart="true"
                     android:src="@drawable/ic_unlike" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_likes"
+                <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@+id/rv_likes"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_toRightOf="@+id/iv_like" />-->
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/fbl_like_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/iv_like" />
+                    android:layout_toRightOf="@+id/iv_like"
+                    app:alignContent="stretch"
+                    app:alignItems="stretch"
+                    app:flexWrap="wrap">
+                    <!--动态加载点赞图片-->
+                </com.google.android.flexbox.FlexboxLayout>
 
             </RelativeLayout>
 
