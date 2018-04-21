@@ -49,6 +49,13 @@ public class NearCircleViewHolder extends RecyclerView.ViewHolder {
         this.itemBinding.setInfo(info);
         this.itemBinding.setImage(headImage);
 
+        this.itemBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemListener.onItemViewClick(v);
+            }
+        });
+
         if (images == null || images.size() <= 0) {
             this.itemBinding.mivImages.setVisibility(View.GONE);
         } else {

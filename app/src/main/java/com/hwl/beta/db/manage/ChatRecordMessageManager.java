@@ -73,7 +73,7 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
         }
     }
 
-    public boolean deleteUserRecords(int myUserId, int friendUserId) {
+    public boolean deleteUserRecords(long myUserId, long friendUserId) {
         if (myUserId <= 0 || friendUserId <= 0 || myUserId == friendUserId) return false;
         List<ChatRecordMessage> records = daoSession.getChatRecordMessageDao().queryBuilder()
                 .whereOr(ChatRecordMessageDao.Properties.FromUserId.eq(myUserId), ChatRecordMessageDao.Properties.FromUserId.eq(friendUserId))

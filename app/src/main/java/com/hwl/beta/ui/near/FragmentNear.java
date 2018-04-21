@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.FragmentNearBinding;
@@ -28,8 +27,8 @@ import com.hwl.beta.net.near.NetNearCircleInfo;
 import com.hwl.beta.net.near.body.GetNearCircleInfosResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
-import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.BaseFragment;
+import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -49,7 +48,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -313,6 +311,11 @@ public class FragmentNear extends BaseFragment {
         boolean isRuning = false;
 
         @Override
+        public void onItemViewClick(View view) {
+            KeyBoardAction.hideSoftInput(view);
+        }
+
+        @Override
         public void onUserHeadClick(NearCircle info) {
             UITransfer.toUserIndexActivity(activity, info.getPublishUserId(), info.getPublishUserName(), info.getPublishUserImage());
         }
@@ -358,7 +361,7 @@ public class FragmentNear extends BaseFragment {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-
+                    UITransfer.toNearCommentPublishActivity(activity);
                 }
 
                 @Override

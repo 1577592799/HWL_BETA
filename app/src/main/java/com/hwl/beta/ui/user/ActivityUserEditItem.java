@@ -61,7 +61,7 @@ public class ActivityUserEditItem extends FragmentActivity {
                 .setTitleRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        KeyBoardAction.hideKeyBoard(activity, v);
+                        KeyBoardAction.hideSoftInput(activity);
                         LoadingDialog.show(activity);
 
                         switch (itemBean.getActionType()) {

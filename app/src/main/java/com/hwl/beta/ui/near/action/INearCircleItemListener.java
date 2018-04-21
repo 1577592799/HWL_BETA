@@ -12,6 +12,8 @@ import com.hwl.beta.db.entity.NearCircleLike;
 
 public interface INearCircleItemListener {
 
+    void onItemViewClick(View view);
+
     void onUserHeadClick(NearCircle info);
 
     void onLikeUserHeadClick(NearCircleLike likeInfo);

@@ -1,1 +1,1 @@
-include ':app', ':emotion', ':autolayout', ':swiperefresh'
+include ':app', ':emotion', ':autolayout'

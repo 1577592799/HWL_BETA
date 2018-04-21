@@ -5,6 +5,8 @@ import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.RetrofitUtils;
 import com.hwl.beta.net.user.body.AddFriendRequest;
 import com.hwl.beta.net.user.body.AddFriendResponse;
+import com.hwl.beta.net.user.body.DeleteFriendRequest;
+import com.hwl.beta.net.user.body.DeleteFriendResponse;
 import com.hwl.beta.net.user.body.GetFriendsRequest;
 import com.hwl.beta.net.user.body.GetFriendsResponse;
 import com.hwl.beta.net.user.body.SearchUserRequest;
@@ -172,6 +174,17 @@ public class UserService {
         return response;
     }
 
+    public static Observable<ResponseBase<DeleteFriendResponse>> deleteFriend(long friendUserId) {
+        DeleteFriendRequest requestBody = new DeleteFriendRequest();
+        requestBody.setMyUserId(UserSP.getUserId());
+        requestBody.setFriendUserId(friendUserId);
+        Observable<ResponseBase<DeleteFriendResponse>> response = RetrofitUtils.createApi(IUserService.class)
+                .deleteFriend(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     private interface IUserService {
         @POST("api/UserLogin")
         Observable<ResponseBase<UserLoginResponse>> userLogin(@Body RequestBase<UserLoginRequest> request);
@@ -206,10 +219,9 @@ public class UserService {
         @POST("api/GetFriends")
         Observable<ResponseBase<GetFriendsResponse>> getFriends(@Body RequestBase<GetFriendsRequest> request);
 
-        //
-//        @POST("api/DeleteFriend")
-//        Call<DeleteFriendResponse> deleteFriend(@Body DeleteFriendRequest request);
-//
+        @POST("api/DeleteFriend")
+        Observable<ResponseBase<DeleteFriendResponse>> deleteFriend(@Body RequestBase<DeleteFriendRequest> request);
+
         @POST("api/SetFriendRemark")
         Observable<ResponseBase<SetFriendRemarkResponse>> setFriendRemark(@Body RequestBase<SetFriendRemarkRequest> request);
     }

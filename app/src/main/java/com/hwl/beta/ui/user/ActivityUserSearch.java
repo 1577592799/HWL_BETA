@@ -91,7 +91,7 @@ public class ActivityUserSearch extends FragmentActivity {
                 isRuning = false;
                 return;
             }
-            KeyBoardAction.hideKeyBoard(activity, binding.btnSearch);
+            KeyBoardAction.hideSoftInput(activity);
             binding.pbLoading.setVisibility(View.VISIBLE);
             UserService.searchUser(userSearchBean.getUserSymbol())
                     .subscribe(new NetDefaultObserver<SearchUserResponse>() {
@@ -144,7 +144,7 @@ public class ActivityUserSearch extends FragmentActivity {
                 @Override
                 public void onClick(final View v) {
                     LoadingDialog.show(activity, "请求发送中...");
-                    KeyBoardAction.hideKeyBoard(activity, v);
+                    KeyBoardAction.hideSoftInput(activity);
 
                     UserMessageSend.sendFriendRequestMessage(user.getId(), remark).subscribe(new MQDefaultObserver() {
                         @Override

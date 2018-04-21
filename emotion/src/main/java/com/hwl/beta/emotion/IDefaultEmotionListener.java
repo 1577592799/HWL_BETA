@@ -6,5 +6,6 @@ package com.hwl.beta.emotion;
 
 public interface IDefaultEmotionListener {
     void onDefaultItemClick(String name);
+
     void onDefaultItemDeleteClick();
 }

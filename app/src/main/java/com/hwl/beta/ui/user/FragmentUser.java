@@ -21,6 +21,7 @@ import com.hwl.beta.net.user.body.GetFriendsResponse;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventDeleteFriend;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.FriendComparator;
 import com.hwl.beta.ui.common.UITransfer;
@@ -132,6 +133,18 @@ public class FragmentUser extends BaseFragment {
             users.add(friend);
             Collections.sort(users, pinyinComparator);
             friendAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void deleteFriend(EventDeleteFriend friend) {
+        if (friend == null || friend.getFriendId() <= 0) return;
+        for (int i = 0; i < users.size(); i++) {
+            if (friend.getFriendId() == users.get(i).getId()) {
+                users.remove(i);
+                friendAdapter.notifyDataSetChanged();
+                break;
+            }
         }
     }
 

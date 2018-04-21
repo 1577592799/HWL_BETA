@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -62,6 +63,7 @@ public class ActivityMain extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         activity = this;
         mainBean = new MainBean(MessageCountSP.getChatMessageCountDesc(), MessageCountSP.getFriendRequestCountDesc());
         mainListener = new MainListener();
@@ -107,6 +109,14 @@ public class ActivityMain extends FragmentActivity {
             mainBean.setChatMessageCountDesc(MessageCountSP.getChatMessageCountDesc());
         }
     }
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            KeyBoardAction.hideSoftInput(activity);
+//        }
+//        return super.onTouchEvent(event);
+//    }
 
     @Override
     protected void onDestroy() {

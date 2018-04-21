@@ -53,7 +53,7 @@ public class EmotionTemplateFragment extends Fragment {
         // 获取屏幕宽度
         screenWidth = DisplayUtils.getScreenWidthPixels(getActivity());
         // item的间距
-        padding = DisplayUtils.dp2px(getActivity(), 12);
+        padding = DisplayUtils.dp2px(getActivity(), 10);
         // 动态计算item的宽度和高度
         itemWidth = (screenWidth - padding * 8) / 7;
         //动态计算gridview的总高度

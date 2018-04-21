@@ -176,6 +176,7 @@
             android:layout_marginTop="20dp"
             android:background="@color/main"
             android:gravity="center"
+            android:onClick="@{view->action.onAddUserClick(view)}"
             android:padding="25px"
             android:text="添加到好友"
             android:textColor="@color/white"

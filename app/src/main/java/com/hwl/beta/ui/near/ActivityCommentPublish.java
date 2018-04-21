@@ -1,31 +1,37 @@
-package com.hwl.beta.ui;
+package com.hwl.beta.ui.near;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ActivityCommentPublish extends FragmentActivity {
 
-/**
- * Created by Administrator on 2018/1/4.
- */
+    Activity activity;
 
-public class TestActivity extends FragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_comment_publish);
+        activity = this;
 
         EmotionDefaultPannel edpEmotion = findViewById(R.id.ecp_emotion);
         edpEmotion.setEditTextFocus(false);
+        edpEmotion.setDefaultPannelListener(new EmotionDefaultPannel.IDefaultPannelListener() {
+            @Override
+            public boolean onSendMessageClick(String text) {
+                Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                finish();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -39,11 +45,4 @@ public class TestActivity extends FragmentActivity {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getWindowManager().updateViewLayout(view, lp);
     }
-//    private List<MultiImageView.ImageBean> getImageUrls() {
-//        List<MultiImageView.ImageBean> urls = new ArrayList<>();
-////        urls.add(new MultiImageView.ImageBean(439,300,"http://img2.imgtn.bdimg.com/it/u=114139281,1353799337&fm=27&gp=0.jpg"));
-//        urls.add(new MultiImageView.ImageBean(590,300,"http://image.uisdc.com/wp-content/uploads/2014/12/20141212164404274-590x300.jpg"));
-//        urls.add(new MultiImageView.ImageBean(1160,653,"http://pic.pptbz.com/201506/2015070581208537.JPG"));
-//        return urls;
-//    }
 }

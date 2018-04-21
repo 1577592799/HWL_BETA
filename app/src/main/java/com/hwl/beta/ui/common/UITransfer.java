@@ -11,6 +11,7 @@ import com.hwl.beta.ui.entry.ActivityMain;
 import com.hwl.beta.ui.entry.ActivityRegister;
 import com.hwl.beta.ui.entry.ActivityWelcome;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
+import com.hwl.beta.ui.near.ActivityCommentPublish;
 import com.hwl.beta.ui.near.ActivityNearPublish;
 import com.hwl.beta.ui.user.ActivityNewFriend;
 import com.hwl.beta.ui.user.ActivityUserEdit;
@@ -147,6 +148,11 @@ public class UITransfer {
 
     public static void toNearPublishActivity(Activity context) {
         Intent intent = new Intent(context, ActivityNearPublish.class);
+        context.startActivity(intent);
+    }
+
+    public static void toNearCommentPublishActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityCommentPublish.class);
         context.startActivity(intent);
     }
 }
