@@ -11,6 +11,10 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import com.hwl.beta.db.entity.ChatGroupMessage;
 import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.ChatUserMessage;
+import com.hwl.beta.db.entity.Circle;
+import com.hwl.beta.db.entity.CircleComment;
+import com.hwl.beta.db.entity.CircleImage;
+import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.FriendRequest;
 import com.hwl.beta.db.entity.GroupInfo;
@@ -23,6 +27,10 @@ import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.dao.ChatGroupMessageDao;
 import com.hwl.beta.db.dao.ChatRecordMessageDao;
 import com.hwl.beta.db.dao.ChatUserMessageDao;
+import com.hwl.beta.db.dao.CircleDao;
+import com.hwl.beta.db.dao.CircleCommentDao;
+import com.hwl.beta.db.dao.CircleImageDao;
+import com.hwl.beta.db.dao.CircleLikeDao;
 import com.hwl.beta.db.dao.FriendDao;
 import com.hwl.beta.db.dao.FriendRequestDao;
 import com.hwl.beta.db.dao.GroupInfoDao;
@@ -44,6 +52,10 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig chatGroupMessageDaoConfig;
     private final DaoConfig chatRecordMessageDaoConfig;
     private final DaoConfig chatUserMessageDaoConfig;
+    private final DaoConfig circleDaoConfig;
+    private final DaoConfig circleCommentDaoConfig;
+    private final DaoConfig circleImageDaoConfig;
+    private final DaoConfig circleLikeDaoConfig;
     private final DaoConfig friendDaoConfig;
     private final DaoConfig friendRequestDaoConfig;
     private final DaoConfig groupInfoDaoConfig;
@@ -56,6 +68,10 @@ public class DaoSession extends AbstractDaoSession {
     private final ChatGroupMessageDao chatGroupMessageDao;
     private final ChatRecordMessageDao chatRecordMessageDao;
     private final ChatUserMessageDao chatUserMessageDao;
+    private final CircleDao circleDao;
+    private final CircleCommentDao circleCommentDao;
+    private final CircleImageDao circleImageDao;
+    private final CircleLikeDao circleLikeDao;
     private final FriendDao friendDao;
     private final FriendRequestDao friendRequestDao;
     private final GroupInfoDao groupInfoDao;
@@ -77,6 +93,18 @@ public class DaoSession extends AbstractDaoSession {
 
         chatUserMessageDaoConfig = daoConfigMap.get(ChatUserMessageDao.class).clone();
         chatUserMessageDaoConfig.initIdentityScope(type);
+
+        circleDaoConfig = daoConfigMap.get(CircleDao.class).clone();
+        circleDaoConfig.initIdentityScope(type);
+
+        circleCommentDaoConfig = daoConfigMap.get(CircleCommentDao.class).clone();
+        circleCommentDaoConfig.initIdentityScope(type);
+
+        circleImageDaoConfig = daoConfigMap.get(CircleImageDao.class).clone();
+        circleImageDaoConfig.initIdentityScope(type);
+
+        circleLikeDaoConfig = daoConfigMap.get(CircleLikeDao.class).clone();
+        circleLikeDaoConfig.initIdentityScope(type);
 
         friendDaoConfig = daoConfigMap.get(FriendDao.class).clone();
         friendDaoConfig.initIdentityScope(type);
@@ -105,6 +133,10 @@ public class DaoSession extends AbstractDaoSession {
         chatGroupMessageDao = new ChatGroupMessageDao(chatGroupMessageDaoConfig, this);
         chatRecordMessageDao = new ChatRecordMessageDao(chatRecordMessageDaoConfig, this);
         chatUserMessageDao = new ChatUserMessageDao(chatUserMessageDaoConfig, this);
+        circleDao = new CircleDao(circleDaoConfig, this);
+        circleCommentDao = new CircleCommentDao(circleCommentDaoConfig, this);
+        circleImageDao = new CircleImageDao(circleImageDaoConfig, this);
+        circleLikeDao = new CircleLikeDao(circleLikeDaoConfig, this);
         friendDao = new FriendDao(friendDaoConfig, this);
         friendRequestDao = new FriendRequestDao(friendRequestDaoConfig, this);
         groupInfoDao = new GroupInfoDao(groupInfoDaoConfig, this);
@@ -117,6 +149,10 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(ChatGroupMessage.class, chatGroupMessageDao);
         registerDao(ChatRecordMessage.class, chatRecordMessageDao);
         registerDao(ChatUserMessage.class, chatUserMessageDao);
+        registerDao(Circle.class, circleDao);
+        registerDao(CircleComment.class, circleCommentDao);
+        registerDao(CircleImage.class, circleImageDao);
+        registerDao(CircleLike.class, circleLikeDao);
         registerDao(Friend.class, friendDao);
         registerDao(FriendRequest.class, friendRequestDao);
         registerDao(GroupInfo.class, groupInfoDao);
@@ -131,6 +167,10 @@ public class DaoSession extends AbstractDaoSession {
         chatGroupMessageDaoConfig.clearIdentityScope();
         chatRecordMessageDaoConfig.clearIdentityScope();
         chatUserMessageDaoConfig.clearIdentityScope();
+        circleDaoConfig.clearIdentityScope();
+        circleCommentDaoConfig.clearIdentityScope();
+        circleImageDaoConfig.clearIdentityScope();
+        circleLikeDaoConfig.clearIdentityScope();
         friendDaoConfig.clearIdentityScope();
         friendRequestDaoConfig.clearIdentityScope();
         groupInfoDaoConfig.clearIdentityScope();
@@ -151,6 +191,22 @@ public class DaoSession extends AbstractDaoSession {
 
     public ChatUserMessageDao getChatUserMessageDao() {
         return chatUserMessageDao;
+    }
+
+    public CircleDao getCircleDao() {
+        return circleDao;
+    }
+
+    public CircleCommentDao getCircleCommentDao() {
+        return circleCommentDao;
+    }
+
+    public CircleImageDao getCircleImageDao() {
+        return circleImageDao;
+    }
+
+    public CircleLikeDao getCircleLikeDao() {
+        return circleLikeDao;
     }
 
     public FriendDao getFriendDao() {

@@ -122,13 +122,18 @@ public class NearCircleViewHolder extends RecyclerView.ViewHolder {
         } else {
             this.itemBinding.llActionContainer.setVisibility(View.GONE);
         }
+        this.itemBinding.executePendingBindings();
+    }
+
+    public NearCircleCommentAdapter getCommentAdapter() {
+        return (NearCircleCommentAdapter) this.itemBinding.rvComments.getAdapter();
     }
 
     private void setLikeViews(final List<NearCircleLike> likes, final INearCircleItemListener itemListener) {
         if (likes == null || likes.size() <= 0) return;
         this.itemBinding.fblLikeContainer.removeAllViews();
         Context context = this.itemBinding.rlLikeContainer.getContext();
-        int size = DisplayUtils.dp2px(context, 20);
+        int size = DisplayUtils.dp2px(context, 25);
         FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
         params.rightMargin = 2;
         params.bottomMargin = 2;

@@ -67,7 +67,7 @@ public abstract class NetDefaultObserver<T> implements Observer<ResponseBase<T>>
             onError("网络请求超时");
         } else {
             //onError("网络请求异常，请稍后再试");
-            onError(e.getMessage());
+            onError("网络请求异常:"+e.getMessage());
         }
     }
 

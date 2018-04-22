@@ -110,14 +110,6 @@ public class ActivityMain extends FragmentActivity {
         }
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//            KeyBoardAction.hideSoftInput(activity);
-//        }
-//        return super.onTouchEvent(event);
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

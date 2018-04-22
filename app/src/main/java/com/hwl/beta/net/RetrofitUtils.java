@@ -19,8 +19,8 @@ public class RetrofitUtils {
     /**
      * http请求测试环境url
      */
-    public static String BASE_URL = "http://192.168.16.1:8030/";
-    public static String RESX_URL = "http://192.168.16.1:8033/";
+    public static String BASE_URL = "http://192.168.1.4:8030/";
+    public static String RESX_URL = "http://192.168.1.4:8033/";
 
     private static Retrofit singleton;
     private static Retrofit resxSingleton;

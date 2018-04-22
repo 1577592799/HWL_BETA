@@ -11,10 +11,23 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
+import com.hwl.beta.net.near.NearCircleService;
+import com.hwl.beta.net.near.body.AddNearCommentResponse;
+import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
+import com.hwl.beta.ui.convert.DBNearCircleAction;
+import com.hwl.beta.utils.StringUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class ActivityCommentPublish extends FragmentActivity {
 
     Activity activity;
+    EmotionDefaultPannel edpEmotion;
+    long nearCircleId = 0;
+    long replyUserId = 0;
+    String replyUserName = "";
+    boolean isRuning = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,16 +35,61 @@ public class ActivityCommentPublish extends FragmentActivity {
         setContentView(R.layout.activity_comment_publish);
         activity = this;
 
-        EmotionDefaultPannel edpEmotion = findViewById(R.id.ecp_emotion);
+        nearCircleId = getIntent().getLongExtra("nearcircleid", 0);
+        if (nearCircleId <= 0) {
+            Toast.makeText(activity, "参数错误", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        replyUserId = getIntent().getLongExtra("replyuserid", 0);
+        replyUserName = getIntent().getStringExtra("replyusername");
+
+        edpEmotion = findViewById(R.id.edp_emotion);
         edpEmotion.setEditTextFocus(false);
+        if (StringUtils.isNotBlank(replyUserName)) {
+            edpEmotion.setHintText("回复 " + replyUserName + " :");
+        } else {
+            edpEmotion.setHintText("输入评论内容");
+        }
         edpEmotion.setDefaultPannelListener(new EmotionDefaultPannel.IDefaultPannelListener() {
             @Override
             public boolean onSendMessageClick(String text) {
-                Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-                finish();
-                return true;
+                if (isRuning) return false;
+                isRuning = true;
+
+                if (StringUtils.isBlank(text)) {
+                    Toast.makeText(activity, "发布的内容不能为空", Toast.LENGTH_SHORT).show();
+                    isRuning = false;
+                    return false;
+                }
+                publishComment(text);
+                return false;
             }
         });
+    }
+
+    private void publishComment(String content) {
+        edpEmotion.setSendButtonText("正在发送...");
+        NearCircleService.addComment(nearCircleId, content, replyUserId)
+                .subscribe(new NetDefaultObserver<AddNearCommentResponse>() {
+                    @Override
+                    protected void onSuccess(AddNearCommentResponse res) {
+                        isRuning = false;
+                        if (res.getNearCircleCommentInfo() != null && res.getNearCircleCommentInfo().getCommentId() > 0) {
+                            Toast.makeText(activity, "发布成功", Toast.LENGTH_SHORT).show();
+                            EventBus.getDefault().post(DBNearCircleAction.convertToNearCircleCommentInfo(res.getNearCircleCommentInfo()));
+                            finish();
+                        } else {
+                            onError("发布失败");
+                        }
+                    }
+
+                    @Override
+                    protected void onError(String resultMessage) {
+                        edpEmotion.setSendButtonText("发送");
+                        isRuning = false;
+                        super.onError(resultMessage);
+                    }
+                });
     }
 
     @Override
@@ -43,6 +101,7 @@ public class ActivityCommentPublish extends FragmentActivity {
         lp.gravity = Gravity.BOTTOM;
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//        lp.alpha = 0.1f;
         getWindowManager().updateViewLayout(view, lp);
     }
 }

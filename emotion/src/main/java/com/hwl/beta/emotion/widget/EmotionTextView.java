@@ -3,6 +3,7 @@ package com.hwl.beta.emotion.widget;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -49,13 +50,17 @@ public class EmotionTextView extends android.support.v7.widget.AppCompatTextView
             while (matcher.find()) {
                 if (EmotionUtils.getDefaultEmotionMap().containsKey(matcher.group())) {
                     int id = EmotionUtils.getDefaultEmotionMap().get(matcher.group());
-                    Bitmap bitmap = BitmapFactory.decodeResource(
-                            getResources(), id);
-                    if (bitmap != null) {
-                        ImageSpan span = new ImageSpan(getContext(), bitmap);
-                        builder.setSpan(span, matcher.start(), matcher.end(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
+                    Drawable drawable = getResources().getDrawable(id);
+                    drawable.setBounds(0, 0, 25, 25);
+                    builder.setSpan(new ImageSpan(drawable), matcher.start(), matcher.end(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    Bitmap bitmap = BitmapFactory.decodeResource(
+//                            getResources(), id);
+//                    if (bitmap != null) {
+//                        ImageSpan span = new ImageSpan(getContext(), bitmap);
+//                        builder.setSpan(span, matcher.start(), matcher.end(),
+//                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    }
                 }
             }
             return builder;

@@ -43,6 +43,8 @@
         <activity
             android:name=".ui.chat.ActivityChatUser"
             android:windowSoftInputMode="stateHidden"></activity>
+        <activity android:name=".ui.circle.ActivityCircleIndex"></activity>
+        <activity android:name=".ui.circle.ActivityCirclePublish"></activity>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -51,11 +53,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote"></service>
-        <!--<receiver android:name=".ui.MainBroadcastReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.hwl.beta.broadcast.main" />-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
     </application>
     <!-- 这个权限用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>

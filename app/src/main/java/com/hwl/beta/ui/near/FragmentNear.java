@@ -84,10 +84,15 @@ public class FragmentNear extends BaseFragment {
 
         initView();
 
-//        if (!EventBus.getDefault().isRegistered(this)) {
-//            EventBus.getDefault().register(this);
-//        }
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         return binding.getRoot();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addComment(NearCircleComment comment) {
+        nearCircleAdapter.addComment(comment);
     }
 
     @Override
@@ -107,7 +112,7 @@ public class FragmentNear extends BaseFragment {
     public void onDestroy() {
         saveInfo();
         super.onDestroy();
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -162,7 +167,7 @@ public class FragmentNear extends BaseFragment {
 
     private void saveInfo() {
         if (!isDataChange || nearCircles == null || nearCircles.size() <= 0) return;
-        Log.d("FragmentNear", "save near info");
+//        Log.d("FragmentNear", "save near info");
         isDataChange = false;
         Observable.fromIterable(nearCircles.subList(0, pageCount))
                 .subscribeOn(Schedulers.io())
@@ -337,7 +342,11 @@ public class FragmentNear extends BaseFragment {
 
         @Override
         public void onCommentContentClick(NearCircleComment comment) {
-
+            if (comment.getCommentUserId() == myUserId) {
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId());
+            } else {
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+            }
         }
 
         @Override
@@ -361,7 +370,7 @@ public class FragmentNear extends BaseFragment {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toNearCommentPublishActivity(activity);
+                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId());
                 }
 
                 @Override
@@ -383,31 +392,16 @@ public class FragmentNear extends BaseFragment {
                         protected void onSuccess(SetNearLikeInfoResponse response) {
                             isRuning = false;
                             if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
-                                NearCircleLike likeInfo = new NearCircleLike();
-                                likeInfo.setNearCircleId(info.getInfo().getNearCircleId());
-                                likeInfo.setLikeUserId(myUserId);
-                                likeInfo.setLikeUserName(UserSP.getUserName());
-                                likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
-                                likeInfo.setLikeTime(new Date());
-                                if (info.getLikes() == null) {
-                                    info.setLikes(new ArrayList<NearCircleLike>());
-                                }
-
                                 if (isLiked) {
-                                    //取消点赞
-                                    info.getInfo().setIsLiked(false);
-                                    for (int i = 0; i < info.getLikes().size(); i++) {
-                                        if (info.getLikes().get(i).getLikeUserId() == myUserId) {
-                                            info.getLikes().remove(i);
-                                            nearCircleAdapter.notifyItemChanged(position);
-                                            break;
-                                        }
-                                    }
+                                    nearCircleAdapter.addLike(position, null);
                                 } else {
-                                    //点赞
-                                    info.getInfo().setIsLiked(true);
-                                    info.getLikes().add(info.getLikes().size(), likeInfo);
-                                    nearCircleAdapter.notifyItemChanged(position);
+                                    NearCircleLike likeInfo = new NearCircleLike();
+                                    likeInfo.setNearCircleId(info.getInfo().getNearCircleId());
+                                    likeInfo.setLikeUserId(myUserId);
+                                    likeInfo.setLikeUserName(UserSP.getUserName());
+                                    likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
+                                    likeInfo.setLikeTime(new Date());
+                                    nearCircleAdapter.addLike(position, likeInfo);
                                 }
                             } else {
                                 onError("操作失败");
@@ -418,7 +412,6 @@ public class FragmentNear extends BaseFragment {
                         protected void onError(String resultMessage) {
                             super.onError(resultMessage);
                             isRuning = false;
-
                         }
                     });
         }
@@ -435,6 +428,7 @@ public class FragmentNear extends BaseFragment {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            deleteCircle();
                             dialog.dismiss();
                         }
                     })
@@ -442,9 +436,12 @@ public class FragmentNear extends BaseFragment {
                     .show();
         }
 
+        private void deleteCircle() {
+        }
+
         @Override
         public void onPublishClick() {
-
+            UITransfer.toNearPublishActivity(activity);
         }
     }
 }

@@ -139,6 +139,14 @@ public class EmotionDefaultPannel extends LinearLayout {
         this.addView(view);
     }
 
+    public void setHintText(String text) {
+        etChatMessage.setHint(text);
+    }
+
+    public void setSendButtonText(String text) {
+        btnChatMessageSend.setText(text);
+    }
+
     public void setEditTextFocus(boolean isLose) {
         if (!isLose) {
             etChatMessage.setFocusable(true);

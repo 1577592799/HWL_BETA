@@ -20,13 +20,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_marginBottom="1dp"
+        android:background="@color/white"
+        android:onClick="@{view->action.onContentClick(comment)}"
         android:padding="@dimen/dp_10">
 
         <ImageView
             android:id="@+id/iv_header"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:onClick="@{view->action.onCommentUserClick(comment)}"
             android:src="@drawable/empty_photo"
             app:imageUrl="@{image.imageUrl}" />
@@ -51,7 +53,6 @@
             android:text="@{comment.getShowTime()}"
             android:textColor="@color/color_b2b2b2"
             android:textSize="@dimen/dp_12" />
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,14 +85,13 @@
                 android:textColor="@color/color_424242"
                 android:textSize="@dimen/dp_12" />
 
-            <TextView
+            <com.hwl.beta.emotion.widget.EmotionTextView
                 android:id="@+id/tv_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{view->action.onContentClick(comment)}"
                 android:text="@{comment.content}"
                 android:textColor="@color/color_424242"
-                android:textSize="@dimen/dp_12" />
+                android:textSize="@dimen/dp_13" />
 
         </LinearLayout>
 

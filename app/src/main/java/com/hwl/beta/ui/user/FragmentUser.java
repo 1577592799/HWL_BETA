@@ -201,6 +201,7 @@ public class FragmentUser extends BaseFragment {
             private void transfer(long fid) {
                 switch ((int) fid) {
                     case -1:
+                        UITransfer.toCircleIndexActivity(activity);
                         break;
                     case -2:
                         break;

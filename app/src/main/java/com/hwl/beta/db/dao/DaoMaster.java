@@ -24,6 +24,10 @@ public class DaoMaster extends AbstractDaoMaster {
         ChatGroupMessageDao.createTable(db, ifNotExists);
         ChatRecordMessageDao.createTable(db, ifNotExists);
         ChatUserMessageDao.createTable(db, ifNotExists);
+        CircleDao.createTable(db, ifNotExists);
+        CircleCommentDao.createTable(db, ifNotExists);
+        CircleImageDao.createTable(db, ifNotExists);
+        CircleLikeDao.createTable(db, ifNotExists);
         FriendDao.createTable(db, ifNotExists);
         FriendRequestDao.createTable(db, ifNotExists);
         GroupInfoDao.createTable(db, ifNotExists);
@@ -39,6 +43,10 @@ public class DaoMaster extends AbstractDaoMaster {
         ChatGroupMessageDao.dropTable(db, ifExists);
         ChatRecordMessageDao.dropTable(db, ifExists);
         ChatUserMessageDao.dropTable(db, ifExists);
+        CircleDao.dropTable(db, ifExists);
+        CircleCommentDao.dropTable(db, ifExists);
+        CircleImageDao.dropTable(db, ifExists);
+        CircleLikeDao.dropTable(db, ifExists);
         FriendDao.dropTable(db, ifExists);
         FriendRequestDao.dropTable(db, ifExists);
         GroupInfoDao.dropTable(db, ifExists);
@@ -68,6 +76,10 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(ChatGroupMessageDao.class);
         registerDaoClass(ChatRecordMessageDao.class);
         registerDaoClass(ChatUserMessageDao.class);
+        registerDaoClass(CircleDao.class);
+        registerDaoClass(CircleCommentDao.class);
+        registerDaoClass(CircleImageDao.class);
+        registerDaoClass(CircleLikeDao.class);
         registerDaoClass(FriendDao.class);
         registerDaoClass(FriendRequestDao.class);
         registerDaoClass(GroupInfoDao.class);

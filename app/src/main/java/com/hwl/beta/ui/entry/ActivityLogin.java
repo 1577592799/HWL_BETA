@@ -35,7 +35,7 @@ public class ActivityLogin extends FragmentActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginBean = new LoginBean();
-        loginBean.setAccount("11@qq.com");
+        loginBean.setAccount("44@qq.com");
         loginBean.setPassword("123456");
         binding.setLoginBean(loginBean);
         binding.setAction(new LoginListener());

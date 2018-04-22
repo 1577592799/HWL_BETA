@@ -200,7 +200,7 @@ public class ActivityNearPublish extends FragmentActivity {
                 .flatMap(new Function<File, ObservableSource<ResponseBase<UpResxResponse>>>() {
                     @Override
                     public ObservableSource<ResponseBase<UpResxResponse>> apply(File file) throws Exception {
-                        return UploadService.upImage(file, ResxType.CIRCLEPOST);
+                        return UploadService.upImage(file, ResxType.NEARCIRCLEPOST);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

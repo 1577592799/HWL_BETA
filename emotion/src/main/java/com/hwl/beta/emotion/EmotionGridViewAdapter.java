@@ -46,7 +46,6 @@ public class EmotionGridViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView iv = new ImageView(context);
-
         iv.setPadding(emotionWidth / 8, emotionWidth / 8, emotionWidth / 8, emotionWidth / 8);
         AbsListView.LayoutParams params = new AbsListView.LayoutParams(emotionWidth, emotionWidth);
         iv.setLayoutParams(params);

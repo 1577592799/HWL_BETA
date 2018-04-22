@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -256,6 +257,7 @@ public class TeamHeadSynthesizer implements ISynthesizer {
      * @throws ExecutionException
      */
     private Bitmap asyncLoadImage(String imageUrl, int targetImageSize) throws InterruptedException, ExecutionException {
+        Log.d("TeamHeadSynthesizer", imageUrl);
         return Glide.with(mContext)
                 .load(imageUrl)
                 .asBitmap()

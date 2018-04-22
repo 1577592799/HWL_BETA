@@ -106,7 +106,7 @@ public class NearCircleService {
         return response;
     }
 
-    public static void addComment(int nearCircleId, String content) {
+    public static void addComment(long nearCircleId, String content) {
         addComment(nearCircleId, content, 0);
     }
 

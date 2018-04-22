@@ -58,22 +58,26 @@ public class DBNearCircleAction {
     public static List<NearCircleComment> convertToNearCircleCommentInfos(List<NetNearCircleCommentInfo> comments) {
         if (comments == null || comments.size() <= 0) return null;
         List<NearCircleComment> circleComments = new ArrayList<>(comments.size());
-        NearCircleComment commentModel = null;
         for (int i = 0; i < comments.size(); i++) {
-            commentModel = new NearCircleComment();
-            commentModel.setNearCircleId(comments.get(i).getNearCircleId());
-            commentModel.setCommentId(comments.get(i).getCommentId());
-            commentModel.setCommentTime(comments.get(i).getCommentTime());
-            commentModel.setCommentUserId(comments.get(i).getCommentUserId());
-            commentModel.setCommentUserImage(comments.get(i).getCommentUserImage());
-            commentModel.setCommentUserName(comments.get(i).getCommentUserName());
-            commentModel.setContent(comments.get(i).getContent());
-            commentModel.setReplyUserId(comments.get(i).getReplyUserId());
-            commentModel.setReplyUserImage(comments.get(i).getReplyUserImage());
-            commentModel.setReplyUserName(comments.get(i).getReplyUserName());
-            circleComments.add(commentModel);
+            circleComments.add(convertToNearCircleCommentInfo(comments.get(i)));
         }
         return circleComments;
+    }
+
+    public static NearCircleComment convertToNearCircleCommentInfo(NetNearCircleCommentInfo comment) {
+        if (comment == null) return null;
+        NearCircleComment commentModel = new NearCircleComment();
+        commentModel.setNearCircleId(comment.getNearCircleId());
+        commentModel.setCommentId(comment.getCommentId());
+        commentModel.setCommentTime(comment.getCommentTime());
+        commentModel.setCommentUserId(comment.getCommentUserId());
+        commentModel.setCommentUserImage(comment.getCommentUserImage());
+        commentModel.setCommentUserName(comment.getCommentUserName());
+        commentModel.setContent(comment.getContent());
+        commentModel.setReplyUserId(comment.getReplyUserId());
+        commentModel.setReplyUserImage(comment.getReplyUserImage());
+        commentModel.setReplyUserName(comment.getReplyUserName());
+        return commentModel;
     }
 
     public static List<NearCircleLike> convertToNearCircleLikeInfos(List<NetNearCircleLikeInfo> likes) {
