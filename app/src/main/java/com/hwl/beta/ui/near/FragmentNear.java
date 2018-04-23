@@ -69,7 +69,7 @@ public class FragmentNear extends BaseFragment {
     List<NearCircleExt> nearCircles;
     NearCircleAdapter nearCircleAdapter;
     boolean isDataChange = false;
-    int pageCount = 5;
+    int pageCount = 15;
     long myUserId;
 
     @Nullable
@@ -110,7 +110,6 @@ public class FragmentNear extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        saveInfo();
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
@@ -169,7 +168,7 @@ public class FragmentNear extends BaseFragment {
         if (!isDataChange || nearCircles == null || nearCircles.size() <= 0) return;
 //        Log.d("FragmentNear", "save near info");
         isDataChange = false;
-        Observable.fromIterable(nearCircles.subList(0, pageCount))
+        Observable.fromIterable(nearCircles.subList(0, (pageCount > nearCircles.size() ? nearCircles.size() : pageCount)))
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Consumer<NearCircleExt>() {
                     @Override
@@ -230,8 +229,7 @@ public class FragmentNear extends BaseFragment {
                             removeEmptyView();
                             return Observable.fromIterable(response.getNearCircleInfos());
                         }
-//                        return Observable.fromIterable(new ArrayList<NetNearCircleInfo>());
-                        return Observable.just(null);
+                        return Observable.fromIterable(new ArrayList<NetNearCircleInfo>());
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

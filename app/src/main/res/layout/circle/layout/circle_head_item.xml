@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="action"
+            type="com.hwl.beta.ui.circle.action.ICircleItemListener" />
+
+        <variable
+            name="image"
+            type="com.hwl.beta.ui.user.bean.ImageViewBean" />
+
+        <variable
+            name="userLifeNotes"
+            type="String" />
+    </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp">
+        android:layout_height="250dp"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/iv_dgy_circle_post_bg"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="225dp"
             android:background="@color/user_circle_background"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:imageUrl="@{image.imageCircleUrl}" />
 
         <TextView
             android:id="@+id/tv_dgy_circle_post_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="15px"
+            android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/iv_user_header"
             android:maxLength="20"
             android:paddingBottom="30dp"
-            android:text="个人介绍"
+            android:text="@{userLifeNotes}"
             android:textColor="@color/white"
             android:textSize="15dp" />
 
@@ -32,6 +50,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:src="@drawable/empty_photo" />
+            android:onClick="@{(view)->action.onUserHeadClick()}"
+            android:src="@drawable/empty_photo"
+            app:imageUrl="@{image.imageUrl}" />
     </RelativeLayout>
 </layout>

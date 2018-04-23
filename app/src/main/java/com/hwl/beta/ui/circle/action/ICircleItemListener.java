@@ -2,9 +2,7 @@ package com.hwl.beta.ui.circle.action;
 
 import android.view.View;
 
-import com.hwl.beta.db.entity.NearCircle;
-import com.hwl.beta.db.entity.NearCircleComment;
-import com.hwl.beta.db.entity.NearCircleLike;
+import com.hwl.beta.db.entity.CircleComment;
 
 /**
  * Created by Administrator on 2018/4/14.
@@ -20,7 +18,7 @@ public interface ICircleItemListener {
 
     void onCommentUserClick();
 
-    void onReplyUserClick(NearCircleComment comment);
+    void onReplyUserClick(CircleComment comment);
 
     void onCommentContentClick();
 

@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -30,9 +31,9 @@ public class Circle {
 
     @Generated(hash = 1755870937)
     public Circle(long circleId, long publishUserId, String publishUserName,
-            String publishUserImage, int contentType, String content,
-            String linkTitle, String linkUrl, String linkImage, Date publishTime,
-            String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
+                  String publishUserImage, int contentType, String content,
+                  String linkTitle, String linkUrl, String linkImage, Date publishTime,
+                  String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
         this.circleId = circleId;
         this.publishUserId = publishUserId;
         this.publishUserName = publishUserName;

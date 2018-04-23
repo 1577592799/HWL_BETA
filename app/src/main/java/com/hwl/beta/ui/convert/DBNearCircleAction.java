@@ -40,9 +40,9 @@ public class DBNearCircleAction {
     }
 
     public static List<NearCircleImage> convertToNearCircleImageInfos(long nearCircleId, long publishUserId, List<NetImageInfo> images) {
-        if (nearCircleId <= 0 || images == null && images.size() <= 0) return null;
+        if (nearCircleId <= 0 || images == null || images.size() <= 0) return null;
         List<NearCircleImage> circleImages = new ArrayList<>(images.size());
-        NearCircleImage imageModel = null;
+        NearCircleImage imageModel;
         for (int i = 0; i < images.size(); i++) {
             imageModel = new NearCircleImage();
             imageModel.setNearCircleId(nearCircleId);
@@ -83,7 +83,7 @@ public class DBNearCircleAction {
     public static List<NearCircleLike> convertToNearCircleLikeInfos(List<NetNearCircleLikeInfo> likes) {
         if (likes == null || likes.size() <= 0) return null;
         List<NearCircleLike> circleLikes = new ArrayList<>(likes.size());
-        NearCircleLike likeModel = null;
+        NearCircleLike likeModel ;
         for (int i = 0; i < likes.size(); i++) {
             likeModel = new NearCircleLike();
             likeModel.setNearCircleId(likes.get(i).getNearCircleId());
@@ -98,7 +98,7 @@ public class DBNearCircleAction {
 
 
     public static List<MultiImageView.ImageBean> convertToMultiImages(List<NearCircleImage> images) {
-        if (images == null && images.size() <= 0) return null;
+        if (images == null || images.size() <= 0) return null;
         List<MultiImageView.ImageBean> imageBeans = new ArrayList<>(images.size());
         MultiImageView.ImageBean imageModel = null;
         for (int i = 0; i < images.size(); i++) {

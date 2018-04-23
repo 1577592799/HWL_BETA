@@ -15,16 +15,16 @@ public class CircleComment {
     private long commentUserId;
     private String commentUserName;
     private String commentUserImage;
-    private int replyUserId;
+    private long replyUserId;
     private String replyUserName ;
     private String replyUserImage ;
     private String content ;
     @OrderBy("commentTime desc")
     private Date commentTime ;
 
-    @Generated(hash = 641175609)
+    @Generated(hash = 597600175)
     public CircleComment(int commentId, long circleId, long commentUserId,
-            String commentUserName, String commentUserImage, int replyUserId,
+            String commentUserName, String commentUserImage, long replyUserId,
             String replyUserName, String replyUserImage, String content,
             Date commentTime) {
         this.commentId = commentId;
@@ -89,11 +89,11 @@ public class CircleComment {
         this.commentUserImage = commentUserImage;
     }
 
-    public int getReplyUserId() {
+    public long getReplyUserId() {
         return this.replyUserId;
     }
 
-    public void setReplyUserId(int replyUserId) {
+    public void setReplyUserId(long replyUserId) {
         this.replyUserId = replyUserId;
     }
 

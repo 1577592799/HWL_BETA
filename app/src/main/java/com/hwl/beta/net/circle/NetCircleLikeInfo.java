@@ -1,12 +1,14 @@
 package com.hwl.beta.net.circle;
 
+import java.util.Date;
+
 public class NetCircleLikeInfo {
     private int LikeId;
     private int CircleId;
     private int LikeUserId;
     private String LikeUserName;
     private String LikeUserImage;
-    private String LikeTime;
+    private Date LikeTime;
 
     public int getLikeId() {
         return LikeId;
@@ -48,11 +50,11 @@ public class NetCircleLikeInfo {
         LikeUserImage = likeUserImage;
     }
 
-    public String getLikeTime() {
+    public Date getLikeTime() {
         return LikeTime;
     }
 
-    public void setLikeTime(String likeTime) {
+    public void setLikeTime(Date likeTime) {
         LikeTime = likeTime;
     }
 }

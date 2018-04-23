@@ -17,10 +17,6 @@
             type="com.hwl.beta.ui.user.bean.ImageViewBean"></variable>
 
         <variable
-            name="images"
-            type="com.hwl.beta.db.entity.NearCircleImage" />
-
-        <variable
             name="action"
             type="com.hwl.beta.ui.near.action.INearCircleItemListener" />
     </data>
@@ -67,8 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_username"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_alignLeft="@+id/tv_username"
+            android:layout_alignStart="@+id/tv_username"
             android:layout_toRightOf="@id/iv_header"
             android:onClick="@{(view)->action.onContentClick(info)}"
             android:text="@{info.content}"

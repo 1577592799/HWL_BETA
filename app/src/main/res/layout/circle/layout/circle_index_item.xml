@@ -9,8 +9,16 @@
             type="int" />
 
         <variable
+            name="info"
+            type="com.hwl.beta.db.entity.Circle" />
+
+        <variable
             name="image"
             type="com.hwl.beta.ui.user.bean.ImageViewBean"></variable>
+
+        <variable
+            name="action"
+            type="com.hwl.beta.ui.circle.action.ICircleItemListener" />
     </data>
 
     <RelativeLayout
@@ -33,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/iv_header"
-            android:text='name'
+            android:text='@{info.publishUserName}'
             android:textColor="@color/color_424242"
             android:textSize="15dp" />
 
@@ -51,11 +59,10 @@
             android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_username"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/iv_header"
-            android:text="content"
+            android:layout_alignBottom="@+id/iv_header"
+            android:layout_alignLeft="@+id/tv_username"
+            android:layout_alignStart="@+id/tv_username"
+            android:text="@{info.content}"
             android:textColor="@color/color_727270"
             android:textSize="15dp" />
 
@@ -88,7 +95,7 @@
                 android:layout_below="@+id/tv_name"
                 android:layout_centerVertical="true"
                 android:paddingRight="10dp"
-                android:text="fromPosDesc"
+                android:text="@{info.fromPosDesc}"
                 android:textColor="@color/color_b2b2b2"
                 android:textSize="@dimen/dp_12" />
 
@@ -98,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/tv_pos_desc"
-                android:text="19:22"
+                android:text="@{info.getShowTime()}"
                 android:textColor="@color/color_b2b2b2"
                 android:textSize="12dp" />
 

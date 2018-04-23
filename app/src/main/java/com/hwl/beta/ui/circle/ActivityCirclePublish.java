@@ -17,14 +17,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityCirclePulishBinding;
 import com.hwl.beta.db.entity.CircleImage;
-import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.emotion.IDefaultEmotionListener;
 import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.body.AddCircleInfoResponse;
-import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.NetImageInfo;
-import com.hwl.beta.net.near.body.AddNearCircleInfoResponse;
 import com.hwl.beta.net.resx.ResxType;
 import com.hwl.beta.net.resx.UploadService;
 import com.hwl.beta.net.resx.body.UpResxResponse;
@@ -147,8 +144,8 @@ public class ActivityCirclePublish extends FragmentActivity {
 
     private void setImageContent(ImageView ivImage) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ivImage.getLayoutParams();
-        params.width = (int) screenWidth / 4 - params.rightMargin - params.leftMargin;
-        params.height = (int) screenWidth / 4 - params.topMargin - params.bottomMargin;
+        params.width = screenWidth / 4 - params.rightMargin - params.leftMargin;
+        params.height = screenWidth / 4 - params.topMargin - params.bottomMargin;
         ivImage.setLayoutParams(params);
     }
 

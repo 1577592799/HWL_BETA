@@ -1,41 +1,51 @@
 package com.hwl.beta.net.circle;
 
-public class NetCircleCommentInfo {
-    private int Id;
-    private int CircleId;
+import java.util.Date;
 
-    private int CommentUserId;
+public class NetCircleCommentInfo {
+    private int CommentId;
+    private long CircleId;
+
+    private long CommentUserId;
     private String CommentUserName;
     private String CommentUserImage;
 
-    private int ReplyUserId;
+    private long ReplyUserId;
     private String ReplyUserName;
     private String ReplyUserImage;
 
     private String Content;
-    private String CommentTimeDesc;
+    private Date CommentTime;
 
-    public int getId() {
-        return Id;
+    public int getCommentId() {
+        return CommentId;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setCommentId(int commentId) {
+        CommentId = commentId;
     }
 
-    public int getCircleId() {
+    public Date getCommentTime() {
+        return CommentTime;
+    }
+
+    public void setCommentTime(Date commentTime) {
+        CommentTime = commentTime;
+    }
+
+    public long getCircleId() {
         return CircleId;
     }
 
-    public void setCircleId(int circleId) {
+    public void setCircleId(long circleId) {
         CircleId = circleId;
     }
 
-    public int getCommentUserId() {
+    public long getCommentUserId() {
         return CommentUserId;
     }
 
-    public void setCommentUserId(int commentUserId) {
+    public void setCommentUserId(long commentUserId) {
         CommentUserId = commentUserId;
     }
 
@@ -55,11 +65,11 @@ public class NetCircleCommentInfo {
         CommentUserImage = commentUserImage;
     }
 
-    public int getReplyUserId() {
+    public long getReplyUserId() {
         return ReplyUserId;
     }
 
-    public void setReplyUserId(int replyUserId) {
+    public void setReplyUserId(long replyUserId) {
         ReplyUserId = replyUserId;
     }
 
@@ -85,13 +95,5 @@ public class NetCircleCommentInfo {
 
     public void setContent(String content) {
         Content = content;
-    }
-
-    public String getCommentTimeDesc() {
-        return CommentTimeDesc;
-    }
-
-    public void setCommentTimeDesc(String commentTimeDesc) {
-        CommentTimeDesc = commentTimeDesc;
     }
 }

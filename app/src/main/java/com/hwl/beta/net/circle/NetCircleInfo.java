@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class NetCircleInfo {
-    private long Id ;
+    private long CircleId ;
     private long UserId ;
     private int ContentType ;
     private String CircleContent ;
@@ -25,9 +25,9 @@ public class NetCircleInfo {
     /// <summary>
     /// 是否点赞过
     /// </summary>
-    private boolean IsLike ;
+    private boolean IsLiked ;
 
-    private List<String> Images ;
+    private List<NetImageInfo> Images ;
 
     private int PublishUserId ;
     private String PublishUserName ;
@@ -37,12 +37,28 @@ public class NetCircleInfo {
 
     private List<NetCircleCommentInfo> CommentInfos ;
 
-    public long getId() {
-        return Id;
+    public List<NetImageInfo> getImages() {
+        return Images;
     }
 
-    public void setId(long id) {
-        Id = id;
+    public void setImages(List<NetImageInfo> images) {
+        Images = images;
+    }
+
+    public boolean isLiked() {
+        return IsLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        IsLiked = liked;
+    }
+
+    public long getCircleId() {
+        return CircleId;
+    }
+
+    public void setCircleId(long circleId) {
+        CircleId = circleId;
     }
 
     public long getUserId() {
@@ -163,22 +179,6 @@ public class NetCircleInfo {
 
     public void setLikeCount(int likeCount) {
         LikeCount = likeCount;
-    }
-
-    public boolean isLike() {
-        return IsLike;
-    }
-
-    public void setLike(boolean like) {
-        IsLike = like;
-    }
-
-    public List<String> getImages() {
-        return Images;
-    }
-
-    public void setImages(List<String> images) {
-        Images = images;
     }
 
     public int getPublishUserId() {

@@ -25,7 +25,13 @@ public class ImageViewBean {
         this.imageRes = imageRes;
     }
 
+    public ImageViewBean(String imageUrl, String imageCircleUrl) {
+        this(imageUrl);
+        this.imageCircleUrl = imageCircleUrl;
+    }
+
     public String imageUrl;
+    public String imageCircleUrl;
     public int imageRes;
 
     @BindingAdapter({"imageUrl"})
@@ -33,6 +39,17 @@ public class ImageViewBean {
         if (StringUtils.isBlank(imageUrl))
             return;
         Glide.with(view.getContext()).load(imageUrl)
+                .placeholder(R.drawable.empty_photo)
+                .error(R.drawable.empty_photo)
+                .dontAnimate()
+                .into(view);
+    }
+
+    @BindingAdapter({"imageCircleUrl"})
+    public static void loadCircleImage(ImageView view, String imageCircleUrl) {
+        if (StringUtils.isBlank(imageCircleUrl))
+            return;
+        Glide.with(view.getContext()).load(imageCircleUrl)
                 .placeholder(R.drawable.empty_photo)
                 .error(R.drawable.empty_photo)
                 .dontAnimate()
