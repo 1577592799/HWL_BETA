@@ -96,7 +96,6 @@ public class DBNearCircleAction {
         return circleLikes;
     }
 
-
     public static List<MultiImageView.ImageBean> convertToMultiImages(List<NearCircleImage> images) {
         if (images == null || images.size() <= 0) return null;
         List<MultiImageView.ImageBean> imageBeans = new ArrayList<>(images.size());

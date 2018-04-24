@@ -1,35 +1,50 @@
 package com.hwl.beta.ui.circle;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityCircleIndexBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.CircleComment;
+import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
+import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.adp.CircleIndexAdapter;
+import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
+import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.NetworkUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -37,7 +52,9 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class ActivityCircleIndex extends FragmentActivity {
 
@@ -45,6 +62,7 @@ public class ActivityCircleIndex extends FragmentActivity {
     ActivityCircleIndexBinding binding;
     List<CircleExt> circles;
     CircleIndexAdapter circleAdapter;
+    boolean isDataChange = false;
     int pageCount = 15;
     long myUserId;
 
@@ -58,12 +76,25 @@ public class ActivityCircleIndex extends FragmentActivity {
 
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_circle_index);
         initView();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        binding.refreshLayout.autoRefresh();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addComment(CircleComment comment) {
+        circleAdapter.addComment(comment);
     }
 
     private void initView() {
@@ -96,7 +127,37 @@ public class ActivityCircleIndex extends FragmentActivity {
             }
         });
 
+        binding.refreshLayout.autoRefresh();
         binding.refreshLayout.setEnableLoadMore(false);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveInfo();
+    }
+
+    private void saveInfo() {
+        if (!isDataChange || circles == null || circles.size() <= 0) return;
+        Log.d("ActivityCircleIndex", "save circle info");
+        isDataChange = false;
+        Observable.fromIterable(circles.subList(0, (pageCount > circles.size() ? circles.size() : pageCount)))
+                .subscribeOn(Schedulers.io())
+                .doOnNext(new Consumer<CircleExt>() {
+                    @Override
+                    public void accept(CircleExt circleExt) throws Exception {
+                        if (circleExt != null && circleExt.getInfo() != null) {
+                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
+                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
+                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
+                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
+                        }
+                    }
+                })
+                .subscribe();
     }
 
     private List<CircleExt> getCircles() {
@@ -208,15 +269,22 @@ public class ActivityCircleIndex extends FragmentActivity {
                         if (updateCount > 0) {
                             circleAdapter.notifyItemRangeChanged(0, circles.size());
                         }
+
+                        if (updateCount > 0 || insertCount > 0) {
+                            isDataChange = true;
+                        }
                     }
                 });
     }
 
     private class CircleItemListener implements ICircleItemListener {
 
+        private CircleActionMorePop mMorePopupWindow;
+        boolean isRuning = false;
+
         @Override
         public void onItemViewClick(View view) {
-
+            KeyBoardAction.hideSoftInput(view);
         }
 
         @Override
@@ -225,23 +293,27 @@ public class ActivityCircleIndex extends FragmentActivity {
         }
 
         @Override
-        public void onLikeUserHeadClick() {
-
+        public void onLikeUserHeadClick(CircleLike likeInfo) {
+            UITransfer.toUserIndexActivity(activity, likeInfo.getLikeUserId(), likeInfo.getLikeUserName(), likeInfo.getLikeUserImage());
         }
 
         @Override
-        public void onCommentUserClick() {
-
+        public void onCommentUserClick(CircleComment comment) {
+            UITransfer.toUserIndexActivity(activity, comment.getCommentUserId(), comment.getCommentUserName(), comment.getCommentUserImage());
         }
 
         @Override
         public void onReplyUserClick(CircleComment comment) {
-
+            UITransfer.toUserIndexActivity(activity, comment.getReplyUserId(), comment.getReplyUserName(), comment.getReplyUserImage());
         }
 
         @Override
-        public void onCommentContentClick() {
-
+        public void onCommentContentClick(CircleComment comment) {
+            if (comment.getCommentUserId() == myUserId) {
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId());
+            } else {
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+            }
         }
 
         @Override
@@ -250,8 +322,65 @@ public class ActivityCircleIndex extends FragmentActivity {
         }
 
         @Override
-        public void onMoreActionClick(View view, int position) {
+        public void onMoreActionClick(final View view, int position) {
+            final CircleExt info = circles.get(position);
+            if (info == null) return;
+            if (mMorePopupWindow == null) {
+                mMorePopupWindow = new CircleActionMorePop(activity);
+            }
+            mMorePopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    view.setVisibility(View.VISIBLE);
+                }
+            });
+            mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
+                @Override
+                public void onCommentClick(int position) {
+                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId());
+                }
 
+                @Override
+                public void onLikeClick(int position) {
+                    setLikeInfo(position, info);
+                }
+            });
+            mMorePopupWindow.show(position, view, info.getInfo().getIsLiked());
+        }
+
+        private void setLikeInfo(final int position, final CircleExt info) {
+            if (isRuning || info == null || info.getInfo() == null || info.getInfo().getCircleId() <= 0)
+                return;
+            isRuning = true;
+            final boolean isLiked = info.getInfo().getIsLiked();
+            CircleService.setLikeInfo(isLiked ? 0 : 1, info.getInfo().getCircleId())
+                    .subscribe(new NetDefaultObserver<SetLikeInfoResponse>() {
+                        @Override
+                        protected void onSuccess(SetLikeInfoResponse response) {
+                            isRuning = false;
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                if (isLiked) {
+                                    circleAdapter.addLike(position, null);
+                                } else {
+                                    CircleLike likeInfo = new CircleLike();
+                                    likeInfo.setCircleId(info.getInfo().getCircleId());
+                                    likeInfo.setLikeUserId(myUserId);
+                                    likeInfo.setLikeUserName(UserSP.getUserName());
+                                    likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
+                                    likeInfo.setLikeTime(new Date());
+                                    circleAdapter.addLike(position, likeInfo);
+                                }
+                            } else {
+                                onError("操作失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            isRuning = false;
+                        }
+                    });
         }
 
         @Override
@@ -261,7 +390,20 @@ public class ActivityCircleIndex extends FragmentActivity {
 
         @Override
         public void onDeleteClick() {
+            new AlertDialog.Builder(activity)
+                    .setMessage("信息删除后,不能恢复,确认删除 ?")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteCircle();
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
 
+        private void deleteCircle() {
         }
 
         @Override

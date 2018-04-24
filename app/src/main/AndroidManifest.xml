@@ -34,17 +34,22 @@
         <activity android:name=".ui.video.ActivityVideoPlay"></activity>
         <activity android:name=".ui.video.ActivityVideoSelect"></activity>
         <activity android:name=".ui.chat.ActivityChatGroup"></activity>
+        <activity
+            android:name=".ui.chat.ActivityChatUser"
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity android:name=".ui.near.ActivityNearPublish"></activity>
         <activity
             android:name=".ui.near.ActivityCommentPublish"
             android:screenOrientation="portrait"
             android:theme="@style/ActivityBottomDialog"
             android:windowSoftInputMode="stateVisible"></activity>
-        <activity
-            android:name=".ui.chat.ActivityChatUser"
-            android:windowSoftInputMode="stateHidden"></activity>
         <activity android:name=".ui.circle.ActivityCircleIndex"></activity>
         <activity android:name=".ui.circle.ActivityCirclePublish"></activity>
+        <activity
+            android:name=".ui.circle.ActivityCircleCommentPublish"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityBottomDialog"
+            android:windowSoftInputMode="stateVisible"></activity>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

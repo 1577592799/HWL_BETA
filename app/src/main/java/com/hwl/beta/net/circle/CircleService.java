@@ -3,10 +3,14 @@ package com.hwl.beta.net.circle;
 import com.hwl.beta.net.RequestBase;
 import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.RetrofitUtils;
+import com.hwl.beta.net.circle.body.AddCircleCommentInfoRequest;
+import com.hwl.beta.net.circle.body.AddCircleCommentInfoResponse;
 import com.hwl.beta.net.circle.body.AddCircleInfoRequest;
 import com.hwl.beta.net.circle.body.AddCircleInfoResponse;
 import com.hwl.beta.net.circle.body.GetCircleInfosRequest;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
+import com.hwl.beta.net.circle.body.SetLikeInfoRequest;
+import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
 import com.hwl.beta.net.near.NetImageInfo;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
@@ -57,11 +61,46 @@ public class CircleService {
         return response;
     }
 
+    public static Observable<ResponseBase<SetLikeInfoResponse>> setLikeInfo(int actionType, long CircleId) {
+        SetLikeInfoRequest requestBody = new SetLikeInfoRequest();
+        requestBody.setLikeUserId(UserSP.getUserId());
+        requestBody.setActionType(actionType);
+        requestBody.setCircleId(CircleId);
+        Observable<ResponseBase<SetLikeInfoResponse>> response = RetrofitUtils.createApi(ICircleService.class)
+                .setCircleLikeInfo(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
+    public static void addComment(long nearCircleId, String content) {
+        addComment(nearCircleId, content, 0);
+    }
+
+    public static Observable<ResponseBase<AddCircleCommentInfoResponse>> addComment(long CircleId, String content, long replyUserId) {
+        AddCircleCommentInfoRequest requestBody = new AddCircleCommentInfoRequest();
+        requestBody.setCommentUserId(UserSP.getUserId());
+        requestBody.setCircleId(CircleId);
+        requestBody.setContent(content);
+        requestBody.setReplyUserId(replyUserId);
+        Observable<ResponseBase<AddCircleCommentInfoResponse>> response = RetrofitUtils.createApi(ICircleService.class)
+                .AddCircleCommentInfo(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public interface ICircleService {
         @POST("api/GetCircleInfos")
         Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(@Body RequestBase<GetCircleInfosRequest> request);
 
         @POST("api/AddCircleInfo")
         Observable<ResponseBase<AddCircleInfoResponse>> addCircleInfo(@Body RequestBase<AddCircleInfoRequest> request);
+
+        @POST("api/SetCircleLikeInfo")
+        Observable<ResponseBase<SetLikeInfoResponse>> setCircleLikeInfo(@Body RequestBase<SetLikeInfoRequest> request);
+
+        @POST("api/AddCircleCommentInfo")
+        Observable<ResponseBase<AddCircleCommentInfoResponse>> AddCircleCommentInfo(@Body RequestBase<AddCircleCommentInfoRequest> request);
     }
 }

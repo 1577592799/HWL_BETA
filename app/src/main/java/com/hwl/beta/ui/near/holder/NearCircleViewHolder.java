@@ -125,10 +125,6 @@ public class NearCircleViewHolder extends RecyclerView.ViewHolder {
         this.itemBinding.executePendingBindings();
     }
 
-    public NearCircleCommentAdapter getCommentAdapter() {
-        return (NearCircleCommentAdapter) this.itemBinding.rvComments.getAdapter();
-    }
-
     private void setLikeViews(final List<NearCircleLike> likes, final INearCircleItemListener itemListener) {
         if (likes == null || likes.size() <= 0) return;
         this.itemBinding.fblLikeContainer.removeAllViews();

@@ -25,6 +25,7 @@ import com.hwl.beta.ui.convert.SexAction;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.user.action.IUserEditItemListener;
 import com.hwl.beta.ui.user.bean.UserEditItemBean;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -161,6 +162,7 @@ public class ActivityUserEditItem extends FragmentActivity {
 
         @Override
         public void init() {
+            if (StringUtils.isBlank(itemBean.getEditContent())) return;
             if (itemBean.getEditContent().equals(SexAction.MAN)) {
                 setSelect(binding.rbSex1);
                 setUnSelect(binding.rbSex0);

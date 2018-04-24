@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.hwl.beta.ui.chat.ActivityChatGroup;
 import com.hwl.beta.ui.chat.ActivityChatUser;
+import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
 import com.hwl.beta.ui.circle.ActivityCirclePublish;
 import com.hwl.beta.ui.entry.ActivityGetpwd;
@@ -172,6 +173,18 @@ public class UITransfer {
 
     public static void toCirclePublishActivity(Activity context) {
         Intent intent = new Intent(context, ActivityCirclePublish.class);
+        context.startActivity(intent);
+    }
+
+    public static void toCircleCommentPublishActivity(Activity context, long circleId) {
+        toCircleCommentPublishActivity(context, circleId, 0, null);
+    }
+
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long replyUserId, String replyUserName) {
+        Intent intent = new Intent(context, ActivityCircleCommentPublish.class);
+        intent.putExtra("circleid", circleId);
+        intent.putExtra("replyuserid", replyUserId);
+        intent.putExtra("replyusername", replyUserName);
         context.startActivity(intent);
     }
 }

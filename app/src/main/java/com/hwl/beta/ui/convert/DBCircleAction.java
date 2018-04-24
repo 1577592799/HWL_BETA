@@ -8,6 +8,7 @@ import com.hwl.beta.net.circle.NetCircleCommentInfo;
 import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.NetCircleLikeInfo;
 import com.hwl.beta.net.near.NetImageInfo;
+import com.hwl.beta.ui.widget.MultiImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +89,15 @@ public class DBCircleAction {
             circleLikes.add(likeModel);
         }
         return circleLikes;
+    }
+
+    public static List<MultiImageView.ImageBean> convertToMultiImages(List<CircleImage> images) {
+        if (images == null || images.size() <= 0) return null;
+        List<MultiImageView.ImageBean> imageBeans = new ArrayList<>(images.size());
+        MultiImageView.ImageBean imageModel = null;
+        for (int i = 0; i < images.size(); i++) {
+            imageBeans.add(new MultiImageView.ImageBean(images.get(i).getImageWidth(), images.get(i).getImageHeight(), images.get(i).getImageUrl()));
+        }
+        return imageBeans;
     }
 }

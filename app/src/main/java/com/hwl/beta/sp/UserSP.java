@@ -80,6 +80,9 @@ public class UserSP {
     public static String getUserSymbol() {
         return getSP().getString(USER_SYMBOL, null);
     }
+    public static String getUserCirclebackimage() {
+        return getSP().getString(USER_CIRCLEBACKIMAGE, null);
+    }
 
     public static void setUserName(String userName) {
         final SharedPreferences.Editor editor = getSP().edit();
