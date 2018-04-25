@@ -60,6 +60,12 @@ public class Circle {
         return null;
     }
 
+    public String getShowDate() {
+        if (this.publishTime != null)
+            return DateUtils.dateToStr(this.publishTime);
+        return null;
+    }
+
     public long getCircleId() {
         return this.circleId;
     }

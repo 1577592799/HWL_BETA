@@ -11,10 +11,6 @@
         <variable
             name="image"
             type="com.hwl.beta.ui.user.bean.ImageViewBean" />
-
-        <variable
-            name="userLifeNotes"
-            type="String" />
     </data>
 
     <RelativeLayout
@@ -30,19 +26,6 @@
             android:scaleType="centerCrop"
             app:imageUrl="@{image.imageCircleUrl}" />
 
-        <TextView
-            android:id="@+id/tv_dgy_circle_post_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/iv_user_header"
-            android:maxLength="20"
-            android:paddingBottom="30dp"
-            android:text="@{userLifeNotes}"
-            android:textColor="@color/white"
-            android:textSize="15dp" />
-
         <ImageView
             android:id="@+id/iv_user_header"
             android:layout_width="50dp"
@@ -50,7 +33,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:onClick="@{(view)->action.onUserHeadClick()}"
+            android:onClick="@{(view)->action.onMyUserHeadClick()}"
             android:src="@drawable/empty_photo"
             app:imageUrl="@{image.imageUrl}" />
     </RelativeLayout>

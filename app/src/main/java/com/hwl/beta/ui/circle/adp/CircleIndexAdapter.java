@@ -72,7 +72,7 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             viewHolder.setItemBinding(itemListener);
         } else if (holder instanceof CircleHeadItemViewHolder) {
             CircleHeadItemViewHolder viewHolder = (CircleHeadItemViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ImageViewBean(UserSP.getUserHeadImage(), UserSP.getUserCirclebackimage()), UserSP.getLifeNotes());
+            viewHolder.setItemBinding(itemListener, new ImageViewBean(UserSP.getUserHeadImage(), UserSP.getUserCirclebackimage()));
         } else if (holder instanceof CircleIndexItemViewHolder) {
             CircleIndexItemViewHolder viewHolder = (CircleIndexItemViewHolder) holder;
             viewHolder.setItemBinding(itemListener, position, new ImageViewBean(info.getInfo().getPublishUserImage()), info.getInfo(), info.getImages(), info.getLikes(), info.getComments());

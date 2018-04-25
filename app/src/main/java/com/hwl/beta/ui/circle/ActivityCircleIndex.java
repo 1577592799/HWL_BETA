@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityCircleIndexBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
@@ -288,8 +289,13 @@ public class ActivityCircleIndex extends FragmentActivity {
         }
 
         @Override
-        public void onUserHeadClick() {
+        public void onMyUserHeadClick() {
+            UITransfer.toCircleUserIndexActivity(activity, UserSP.getUserId(), UserSP.getUserName(), UserSP.getUserHeadImage(), UserSP.getUserCirclebackimage(), UserSP.getLifeNotes());
+        }
 
+        @Override
+        public void onUserHeadClick(Circle info) {
+            UITransfer.toUserIndexActivity(activity, info.getPublishUserId(), info.getPublishUserName(), info.getPublishUserImage());
         }
 
         @Override

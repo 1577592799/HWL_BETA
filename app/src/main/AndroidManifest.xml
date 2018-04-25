@@ -50,6 +50,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ActivityBottomDialog"
             android:windowSoftInputMode="stateVisible"></activity>
+        <activity android:name=".ui.circle.ActivityCircleUserIndex"></activity>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

@@ -8,6 +8,7 @@ import com.hwl.beta.ui.chat.ActivityChatUser;
 import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
 import com.hwl.beta.ui.circle.ActivityCirclePublish;
+import com.hwl.beta.ui.circle.ActivityCircleUserIndex;
 import com.hwl.beta.ui.entry.ActivityGetpwd;
 import com.hwl.beta.ui.entry.ActivityLogin;
 import com.hwl.beta.ui.entry.ActivityMain;
@@ -185,6 +186,16 @@ public class UITransfer {
         intent.putExtra("circleid", circleId);
         intent.putExtra("replyuserid", replyUserId);
         intent.putExtra("replyusername", replyUserName);
+        context.startActivity(intent);
+    }
+
+    public static void toCircleUserIndexActivity(Activity context, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage,String viewUserLifeNotes) {
+        Intent intent = new Intent(context, ActivityCircleUserIndex.class);
+        intent.putExtra("viewuserid", viewUserId);
+        intent.putExtra("viewusername", viewUserName);
+        intent.putExtra("viewuserimage", viewUserImage);
+        intent.putExtra("viewcirclebackimage", viewCircleBackImage);
+        intent.putExtra("viewuserlifenotes", viewUserLifeNotes);
         context.startActivity(intent);
     }
 }

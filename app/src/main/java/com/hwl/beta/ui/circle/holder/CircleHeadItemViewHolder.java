@@ -15,10 +15,9 @@ public class CircleHeadItemViewHolder extends RecyclerView.ViewHolder {
         this.itemBinding = itemBinding;
     }
 
-    public void setItemBinding(ICircleItemListener itemListener, ImageViewBean imageBean, String lifeNotes) {
+    public void setItemBinding(ICircleItemListener itemListener, ImageViewBean imageBean) {
         this.itemBinding.setAction(itemListener);
         this.itemBinding.setImage(imageBean);
-        this.itemBinding.setUserLifeNotes(lifeNotes);
     }
 
     public CircleHeadItemBinding getItemBinding() {

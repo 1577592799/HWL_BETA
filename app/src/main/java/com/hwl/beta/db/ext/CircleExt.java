@@ -18,6 +18,11 @@ public class CircleExt {
     public static final int CircleIndexItem = 2;
 
     private int circleItemType;
+    private long viewUserId;
+    private String viewUserName;
+    private String viewUserImage;
+    private String viewUserLifeNotes;
+    private String viewCircleBackImage;
     private Circle info;
     private List<CircleImage> images;
     private List<CircleComment> comments;
@@ -25,6 +30,15 @@ public class CircleExt {
 
     public CircleExt(int circleItemType) {
         this.circleItemType = circleItemType;
+    }
+
+    public CircleExt(int circleItemType, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage,String viewUserLifeNotes) {
+        this.circleItemType = circleItemType;
+        this.viewUserId = viewUserId;
+        this.viewUserName = viewUserName;
+        this.viewUserImage = viewUserImage;
+        this.viewCircleBackImage = viewCircleBackImage;
+        this.viewUserLifeNotes = viewUserLifeNotes;
     }
 
     public CircleExt(int circleItemType, Circle info, List<CircleImage> images, List<CircleComment> comments, List<CircleLike> likes) {
@@ -37,6 +51,46 @@ public class CircleExt {
 
     public CircleExt(Circle info, List<CircleImage> images, List<CircleComment> comments, List<CircleLike> likes) {
         this(CircleIndexItem, info, images, comments, likes);
+    }
+
+    public String getViewUserLifeNotes() {
+        return viewUserLifeNotes;
+    }
+
+    public void setViewUserLifeNotes(String viewUserLifeNotes) {
+        this.viewUserLifeNotes = viewUserLifeNotes;
+    }
+
+    public String getViewCircleBackImage() {
+        return viewCircleBackImage;
+    }
+
+    public void setViewCircleBackImage(String viewCircleBackImage) {
+        this.viewCircleBackImage = viewCircleBackImage;
+    }
+
+    public long getViewUserId() {
+        return viewUserId;
+    }
+
+    public void setViewUserId(long viewUserId) {
+        this.viewUserId = viewUserId;
+    }
+
+    public String getViewUserName() {
+        return viewUserName;
+    }
+
+    public void setViewUserName(String viewUserName) {
+        this.viewUserName = viewUserName;
+    }
+
+    public String getViewUserImage() {
+        return viewUserImage;
+    }
+
+    public void setViewUserImage(String viewUserImage) {
+        this.viewUserImage = viewUserImage;
     }
 
     public int getCircleItemType() {

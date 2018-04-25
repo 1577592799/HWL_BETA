@@ -98,20 +98,36 @@ public class CircleManager extends BaseDao<Circle> {
         }
     }
 
-
     public List<CircleExt> getAll() {
         List<Circle> infos = daoSession.getCircleDao().queryBuilder()
                 .orderDesc(CircleDao.Properties.CircleId)
                 .list();
         if (infos == null || infos.size() <= 0) return null;
         List<CircleExt> exts = new ArrayList<>(infos.size());
-        CircleExt ext ;
+        CircleExt ext;
         for (int i = 0; i < infos.size(); i++) {
             ext = new CircleExt(CircleExt.CircleIndexItem);
             ext.setInfo(infos.get(i));
             ext.setImages(getImages(infos.get(i).getCircleId()));
             ext.setComments(getComments(infos.get(i).getCircleId()));
             ext.setLikes(getLikes(infos.get(i).getCircleId()));
+            exts.add(ext);
+        }
+        return exts;
+    }
+
+    public List<CircleExt> getUserCircles(long userId) {
+        List<Circle> infos = daoSession.getCircleDao().queryBuilder()
+                .where(CircleDao.Properties.PublishUserId.eq(userId))
+                .orderDesc(CircleDao.Properties.CircleId)
+                .list();
+        if (infos == null || infos.size() <= 0) return null;
+        List<CircleExt> exts = new ArrayList<>(infos.size());
+        CircleExt ext;
+        for (int i = 0; i < infos.size(); i++) {
+            ext = new CircleExt(CircleExt.CircleIndexItem);
+            ext.setInfo(infos.get(i));
+            ext.setImages(getImages(infos.get(i).getCircleId()));
             exts.add(ext);
         }
         return exts;
