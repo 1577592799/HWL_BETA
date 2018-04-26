@@ -5,12 +5,16 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.CircleUserHeadItemBinding;
 import com.hwl.beta.databinding.CircleUserIndexItemBinding;
 import com.hwl.beta.databinding.CircleUserItemNullBinding;
+import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.ui.circle.action.ICircleUserItemListener;
 import com.hwl.beta.ui.circle.holder.CircleUserHeadItemViewHolder;
@@ -70,10 +74,10 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        CircleExt info = circles.get(position);
+        final CircleExt info = circles.get(position);
         if (holder instanceof CircleUserItemNullViewHolder) {
             CircleUserItemNullViewHolder viewHolder = (CircleUserItemNullViewHolder) holder;
-            viewHolder.setItemBinding(itemListener);
+            viewHolder.setItemBinding(itemListener, (Calendar.getInstance().get(Calendar.MONTH) + 1) + "月", Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
         } else if (holder instanceof CircleUserHeadItemViewHolder) {
             CircleUserHeadItemViewHolder viewHolder = (CircleUserHeadItemViewHolder) holder;
             viewHolder.setItemBinding(new ImageViewBean(info.getViewUserImage(), info.getViewCircleBackImage()), info.getViewUserName(), info.getViewUserLifeNotes());
@@ -99,8 +103,20 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 prevYear = prev.get(Calendar.YEAR);
                 prevMonth = prev.get(Calendar.MONTH) + 1;
                 prevDay = prev.get(Calendar.DAY_OF_MONTH);
+
+                if (position != 1 || timeMonth.equals("")) {
+                    RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewHolder.getItemBinding().llCircleContainer.getLayoutParams();
+                    params.topMargin = 1;
+                    viewHolder.getItemBinding().llCircleContainer.setLayoutParams(params);
+                }
             }
             viewHolder.setItemBinding(timeYear, timeMonth, timeDay, info.getInfo().getContent(), info.getImages());
+            viewHolder.getItemBinding().getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemListener.onItemViewClick(info);
+                }
+            });
         }
     }
 

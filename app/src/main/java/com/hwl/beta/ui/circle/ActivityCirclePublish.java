@@ -51,6 +51,7 @@ public class ActivityCirclePublish extends FragmentActivity {
     List<String> imagePaths = null;
     List<CircleImage> circleImages;
     int screenWidth;
+    boolean isRuning = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -175,9 +176,13 @@ public class ActivityCirclePublish extends FragmentActivity {
     }
 
     private void publishImages() {
+        if (isRuning) return;
+        isRuning = true;
+
         final String content = binding.etEmotionText.getText() + "";
         if (StringUtils.isBlank(content) && imagePaths.size() <= 0) {
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
+            isRuning = false;
             return;
         }
 
@@ -236,6 +241,7 @@ public class ActivityCirclePublish extends FragmentActivity {
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
                         LoadingDialog.hide();
+                        isRuning = false;
                     }
                 });
     }
@@ -244,6 +250,7 @@ public class ActivityCirclePublish extends FragmentActivity {
         if (StringUtils.isBlank(content) && images.size() <= 0) {
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
             LoadingDialog.hide();
+            isRuning = false;
             return;
         }
 
@@ -264,6 +271,7 @@ public class ActivityCirclePublish extends FragmentActivity {
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
                         LoadingDialog.hide();
+                        isRuning = false;
                     }
                 });
     }

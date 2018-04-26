@@ -123,5 +123,19 @@ public class ActivityCircleUserIndex extends FragmentActivity {
 
     public class CircleUserItemListener implements ICircleUserItemListener {
 
+        @Override
+        public void onItemNullViewClick() {
+            UITransfer.toCirclePublishActivity(activity);
+        }
+
+        @Override
+        public void onItemViewClick(CircleExt info) {
+
+        }
+
+        @Override
+        public void onBackImageClick() {
+
+        }
     }
 }
