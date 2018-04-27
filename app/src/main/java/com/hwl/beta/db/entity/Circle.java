@@ -6,12 +6,15 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class Circle {
+public class Circle implements Serializable{
+    private static final long serialVersionUID = 5L;
+
     @Id
     private long circleId;
     private long publishUserId;

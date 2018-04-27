@@ -5,13 +5,14 @@ import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.entity.CircleLike;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/11.
  */
 
-public class CircleExt {
+public class CircleExt implements Serializable {
 
     public static final int CircleHeadItem = 0;
     public static final int CircleNullItem = 1;

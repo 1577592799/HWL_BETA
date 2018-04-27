@@ -7,6 +7,8 @@ import com.hwl.beta.net.circle.body.AddCircleCommentInfoRequest;
 import com.hwl.beta.net.circle.body.AddCircleCommentInfoResponse;
 import com.hwl.beta.net.circle.body.AddCircleInfoRequest;
 import com.hwl.beta.net.circle.body.AddCircleInfoResponse;
+import com.hwl.beta.net.circle.body.GetCircleDetailRequest;
+import com.hwl.beta.net.circle.body.GetCircleDetailResponse;
 import com.hwl.beta.net.circle.body.GetCircleInfosRequest;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.GetUserCircleInfosRequest;
@@ -105,6 +107,17 @@ public class CircleService {
         return response;
     }
 
+    public static Observable<ResponseBase<GetCircleDetailResponse>> getCircleDetail(long circleId) {
+        GetCircleDetailRequest requestBody = new GetCircleDetailRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setCircleId(circleId);
+        Observable<ResponseBase<GetCircleDetailResponse>> response = RetrofitUtils.createApi(ICircleService.class)
+                .getCircleDetail(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public interface ICircleService {
         @POST("api/GetCircleInfos")
         Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(@Body RequestBase<GetCircleInfosRequest> request);
@@ -120,5 +133,8 @@ public class CircleService {
 
         @POST("api/GetUserCircleInfos")
         Observable<ResponseBase<GetUserCircleInfosResponse>> getUserCircleInfos(@Body RequestBase<GetUserCircleInfosRequest> request);
+
+        @POST("api/GetCircleDetail")
+        Observable<ResponseBase<GetCircleDetailResponse>> getCircleDetail(@Body RequestBase<GetCircleDetailRequest> request);
     }
 }

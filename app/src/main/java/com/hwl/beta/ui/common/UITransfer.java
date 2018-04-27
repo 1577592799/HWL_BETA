@@ -2,10 +2,13 @@ package com.hwl.beta.ui.common;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 
+import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.ui.chat.ActivityChatGroup;
 import com.hwl.beta.ui.chat.ActivityChatUser;
 import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
+import com.hwl.beta.ui.circle.ActivityCircleDetail;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
 import com.hwl.beta.ui.circle.ActivityCirclePublish;
 import com.hwl.beta.ui.circle.ActivityCircleUserIndex;
@@ -189,13 +192,27 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleUserIndexActivity(Activity context, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage,String viewUserLifeNotes) {
+    public static void toCircleUserIndexActivity(Activity context, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage, String viewUserLifeNotes) {
         Intent intent = new Intent(context, ActivityCircleUserIndex.class);
         intent.putExtra("viewuserid", viewUserId);
         intent.putExtra("viewusername", viewUserName);
         intent.putExtra("viewuserimage", viewUserImage);
         intent.putExtra("viewcirclebackimage", viewCircleBackImage);
         intent.putExtra("viewuserlifenotes", viewUserLifeNotes);
+        context.startActivity(intent);
+    }
+
+//    public static void toCircleDetailActivity(Activity context, long circleId) {
+//        Intent intent = new Intent(context, ActivityCircleDetail.class);
+//        intent.putExtra("circleid", circleId);
+//        context.startActivity(intent);
+//    }
+
+    public static void toCircleDetailActivity(Activity context, CircleExt info) {
+        Intent intent = new Intent(context, ActivityCircleDetail.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("circleext", info);
+        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 }

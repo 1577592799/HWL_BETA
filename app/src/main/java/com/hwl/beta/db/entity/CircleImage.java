@@ -3,8 +3,11 @@ package com.hwl.beta.db.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.io.Serializable;
+
 @Entity
-public class CircleImage {
+public class CircleImage implements Serializable {
+    private static final long serialVersionUID = 7L;
     private long circleId;
     private long postUserId;
     private String imageUrl;

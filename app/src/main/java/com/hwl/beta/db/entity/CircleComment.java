@@ -5,11 +5,13 @@ import com.hwl.beta.utils.DateUtils;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.OrderBy;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class CircleComment {
+public class CircleComment implements Serializable {
+    private static final long serialVersionUID = 6L;
     private int commentId;
     private long circleId ;
     private long commentUserId;

@@ -14,6 +14,7 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.CircleUserHeadItemBinding;
 import com.hwl.beta.databinding.CircleUserIndexItemBinding;
 import com.hwl.beta.databinding.CircleUserItemNullBinding;
+import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.ui.circle.action.ICircleUserItemListener;
@@ -23,6 +24,7 @@ import com.hwl.beta.ui.circle.holder.CircleUserItemNullViewHolder;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +44,6 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.circles = circles;
         this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
-        prevShowDate = "";
         prevYear = Calendar.getInstance().get(Calendar.YEAR);
     }
 
@@ -81,6 +82,9 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         } else if (holder instanceof CircleUserHeadItemViewHolder) {
             CircleUserHeadItemViewHolder viewHolder = (CircleUserHeadItemViewHolder) holder;
             viewHolder.setItemBinding(new ImageViewBean(info.getViewUserImage(), info.getViewCircleBackImage()), info.getViewUserName(), info.getViewUserLifeNotes());
+            prevShowDate = "";
+            prevMonth = 0;
+            prevDay = 0;
         } else if (holder instanceof CircleUserIndexItemViewHolder) {
             CircleUserIndexItemViewHolder viewHolder = (CircleUserIndexItemViewHolder) holder;
             String timeYear = "";
@@ -117,6 +121,35 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     itemListener.onItemViewClick(info);
                 }
             });
+        }
+    }
+
+    public void addComment(CircleComment comment) {
+        if (comment == null || comment.getCircleId() <= 0 || comment.getCommentUserId() <= 0)
+            return;
+
+        int position = -1;
+        List<CircleComment> comments = null;
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
+                comments = circles.get(i).getComments();
+                if (comments == null) {
+                    comments = new ArrayList<>();
+                    circles.get(i).setComments(comments);
+                }
+                position = i;
+                break;
+            }
+        }
+
+        if(comments==null){
+            return;
+        }
+        comments.add(comment);
+        if (position == -1) {
+            notifyItemChanged(0);
+        } else {
+            notifyItemChanged(position);
         }
     }
 

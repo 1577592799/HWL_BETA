@@ -3,11 +3,13 @@ package com.hwl.beta.db.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.OrderBy;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class CircleLike {
+public class CircleLike implements Serializable {
+    private static final long serialVersionUID = 8L;
     private long circleId;
     private long likeUserId;
     private String likeUserName;
