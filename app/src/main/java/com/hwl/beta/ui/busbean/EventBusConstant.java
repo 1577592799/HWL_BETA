@@ -19,4 +19,7 @@ public class EventBusConstant {
     public static final int EB_TYPE_NETWORK_CONNECT_UPDATE = 5;
     public static final int EB_TYPE_NETWORK_BREAK_UPDATE = 6;
     public static final int EB_TYPE_NEAR_INFO_UPDATE = 7;
+
+    public static final int EB_TYPE_ACTINO_ADD = 8;
+    public static final int EB_TYPE_ACTINO_REMOVE = 9;
 }

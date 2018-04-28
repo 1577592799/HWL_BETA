@@ -27,6 +27,9 @@ import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionCircleComment;
+import com.hwl.beta.ui.busbean.EventActionCircleLike;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.adp.CircleIndexAdapter;
 import com.hwl.beta.ui.common.KeyBoardAction;
@@ -94,8 +97,21 @@ public class ActivityCircleIndex extends FragmentActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void addComment(CircleComment comment) {
-        circleAdapter.addComment(comment);
+    public void addComment(EventActionCircleComment action) {
+        if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
+            circleAdapter.addComment(action.getComment());
+        } else if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            circleAdapter.removeComment(action.getComment());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addLike(EventActionCircleLike action) {
+        if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
+            circleAdapter.addLike(action.getLike());
+        } else if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            circleAdapter.removeLike(action.getLike());
+        }
     }
 
     private void initView() {

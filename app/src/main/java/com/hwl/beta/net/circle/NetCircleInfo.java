@@ -6,36 +6,44 @@ import java.util.Date;
 import java.util.List;
 
 public class NetCircleInfo {
-    private long CircleId ;
-    private long UserId ;
-    private int ContentType ;
-    private String CircleContent ;
-    private Date PublishTime ;
-    private String PublishTimeDesc ;
-    private int PosId ;
-    private String PosDesc ;
-    private double Lon ;
-    private double Lat ;
-    private String LinkUrl ;
-    private String LinkTitle ;
-    private String LinkImage ;
-    private int ImageCount ;
-    private int CommentCount ;
-    private int LikeCount ;
+    private long CircleId;
+    private long UserId;
+    private int ContentType;
+    private String CircleContent;
+    private Date PublishTime;
+    private Date UpdateTime;
+    private int PosId;
+    private String PosDesc;
+    private double Lon;
+    private double Lat;
+    private String LinkUrl;
+    private String LinkTitle;
+    private String LinkImage;
+    private int ImageCount;
+    private int CommentCount;
+    private int LikeCount;
     /// <summary>
     /// 是否点赞过
     /// </summary>
-    private boolean IsLiked ;
+    private boolean IsLiked;
 
-    private List<NetImageInfo> Images ;
+    private List<NetImageInfo> Images;
 
-    private int PublishUserId ;
-    private String PublishUserName ;
-    private String PublishUserImage ;
+    private int PublishUserId;
+    private String PublishUserName;
+    private String PublishUserImage;
 
-    private List<NetCircleLikeInfo> LikeInfos ;
+    public Date getUpdateTime() {
+        return UpdateTime;
+    }
 
-    private List<NetCircleCommentInfo> CommentInfos ;
+    public void setUpdateTime(Date updateTime) {
+        UpdateTime = updateTime;
+    }
+
+    private List<NetCircleLikeInfo> LikeInfos;
+
+    private List<NetCircleCommentInfo> CommentInfos;
 
     public List<NetImageInfo> getImages() {
         return Images;
@@ -91,14 +99,6 @@ public class NetCircleInfo {
 
     public void setPublishTime(Date publishTime) {
         PublishTime = publishTime;
-    }
-
-    public String getPublishTimeDesc() {
-        return PublishTimeDesc;
-    }
-
-    public void setPublishTimeDesc(String publishTimeDesc) {
-        PublishTimeDesc = publishTimeDesc;
     }
 
     public int getPosId() {

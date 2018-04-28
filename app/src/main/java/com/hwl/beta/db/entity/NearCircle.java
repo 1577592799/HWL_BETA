@@ -31,6 +31,7 @@ public class NearCircle implements Serializable {
     private String linkImage;
     @OrderBy("publishTime desc")
     private Date publishTime;
+    private Date updateTime;
     private String fromPosDesc;
     private int commentCount;
     private int likeCount;
@@ -42,11 +43,11 @@ public class NearCircle implements Serializable {
         return null;
     }
 
-    @Generated(hash = 1859886842)
+    @Generated(hash = 1954381694)
     public NearCircle(long nearCircleId, long publishUserId, String publishUserName,
-                      String publishUserImage, int contentType, String content,
-                      String linkTitle, String linkUrl, String linkImage, Date publishTime,
-                      String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
+            String publishUserImage, int contentType, String content, String linkTitle,
+            String linkUrl, String linkImage, Date publishTime, Date updateTime,
+            String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
         this.nearCircleId = nearCircleId;
         this.publishUserId = publishUserId;
         this.publishUserName = publishUserName;
@@ -57,6 +58,7 @@ public class NearCircle implements Serializable {
         this.linkUrl = linkUrl;
         this.linkImage = linkImage;
         this.publishTime = publishTime;
+        this.updateTime = updateTime;
         this.fromPosDesc = fromPosDesc;
         this.commentCount = commentCount;
         this.likeCount = likeCount;
@@ -177,5 +179,13 @@ public class NearCircle implements Serializable {
 
     public void setIsLiked(boolean isLiked) {
         this.isLiked = isLiked;
+    }
+
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

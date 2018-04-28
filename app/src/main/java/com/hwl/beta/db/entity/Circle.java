@@ -27,16 +27,17 @@ public class Circle implements Serializable{
     private String linkImage;
     @OrderBy("publishTime desc")
     private Date publishTime;
+    private Date updateTime;
     private String fromPosDesc;
     private int commentCount;
     private int likeCount;
     private boolean isLiked;
 
-    @Generated(hash = 1755870937)
+    @Generated(hash = 522127894)
     public Circle(long circleId, long publishUserId, String publishUserName,
-                  String publishUserImage, int contentType, String content,
-                  String linkTitle, String linkUrl, String linkImage, Date publishTime,
-                  String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
+            String publishUserImage, int contentType, String content, String linkTitle,
+            String linkUrl, String linkImage, Date publishTime, Date updateTime,
+            String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
         this.circleId = circleId;
         this.publishUserId = publishUserId;
         this.publishUserName = publishUserName;
@@ -47,6 +48,7 @@ public class Circle implements Serializable{
         this.linkUrl = linkUrl;
         this.linkImage = linkImage;
         this.publishTime = publishTime;
+        this.updateTime = updateTime;
         this.fromPosDesc = fromPosDesc;
         this.commentCount = commentCount;
         this.likeCount = likeCount;
@@ -179,5 +181,13 @@ public class Circle implements Serializable{
 
     public void setIsLiked(boolean isLiked) {
         this.isLiked = isLiked;
+    }
+
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

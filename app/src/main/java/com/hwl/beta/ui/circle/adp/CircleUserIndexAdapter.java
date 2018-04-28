@@ -131,7 +131,7 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         int position = -1;
         List<CircleComment> comments = null;
         for (int i = 0; i < circles.size(); i++) {
-            if (circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
+            if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
                 comments = circles.get(i).getComments();
                 if (comments == null) {
                     comments = new ArrayList<>();
@@ -142,7 +142,7 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        if(comments==null){
+        if (comments == null) {
             return;
         }
         comments.add(comment);

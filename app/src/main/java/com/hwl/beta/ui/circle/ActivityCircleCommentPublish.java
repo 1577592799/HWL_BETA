@@ -13,6 +13,8 @@ import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.body.AddCircleCommentInfoResponse;
+import com.hwl.beta.ui.busbean.EventActionCircleComment;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
 import com.hwl.beta.utils.StringUtils;
@@ -75,7 +77,7 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
                         isRuning = false;
                         if (res.getCommentInfo() != null && res.getCommentInfo().getCommentId() > 0) {
                             Toast.makeText(activity, "发布成功", Toast.LENGTH_SHORT).show();
-                            EventBus.getDefault().post(DBCircleAction.convertToCircleCommentInfo(res.getCommentInfo()));
+                            EventBus.getDefault().post(new EventActionCircleComment(EventBusConstant.EB_TYPE_ACTINO_ADD, DBCircleAction.convertToCircleCommentInfo(res.getCommentInfo())));
                             finish();
                         } else {
                             onError("发布失败");

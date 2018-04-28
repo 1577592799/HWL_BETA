@@ -86,7 +86,7 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         int position = -1;
         List<CircleComment> comments = null;
         for (int i = 0; i < circles.size(); i++) {
-            if (circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
+            if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
                 comments = circles.get(i).getComments();
                 if (comments == null) {
                     comments = new ArrayList<>();
@@ -97,12 +97,35 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }
 
-
+        if (comments == null) return;
         comments.add(comment);
         if (position == -1) {
             notifyItemChanged(0);
         } else {
             notifyItemChanged(position);
+        }
+    }
+
+    public void removeComment(CircleComment comment) {
+        if (comment == null || comment.getCircleId() <= 0 || comment.getCommentUserId() <= 0) {
+            return;
+        }
+
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == comment.getCircleId()) {
+                CircleExt info = circles.get(i);
+                if (info.getComments() != null && info.getComments().size() > 0) {
+                    int len = info.getComments().size();
+                    for (int j = 0; j < len; j++) {
+                        if (info.getComments().get(j) != null && info.getComments().get(j).getCommentUserId() == myUserId) {
+                            info.getComments().remove(j);
+                            notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -116,7 +139,7 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             //取消点赞
             info.getInfo().setIsLiked(false);
             for (int i = 0; i < info.getLikes().size(); i++) {
-                if (info.getLikes().get(i).getLikeUserId() == myUserId) {
+                if (info.getLikes().get(i) != null && info.getLikes().get(i).getLikeUserId() == myUserId) {
                     info.getLikes().remove(i);
                     notifyItemChanged(position);
                     break;
@@ -127,6 +150,54 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             info.getInfo().setIsLiked(true);
             info.getLikes().add(info.getLikes().size(), likeInfo);
             notifyItemChanged(position);
+        }
+    }
+
+    public void addLike(CircleLike likeInfo) {
+        if (likeInfo == null || likeInfo.getCircleId() <= 0 || likeInfo.getLikeUserId() <= 0)
+            return;
+
+        int position = -1;
+        List<CircleLike> likes = null;
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == likeInfo.getCircleId()) {
+                likes = circles.get(i).getLikes();
+                if (likes == null) {
+                    likes = new ArrayList<>();
+                    circles.get(i).setLikes(likes);
+                }
+                position = i;
+                break;
+            }
+        }
+
+        if (likes == null) return;
+        likes.add(likeInfo);
+        if (position == -1) {
+            notifyItemChanged(0);
+        } else {
+            notifyItemChanged(position);
+        }
+    }
+
+    public void removeLike(CircleLike likeInfo) {
+        if (likeInfo == null || likeInfo.getCircleId() <= 0 || likeInfo.getLikeUserId() <= 0)
+            return;
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == likeInfo.getCircleId()) {
+                CircleExt info = circles.get(i);
+                if (info.getLikes() != null && info.getLikes().size() > 0) {
+                    int len = info.getLikes().size();
+                    for (int j = 0; j < len; j++) {
+                        if (info.getLikes().get(j) != null && info.getLikes().get(j).getLikeUserId() == myUserId) {
+                            info.getLikes().remove(j);
+                            notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
     }
 

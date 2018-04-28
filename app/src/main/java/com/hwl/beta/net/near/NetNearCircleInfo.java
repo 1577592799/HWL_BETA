@@ -18,6 +18,7 @@ public class NetNearCircleInfo {
     private String LinkUrl;
     private String LinkImage;
     private Date PublishTime;
+    private Date UpdateTime;
     private String PosDesc;
     private List<NetImageInfo> Images;
     private int CommentCount;
@@ -25,6 +26,18 @@ public class NetNearCircleInfo {
     private boolean IsLiked;
     private List<NetNearCircleLikeInfo> LikeInfos;
     private List<NetNearCircleCommentInfo> CommentInfos;
+
+    public void setPosDesc(String posDesc) {
+        PosDesc = posDesc;
+    }
+
+    public Date getUpdateTime() {
+        return UpdateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        UpdateTime = updateTime;
+    }
 
     public NetNearCircleInfo() {
     }
@@ -139,10 +152,6 @@ public class NetNearCircleInfo {
 
     public String getPosDesc() {
         return PosDesc;
-    }
-
-    public void setFromPosDesc(String posDesc) {
-        PosDesc = posDesc;
     }
 
     public List<NetImageInfo> getImages() {

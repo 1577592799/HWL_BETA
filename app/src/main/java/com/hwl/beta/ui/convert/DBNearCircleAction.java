@@ -28,6 +28,7 @@ public class DBNearCircleAction {
         model.setPublishUserImage(info.getPublishUserImage());
         model.setFromPosDesc(info.getPosDesc());
         model.setPublishTime(info.getPublishTime());
+        model.setUpdateTime(info.getUpdateTime());
         model.setLikeCount(info.getLikeCount());
         model.setContentType(info.getContentType());
         model.setContent(info.getContent());
