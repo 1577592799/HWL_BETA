@@ -2,7 +2,7 @@ package com.hwl.beta.ui.entry;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
 import com.hwl.beta.R;
@@ -10,7 +10,7 @@ import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.common.UITransfer;
 
-public class ActivityWelcome extends AppCompatActivity {
+public class ActivityWelcome extends FragmentActivity {
 
     private TextView tvCountdown;
     private int tmrCount = 3;

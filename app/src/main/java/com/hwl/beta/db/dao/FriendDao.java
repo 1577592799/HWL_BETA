@@ -35,6 +35,7 @@ public class FriendDao extends AbstractDao<Friend, Long> {
         public final static Property CircleBackImage = new Property(8, String.class, "circleBackImage", false, "CIRCLE_BACK_IMAGE");
         public final static Property Country = new Property(9, String.class, "country", false, "COUNTRY");
         public final static Property Province = new Property(10, String.class, "province", false, "PROVINCE");
+        public final static Property UpdateTime = new Property(11, String.class, "updateTime", false, "UPDATE_TIME");
     }
 
 
@@ -60,7 +61,8 @@ public class FriendDao extends AbstractDao<Friend, Long> {
                 "\"SEX\" INTEGER NOT NULL ," + // 7: sex
                 "\"CIRCLE_BACK_IMAGE\" TEXT," + // 8: circleBackImage
                 "\"COUNTRY\" TEXT," + // 9: country
-                "\"PROVINCE\" TEXT);"); // 10: province
+                "\"PROVINCE\" TEXT," + // 10: province
+                "\"UPDATE_TIME\" TEXT);"); // 11: updateTime
     }
 
     /** Drops the underlying database table. */
@@ -119,6 +121,11 @@ public class FriendDao extends AbstractDao<Friend, Long> {
         if (province != null) {
             stmt.bindString(11, province);
         }
+ 
+        String updateTime = entity.getUpdateTime();
+        if (updateTime != null) {
+            stmt.bindString(12, updateTime);
+        }
     }
 
     @Override
@@ -171,6 +178,11 @@ public class FriendDao extends AbstractDao<Friend, Long> {
         if (province != null) {
             stmt.bindString(11, province);
         }
+ 
+        String updateTime = entity.getUpdateTime();
+        if (updateTime != null) {
+            stmt.bindString(12, updateTime);
+        }
     }
 
     @Override
@@ -191,7 +203,8 @@ public class FriendDao extends AbstractDao<Friend, Long> {
             cursor.getInt(offset + 7), // sex
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // circleBackImage
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // country
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // province
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // province
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // updateTime
         );
         return entity;
     }
@@ -209,6 +222,7 @@ public class FriendDao extends AbstractDao<Friend, Long> {
         entity.setCircleBackImage(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setCountry(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setProvince(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setUpdateTime(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
      }
     
     @Override

@@ -12,7 +12,7 @@ import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class Circle implements Serializable{
+public class Circle implements Serializable {
     private static final long serialVersionUID = 5L;
 
     @Id
@@ -27,17 +27,30 @@ public class Circle implements Serializable{
     private String linkImage;
     @OrderBy("publishTime desc")
     private Date publishTime;
-    private Date updateTime;
+    private String updateTime;
     private String fromPosDesc;
     private int commentCount;
     private int likeCount;
     private boolean isLiked;
 
-    @Generated(hash = 522127894)
+    public String getShowTime() {
+        if (this.publishTime != null)
+            return DateUtils.dateToStrLong2(this.publishTime);
+        return null;
+    }
+
+    public String getShowDate() {
+        if (this.publishTime != null)
+            return DateUtils.dateToStr(this.publishTime);
+        return null;
+    }
+
+    @Generated(hash = 1559919035)
     public Circle(long circleId, long publishUserId, String publishUserName,
-            String publishUserImage, int contentType, String content, String linkTitle,
-            String linkUrl, String linkImage, Date publishTime, Date updateTime,
-            String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
+                  String publishUserImage, int contentType, String content,
+                  String linkTitle, String linkUrl, String linkImage, Date publishTime,
+                  String updateTime, String fromPosDesc, int commentCount, int likeCount,
+                  boolean isLiked) {
         this.circleId = circleId;
         this.publishUserId = publishUserId;
         this.publishUserName = publishUserName;
@@ -57,18 +70,6 @@ public class Circle implements Serializable{
 
     @Generated(hash = 2062793395)
     public Circle() {
-    }
-
-    public String getShowTime() {
-        if (this.publishTime != null)
-            return DateUtils.dateToStrLong2(this.publishTime);
-        return null;
-    }
-
-    public String getShowDate() {
-        if (this.publishTime != null)
-            return DateUtils.dateToStr(this.publishTime);
-        return null;
     }
 
     public long getCircleId() {
@@ -151,6 +152,14 @@ public class Circle implements Serializable{
         this.publishTime = publishTime;
     }
 
+    public String getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public String getFromPosDesc() {
         return this.fromPosDesc;
     }
@@ -181,13 +190,5 @@ public class Circle implements Serializable{
 
     public void setIsLiked(boolean isLiked) {
         this.isLiked = isLiked;
-    }
-
-    public Date getUpdateTime() {
-        return this.updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 }

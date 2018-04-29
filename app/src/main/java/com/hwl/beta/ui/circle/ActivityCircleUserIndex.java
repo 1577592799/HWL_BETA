@@ -14,11 +14,17 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityCircleUserIndexBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.CircleComment;
+import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
+import com.hwl.beta.net.circle.NetCircleMatchInfo;
+import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.GetUserCircleInfosResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionCircleComment;
+import com.hwl.beta.ui.busbean.EventActionCircleLike;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleUserItemListener;
 import com.hwl.beta.ui.circle.adp.CircleUserIndexAdapter;
 import com.hwl.beta.ui.common.UITransfer;
@@ -41,6 +47,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 public class ActivityCircleUserIndex extends FragmentActivity {
@@ -77,8 +84,55 @@ public class ActivityCircleUserIndex extends FragmentActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void addComment(CircleComment comment) {
-        circleAdapter.addComment(comment);
+    public void addComment(EventActionCircleComment action) {
+        if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == action.getComment().getCircleId()) {
+                    if (circles.get(i).getComments() == null) {
+                        circles.get(i).setComments(new ArrayList<CircleComment>());
+                    }
+                    circles.get(i).getComments().add(action.getComment());
+                    break;
+                }
+            }
+        } else if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == action.getComment().getCircleId()) {
+                    for (int j = 0; j < circles.get(i).getComments().size(); j++) {
+                        if (circles.get(i).getComments().get(j).getCommentUserId() == action.getComment().getCommentUserId()) {
+                            circles.get(i).getComments().remove(j);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addLike(EventActionCircleLike action) {
+        if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == action.getLike().getCircleId()) {
+                    if (circles.get(i).getLikes() == null) {
+                        circles.get(i).setLikes(new ArrayList<CircleLike>());
+                    }
+                    circles.get(i).getLikes().add(action.getLike());
+                    break;
+                }
+            }
+        } else if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() == action.getLike().getCircleId()) {
+                    for (int j = 0; j < circles.get(i).getLikes().size(); j++) {
+                        if (circles.get(i).getLikes().get(j).getLikeUserId() == action.getLike().getLikeUserId()) {
+                            circles.get(i).getLikes().remove(j);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -93,7 +147,8 @@ public class ActivityCircleUserIndex extends FragmentActivity {
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UITransfer.toCirclePublishActivity(activity);
+                        //UITransfer.toCirclePublishActivity(activity);
+                        Toast.makeText(activity, "查看消息列表", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {
@@ -105,12 +160,12 @@ public class ActivityCircleUserIndex extends FragmentActivity {
 
         binding.rvCircleContainer.setAdapter(circleAdapter);
         binding.rvCircleContainer.setLayoutManager(new LinearLayoutManager(activity));
-        binding.refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                loadCircleFromServer(0);
-            }
-        });
+//        binding.refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//                loadCircleFromServer(0);
+//            }
+//        });
         binding.refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
@@ -119,7 +174,14 @@ public class ActivityCircleUserIndex extends FragmentActivity {
         });
 
 //        binding.refreshLayout.autoRefresh();
+        binding.refreshLayout.setEnableRefresh(false);
         binding.refreshLayout.setEnableLoadMore(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCircleFromServer(0);
     }
 
     private void loadCircleFromServer(final long minCircleId) {
@@ -127,10 +189,20 @@ public class ActivityCircleUserIndex extends FragmentActivity {
             showResult();
             return;
         }
-        CircleService.getUserCircleInfos(viewUserId, minCircleId, pageCount)
-                .flatMap(new NetDefaultFunction<GetUserCircleInfosResponse, NetCircleInfo>() {
+
+        List<NetCircleMatchInfo> circleMatchInfos = new ArrayList<>();
+        if (minCircleId <= 0) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() > 0) {
+                    circleMatchInfos.add(new NetCircleMatchInfo(circles.get(i).getInfo().getCircleId(), circles.get(i).getInfo().getUpdateTime()));
+                }
+            }
+        }
+
+        CircleService.getCircleInfos(viewUserId, minCircleId, pageCount, circleMatchInfos)
+                .flatMap(new NetDefaultFunction<GetCircleInfosResponse, NetCircleInfo>() {
                     @Override
-                    protected ObservableSource<NetCircleInfo> onSuccess(GetUserCircleInfosResponse response) {
+                    protected ObservableSource<NetCircleInfo> onSuccess(GetCircleInfosResponse response) {
                         if (response.getCircleInfos() != null && response.getCircleInfos().size() > 0) {
                             removeEmptyView();
                             return Observable.fromIterable(response.getCircleInfos());
@@ -146,11 +218,25 @@ public class ActivityCircleUserIndex extends FragmentActivity {
                         if (info != null && info.getCircleId() > 0) {
                             circleBean.setInfo(DBCircleAction.convertToCircleInfo(info));
                             circleBean.setImages(DBCircleAction.convertToCircleImageInfos(info.getCircleId(), info.getPublishUserId(), info.getImages()));
-//                            circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(info.getCommentInfos()));
-//                            circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(info.getLikeInfos()));
+                            circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(info.getCommentInfos()));
+                            circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(info.getLikeInfos()));
                             return circleBean;
                         }
                         return circleBean;
+                    }
+                })
+                .doOnNext(new Consumer<CircleExt>() {
+                    @Override
+                    public void accept(CircleExt circleExt) throws Exception {
+                        if (circleExt != null && circleExt.getInfo() != null) {
+                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
+                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
+                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
+                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
+                        }
                     }
                 })
                 .subscribe(new Observer<CircleExt>() {
@@ -253,7 +339,7 @@ public class ActivityCircleUserIndex extends FragmentActivity {
         @Override
         public void onItemViewClick(CircleExt info) {
             if (info == null || info.getInfo() == null) return;
-            UITransfer.toCircleDetailActivity(activity, info);
+            UITransfer.toCircleDetailActivity(activity, 0, info);
         }
 
         @Override

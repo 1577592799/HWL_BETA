@@ -2,6 +2,7 @@ package com.hwl.beta.ui.convert;
 
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.net.user.NetUserFriendInfo;
+import com.hwl.beta.net.user.UserDetailsInfo;
 
 /**
  * Created by Administrator on 2018/4/1.
@@ -13,10 +14,30 @@ public class DBFriendAction {
         friend.setId(netFriendInfo.getId());
         friend.setSymbol(netFriendInfo.getSymbol());
         friend.setName(netFriendInfo.getName());
+        friend.setSex(netFriendInfo.getSex());
 //        friend.setRemark(netFriendInfo.getNameRemark());
         friend.setHeadImage(netFriendInfo.getHeadImage());
         friend.setCountry(netFriendInfo.getCountry());
         friend.setProvince(netFriendInfo.getProvince());
+        friend.setUpdateTime(netFriendInfo.getUpdateTime());
+        friend.setCircleBackImage(netFriendInfo.getCircleBackImage());
+        friend.setLifeNotes(netFriendInfo.getLifeNotes());
+        return friend;
+    }
+
+    public static Friend convertToFriendInfo(UserDetailsInfo userDetailsInfo) {
+        Friend friend = new Friend();
+        friend.setId(userDetailsInfo.getId());
+        friend.setSymbol(userDetailsInfo.getSymbol());
+        friend.setName(userDetailsInfo.getName());
+        friend.setSex(userDetailsInfo.getSex());
+        friend.setRemark(userDetailsInfo.getNameRemark());
+        friend.setHeadImage(userDetailsInfo.getHeadImage());
+        friend.setCountry(userDetailsInfo.getCountry());
+        friend.setProvince(userDetailsInfo.getProvince());
+        friend.setUpdateTime(userDetailsInfo.getUpdateTime());
+        friend.setCircleBackImage(userDetailsInfo.getCircleBackImage());
+        friend.setLifeNotes(userDetailsInfo.getLifeNotes());
         return friend;
     }
 }

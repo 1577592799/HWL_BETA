@@ -9,6 +9,8 @@ import com.hwl.beta.net.user.body.DeleteFriendRequest;
 import com.hwl.beta.net.user.body.DeleteFriendResponse;
 import com.hwl.beta.net.user.body.GetFriendsRequest;
 import com.hwl.beta.net.user.body.GetFriendsResponse;
+import com.hwl.beta.net.user.body.GetUserDetailsRequest;
+import com.hwl.beta.net.user.body.GetUserDetailsResponse;
 import com.hwl.beta.net.user.body.SearchUserRequest;
 import com.hwl.beta.net.user.body.SearchUserResponse;
 import com.hwl.beta.net.user.body.SetFriendRemarkRequest;
@@ -185,6 +187,17 @@ public class UserService {
         return response;
     }
 
+    public static Observable<ResponseBase<GetUserDetailsResponse>> getUserDetails(long viewUserId) {
+        GetUserDetailsRequest requestBody = new GetUserDetailsRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setGetUserId(viewUserId);
+        Observable<ResponseBase<GetUserDetailsResponse>> response = RetrofitUtils.createApi(IUserService.class)
+                .getUserDetails(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     private interface IUserService {
         @POST("api/UserLogin")
         Observable<ResponseBase<UserLoginResponse>> userLogin(@Body RequestBase<UserLoginRequest> request);
@@ -224,5 +237,8 @@ public class UserService {
 
         @POST("api/SetFriendRemark")
         Observable<ResponseBase<SetFriendRemarkResponse>> setFriendRemark(@Body RequestBase<SetFriendRemarkRequest> request);
+
+        @POST("api/GetUserDetails")
+        Observable<ResponseBase<GetUserDetailsResponse>> getUserDetails(@Body RequestBase<GetUserDetailsRequest> request);
     }
 }

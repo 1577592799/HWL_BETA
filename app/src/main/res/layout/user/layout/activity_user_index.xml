@@ -60,15 +60,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:gravity="center_vertical"
-                    android:text="@{user.showName}"
-                    android:textColor="@color/black" />
+                    android:text="username"
+                    android:textColor="@color/color_424242" />
 
                 <TextView
                     android:id="@+id/tv_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="@{user.symbol}" />
+                    android:text="symbol" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -81,8 +81,7 @@
             android:background="@color/white"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:visibility="@{ user.isFriend?View.VISIBLE : View.GONE}">
+            android:paddingTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -97,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="@{user.remark}" />
+                android:text="remark" />
 
         </LinearLayout>
 
@@ -125,8 +124,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="@{user.registerAddress}"
-                android:textColor="@color/black" />
+                android:text="registerAddress"
+                android:textColor="@color/color_424242" />
 
         </LinearLayout>
 
@@ -136,34 +135,75 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
             android:background="@color/white"
+            android:onClick="@{view->action.onCircleClick()}"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:visibility="@{ user.isFriend?View.VISIBLE : View.GONE}">
+            android:paddingTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="个人相册" />
+                android:text="TA的动态" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/empty_photo" />
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/fbl_circle_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_20"
+                android:background="@color/color_f3f3f3">
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/empty_photo" />
+            </com.google.android.flexbox.FlexboxLayout>
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/empty_photo" />
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/dp_10"-->
+            <!--android:layout_marginRight="@dimen/dp_20"-->
+            <!--android:background="@color/color_f3f3f3"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tv_content1"-->
+            <!--android:padding="@dimen/dp_5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="RecyclerView通过其高度的可定制性深受大家的青睐..."/>-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tv_content2"-->
+            <!--android:padding="@dimen/dp_5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="RecyclerView通过其高度的可定制性深受大家的青睐"/>-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tv_content3"-->
+            <!--android:padding="@dimen/dp_5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="RecyclerView通过其高度的可定制性深受大家的青睐"/>-->
+            <!--</LinearLayout>-->
+
+
+            <!--<ImageView-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/empty_photo" />-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/empty_photo" />-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/empty_photo" />-->
 
         </LinearLayout>
 

@@ -21,6 +21,13 @@ public class CircleManager extends BaseDao<Circle> {
         super(context);
     }
 
+    public boolean isExists(long circleId) {
+        if (circleId <= 0) return false;
+        if (daoSession.getCircleDao().load(circleId) != null)
+            return true;
+        return false;
+    }
+
     public long save(Circle model) {
         if (model == null) return 0;
         return daoSession.getCircleDao().insertOrReplace(model);
@@ -98,9 +105,10 @@ public class CircleManager extends BaseDao<Circle> {
         }
     }
 
-    public List<CircleExt> getAll() {
+    public List<CircleExt> getCircles(int pageCount) {
         List<Circle> infos = daoSession.getCircleDao().queryBuilder()
                 .orderDesc(CircleDao.Properties.CircleId)
+                .limit(pageCount)
                 .list();
         if (infos == null || infos.size() <= 0) return null;
         List<CircleExt> exts = new ArrayList<>(infos.size());
@@ -128,6 +136,8 @@ public class CircleManager extends BaseDao<Circle> {
             ext = new CircleExt(CircleExt.CircleIndexItem);
             ext.setInfo(infos.get(i));
             ext.setImages(getImages(infos.get(i).getCircleId()));
+            ext.setComments(getComments(infos.get(i).getCircleId()));
+            ext.setLikes(getLikes(infos.get(i).getCircleId()));
             exts.add(ext);
         }
         return exts;

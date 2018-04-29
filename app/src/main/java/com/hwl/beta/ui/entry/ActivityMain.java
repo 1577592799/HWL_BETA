@@ -93,6 +93,7 @@ public class ActivityMain extends FragmentActivity {
             EventBus.getDefault().register(this);
         }
         activity.registerReceiver(networkBroadcastReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        SQLiteStudioService.instance().start(this);
     }
 
     @Override

@@ -13,8 +13,17 @@ public class NetUserFriendInfo {
     private String Country;
     private String Province;
     private int Sex;
-    public String CircleBackImage ;
-    public String LifeNotes ;
+    public String CircleBackImage;
+    public String LifeNotes;
+    public String UpdateTime;
+
+    public String getUpdateTime() {
+        return UpdateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        UpdateTime = updateTime;
+    }
 
     public int getSex() {
         return Sex;

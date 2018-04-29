@@ -24,6 +24,7 @@ import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
+import com.hwl.beta.net.circle.NetCircleMatchInfo;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
@@ -66,7 +67,7 @@ public class ActivityCircleIndex extends FragmentActivity {
     ActivityCircleIndexBinding binding;
     List<CircleExt> circles;
     CircleIndexAdapter circleAdapter;
-    boolean isDataChange = false;
+    //    boolean isDataChange = false;
     int pageCount = 15;
     long myUserId;
 
@@ -95,6 +96,14 @@ public class ActivityCircleIndex extends FragmentActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshInfo(Integer ebType) {
+        if (ebType == EventBusConstant.EB_TYPE_CIRCLE_INFO_UPDATE) {
+            binding.refreshLayout.autoRefresh();
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void addComment(EventActionCircleComment action) {
@@ -148,37 +157,37 @@ public class ActivityCircleIndex extends FragmentActivity {
         binding.refreshLayout.setEnableLoadMore(false);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveInfo();
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        saveInfo();
+//    }
 
-    private void saveInfo() {
-        if (!isDataChange || circles == null || circles.size() <= 0) return;
-        Log.d("ActivityCircleIndex", "save circle info");
-        isDataChange = false;
-        Observable.fromIterable(circles.subList(0, (pageCount > circles.size() ? circles.size() : pageCount)))
-                .subscribeOn(Schedulers.io())
-                .doOnNext(new Consumer<CircleExt>() {
-                    @Override
-                    public void accept(CircleExt circleExt) throws Exception {
-                        if (circleExt != null && circleExt.getInfo() != null) {
-                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
-                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
-                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
-                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
-                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
-                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
-                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
-                        }
-                    }
-                })
-                .subscribe();
-    }
+//    private void saveInfo() {
+//        if (!isDataChange || circles == null || circles.size() <= 0) return;
+////        Log.d("ActivityCircleIndex", "save circle info");
+//        isDataChange = false;
+//        Observable.fromIterable(circles.subList(0, (pageCount > circles.size() ? circles.size() : pageCount)))
+//                .subscribeOn(Schedulers.io())
+//                .doOnNext(new Consumer<CircleExt>() {
+//                    @Override
+//                    public void accept(CircleExt circleExt) throws Exception {
+//                        if (circleExt != null && circleExt.getInfo() != null) {
+//                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
+//                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
+//                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
+//                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
+//                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
+//                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
+//                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
+//                        }
+//                    }
+//                })
+//                .subscribe();
+//    }
 
     private List<CircleExt> getCircles() {
-        List<CircleExt> infos = DaoUtils.getCircleManagerInstance().getAll();
+        List<CircleExt> infos = DaoUtils.getCircleManagerInstance().getCircles(pageCount);
         if (infos == null) {
             infos = new ArrayList<>();
         }
@@ -207,12 +216,27 @@ public class ActivityCircleIndex extends FragmentActivity {
         }
     }
 
+    /*
+     * 首先获取本地已经存在的第一页的数据id和updatetime
+     * 根据id和updatetime去服务器请求数据，如果服务器端获取的数据中有存在的，就匹配是否需要更新，如果要更新则返回到客户端，否则返回null
+     * 客户端同样也要再次进行判断，如果更新时间不匹配，则进行存储，否则不存储到本地
+     * */
     private void loadCircleFromServer(final long minCircleId) {
         if (!NetworkUtils.isConnected()) {
             showResult();
             return;
         }
-        CircleService.getCircleInfos(minCircleId, pageCount)
+
+        List<NetCircleMatchInfo> circleMatchInfos = new ArrayList<>();
+        if (minCircleId <= 0) {
+            for (int i = 0; i < circles.size(); i++) {
+                if (circles.get(i).getInfo() != null && circles.get(i).getInfo().getCircleId() > 0) {
+                    circleMatchInfos.add(new NetCircleMatchInfo(circles.get(i).getInfo().getCircleId(), circles.get(i).getInfo().getUpdateTime()));
+                }
+            }
+        }
+
+        CircleService.getCircleInfos(minCircleId, pageCount, circleMatchInfos)
                 .flatMap(new NetDefaultFunction<GetCircleInfosResponse, NetCircleInfo>() {
                     @Override
                     protected ObservableSource<NetCircleInfo> onSuccess(GetCircleInfosResponse response) {
@@ -236,6 +260,20 @@ public class ActivityCircleIndex extends FragmentActivity {
                             return circleBean;
                         }
                         return circleBean;
+                    }
+                })
+                .doOnNext(new Consumer<CircleExt>() {
+                    @Override
+                    public void accept(CircleExt circleExt) throws Exception {
+                        if (circleExt != null && circleExt.getInfo() != null) {
+                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
+                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
+                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
+                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
+                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
+                        }
                     }
                 })
                 .subscribe(new Observer<CircleExt>() {
@@ -287,9 +325,9 @@ public class ActivityCircleIndex extends FragmentActivity {
                             circleAdapter.notifyItemRangeChanged(0, circles.size());
                         }
 
-                        if (updateCount > 0 || insertCount > 0) {
-                            isDataChange = true;
-                        }
+//                        if (updateCount > 0 || insertCount > 0) {
+//                            isDataChange = true;
+//                        }
                     }
                 });
     }

@@ -35,6 +35,7 @@ public class Friend extends BaseObservable implements Serializable {
     private String messageCount;
     @Transient
     private int imageRes;
+    private String updateTime;
 
     @Bindable
     public String getMessageCount() {
@@ -56,10 +57,9 @@ public class Friend extends BaseObservable implements Serializable {
         this.imageRes = imageRes;
     }
 
-    @Generated(hash = 2012407895)
-    public Friend(long id, String symbol, String name, String remark,
-                  String firstLetter, String headImage, String lifeNotes, int sex,
-                  String circleBackImage, String country, String province) {
+    @Generated(hash = 1893035974)
+    public Friend(long id, String symbol, String name, String remark, String firstLetter, String headImage, String lifeNotes, int sex, String circleBackImage, String country, String province,
+            String updateTime) {
         this.id = id;
         this.symbol = symbol;
         this.name = name;
@@ -71,6 +71,7 @@ public class Friend extends BaseObservable implements Serializable {
         this.circleBackImage = circleBackImage;
         this.country = country;
         this.province = province;
+        this.updateTime = updateTime;
     }
 
     @Generated(hash = 287143722)
@@ -163,5 +164,18 @@ public class Friend extends BaseObservable implements Serializable {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s-%s-%s-%s-%s-%s-%s-%s-%s-%s", this.id, this.symbol, this.name, this.remark, this.headImage, this.lifeNotes, this.sex, this.circleBackImage, this.country, this.province);
+    }
+
+    public String getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }

@@ -202,17 +202,22 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-//    public static void toCircleDetailActivity(Activity context, long circleId) {
-//        Intent intent = new Intent(context, ActivityCircleDetail.class);
-//        intent.putExtra("circleid", circleId);
-//        context.startActivity(intent);
-//    }
+    public static void toCircleDetailActivity(Activity context, long circleId) {
+        toCircleDetailActivity(context, circleId, null);
+    }
 
     public static void toCircleDetailActivity(Activity context, CircleExt info) {
+        toCircleDetailActivity(context, 0, info);
+    }
+
+    public static void toCircleDetailActivity(Activity context, long circleId, CircleExt info) {
         Intent intent = new Intent(context, ActivityCircleDetail.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("circleext", info);
-        intent.putExtras(bundle);
+        if (info != null && info.getInfo() != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("circleext", info);
+            intent.putExtras(bundle);
+        }
+        intent.putExtra("circleid", circleId);
         context.startActivity(intent);
     }
 }

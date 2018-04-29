@@ -6,13 +6,63 @@ package com.hwl.beta.ui.user.bean;
 
 public class UserIndexBean {
 
+    public static final int IDCARD_FRIEND = 1;
+    public static final int IDCARD_MINE = 2;
+    public static final int IDCARD_OTHER = 3;
+
     private long userId;
     private String showName;
     private String userImage;
     private String symbol;
     private String remark;
     private String registerAddress;
-    private boolean isFriend;
+    private String userCircleBackImage;
+    private String userLifeNotes;
+    private int idcard;
+    private String[] circleImages;
+    private String[] circleTexts;
+
+    public boolean isFriend;
+
+    public String[] getCircleImages() {
+        return circleImages;
+    }
+
+    public void setCircleImages(String[] circleImages) {
+        this.circleImages = circleImages;
+    }
+
+    public String[] getCircleTexts() {
+        return circleTexts;
+    }
+
+    public void setCircleTexts(String[] circleTexts) {
+        this.circleTexts = circleTexts;
+    }
+
+    public int getIdcard() {
+        return idcard;
+    }
+
+    public void setIdcard(int idcard) {
+        this.idcard = idcard;
+    }
+
+    public String getUserCircleBackImage() {
+        return userCircleBackImage;
+    }
+
+    public void setUserCircleBackImage(String userCircleBackImage) {
+        this.userCircleBackImage = userCircleBackImage;
+    }
+
+    public String getUserLifeNotes() {
+        return userLifeNotes;
+    }
+
+    public void setUserLifeNotes(String userLifeNotes) {
+        this.userLifeNotes = userLifeNotes;
+    }
 
     public UserIndexBean() {
     }
@@ -29,14 +79,6 @@ public class UserIndexBean {
 
     public void setUserImage(String userImage) {
         this.userImage = userImage;
-    }
-
-    public boolean isFriend() {
-        return isFriend;
-    }
-
-    public void setFriend(boolean friend) {
-        isFriend = friend;
     }
 
     public String getShowName() {

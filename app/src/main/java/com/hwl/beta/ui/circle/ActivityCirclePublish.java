@@ -26,6 +26,7 @@ import com.hwl.beta.net.resx.ResxType;
 import com.hwl.beta.net.resx.UploadService;
 import com.hwl.beta.net.resx.body.UpResxResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.dialog.LoadingDialog;
@@ -34,6 +35,8 @@ import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
 import com.hwl.beta.utils.ScreenUtils;
 import com.hwl.beta.utils.StringUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -261,6 +264,7 @@ public class ActivityCirclePublish extends FragmentActivity {
                         LoadingDialog.hide();
                         if (res != null && res.getCircleId() > 0) {
                             Toast.makeText(getApplicationContext(), "发布成功", Toast.LENGTH_SHORT).show();
+                            EventBus.getDefault().post(EventBusConstant.EB_TYPE_CIRCLE_INFO_UPDATE);
                             finish();
                         } else {
                             onError("发布失败");

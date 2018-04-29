@@ -2,6 +2,8 @@ package com.hwl.beta.sp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.hwl.beta.HWLApp;
 import com.hwl.beta.net.user.NetUserInfo;
@@ -23,6 +25,8 @@ public class UserSP {
     private static final String USER_CIRCLEBACKIMAGE = "CircleBackImage";
     private static final String USER_USERSEX = "UserSex";
     private static final String USER_LIFENOTES = "LifeNotes";
+    private static final String USER_REGISTERPOSIDLIST = "RegisterPosIdList";
+    private static final String USER_REGISTERPOSLIST = "RegisterPosList";
     private static final String USER_FRIENDCOUNT = "FriendCount";
 
     private static SharedPreferences getSP() {
@@ -80,6 +84,7 @@ public class UserSP {
     public static String getUserSymbol() {
         return getSP().getString(USER_SYMBOL, null);
     }
+
     public static String getUserCirclebackimage() {
         return getSP().getString(USER_CIRCLEBACKIMAGE, null);
     }
@@ -128,6 +133,8 @@ public class UserSP {
         editor.putString(USER_HEADIMAGE, user.getHeadImage());
         editor.putString(USER_CIRCLEBACKIMAGE, user.getCircleBackImage());
         editor.putString(USER_LIFENOTES, user.getLifeNotes());
+        editor.putString(USER_REGISTERPOSIDLIST, user.getRegisterPosIdList().toString());
+        editor.putString(USER_REGISTERPOSLIST, user.getRegisterPosList().toString());
         editor.commit();
     }
 
@@ -154,7 +161,17 @@ public class UserSP {
         user.setHeadImage(prefs.getString(USER_HEADIMAGE, null));
         user.setCircleBackImage(prefs.getString(USER_CIRCLEBACKIMAGE, null));
         user.setLifeNotes(prefs.getString(USER_LIFENOTES, null));
+        user.setRegisterPosList(prefs.getString(USER_REGISTERPOSLIST, null).split(","));
         return user;
+    }
+
+    public static String getRegisterAddress() {
+        String address = getSP().getString(USER_REGISTERPOSLIST, null);
+        if (StringUtils.isNotBlank(address)) {
+            String[] str = address.split(",");
+            return str[0] + str[1];
+        }
+        return "";
     }
 
     public static void clearUserInfo() {

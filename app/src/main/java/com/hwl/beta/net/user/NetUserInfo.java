@@ -15,6 +15,13 @@ public class NetUserInfo {
         return showName;
     }
 
+    public String getRegisterAddress() {
+        if (this.RegisterPosList != null) {
+            return this.RegisterPosList[0] + " " + this.RegisterPosList[1];
+        }
+        return "";
+    }
+
     private long Id;
     private String Symbol;
     private String Email;

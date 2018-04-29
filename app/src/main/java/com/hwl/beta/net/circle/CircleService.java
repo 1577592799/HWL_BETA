@@ -29,11 +29,20 @@ import retrofit2.http.POST;
 
 public class CircleService {
 
-    public static Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(long minCircleId, int pageCount) {
+    public static Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(long viewUserId, long minCircleId, int pageCount) {
+        return getCircleInfos(viewUserId, minCircleId, pageCount, null);
+    }
+
+    public static Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(long minCircleId, int pageCount, List<NetCircleMatchInfo> circleMatchInfos) {
+        return getCircleInfos(0, minCircleId, pageCount, circleMatchInfos);
+    }
+
+    public static Observable<ResponseBase<GetCircleInfosResponse>> getCircleInfos(long viewUserId, long minCircleId, int pageCount, List<NetCircleMatchInfo> circleMatchInfos) {
         GetCircleInfosRequest requestBody = new GetCircleInfosRequest();
         requestBody.setUserId(UserSP.getUserId());
+        requestBody.setViewUserId(viewUserId);
         requestBody.setMinCircleId(minCircleId);
-//        requestBody.setPageIndex(pageIndex);
+        requestBody.setCircleMatchInfos(circleMatchInfos);
         requestBody.setCount(pageCount <= 0 ? 15 : pageCount);
         Observable<ResponseBase<GetCircleInfosResponse>> response = RetrofitUtils.createApi(ICircleService.class)
                 .getCircleInfos(new RequestBase(UserSP.getUserToken(), requestBody))
@@ -94,18 +103,18 @@ public class CircleService {
         return response;
     }
 
-    public static Observable<ResponseBase<GetUserCircleInfosResponse>> getUserCircleInfos(long viewUserId, long minCircleId, int pageCount) {
-        GetUserCircleInfosRequest requestBody = new GetUserCircleInfosRequest();
-        requestBody.setUserId(UserSP.getUserId());
-        requestBody.setViewUserId(viewUserId);
-        requestBody.setMinCircleId(minCircleId);
-        requestBody.setCount(pageCount <= 0 ? 15 : pageCount);
-        Observable<ResponseBase<GetUserCircleInfosResponse>> response = RetrofitUtils.createApi(ICircleService.class)
-                .getUserCircleInfos(new RequestBase(UserSP.getUserToken(), requestBody))
-                .subscribeOn(Schedulers.io());
-//                .observeOn(AndroidSchedulers.mainThread());
-        return response;
-    }
+//    public static Observable<ResponseBase<GetUserCircleInfosResponse>> getUserCircleInfos(long viewUserId, long minCircleId, int pageCount) {
+//        GetUserCircleInfosRequest requestBody = new GetUserCircleInfosRequest();
+//        requestBody.setUserId(UserSP.getUserId());
+//        requestBody.setViewUserId(viewUserId);
+//        requestBody.setMinCircleId(minCircleId);
+//        requestBody.setCount(pageCount <= 0 ? 15 : pageCount);
+//        Observable<ResponseBase<GetUserCircleInfosResponse>> response = RetrofitUtils.createApi(ICircleService.class)
+//                .getUserCircleInfos(new RequestBase(UserSP.getUserToken(), requestBody))
+//                .subscribeOn(Schedulers.io());
+////                .observeOn(AndroidSchedulers.mainThread());
+//        return response;
+//    }
 
     public static Observable<ResponseBase<GetCircleDetailResponse>> getCircleDetail(long circleId) {
         GetCircleDetailRequest requestBody = new GetCircleDetailRequest();

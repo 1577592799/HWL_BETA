@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityUserIndexBinding;
 import com.hwl.beta.db.DaoUtils;
@@ -22,15 +25,17 @@ import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.DeleteFriendResponse;
+import com.hwl.beta.net.user.body.GetUserDetailsResponse;
 import com.hwl.beta.sp.UserSP;
-import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventDeleteFriend;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
+import com.hwl.beta.ui.convert.DBFriendAction;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.user.action.IUserIndexListener;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.user.bean.UserIndexBean;
+import com.hwl.beta.utils.DisplayUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,11 +48,13 @@ public class ActivityUserIndex extends FragmentActivity {
     Activity activity;
     UserIndexBean userBean;
     UserIndexListener indexListener;
+    Friend friend;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
+
         userBean = new UserIndexBean(
                 getIntent().getLongExtra("userid", 0),
                 getIntent().getStringExtra("username"),
@@ -58,25 +65,31 @@ public class ActivityUserIndex extends FragmentActivity {
             finish();
         }
 
-        Friend friend = DaoUtils.getFriendManagerInstance().get(userBean.getUserId());
+        friend = DaoUtils.getFriendManagerInstance().get(userBean.getUserId());
         if (friend != null) {
-            userBean.setFriend(true);
+            userBean.setIdcard(UserIndexBean.IDCARD_FRIEND);
+            userBean.setShowName(friend.getName());
+            userBean.setUserImage(friend.getHeadImage());
             userBean.setRegisterAddress(friend.getCountry());
             userBean.setRemark(friend.getRemark());
             userBean.setSymbol(friend.getSymbol());
+            userBean.setUserCircleBackImage(friend.getCircleBackImage());
+            userBean.setUserLifeNotes(friend.getLifeNotes());
         } else if (userBean.getUserId() == UserSP.getUserId()) {
             NetUserInfo netUserInfo = UserSP.getUserInfo();
+            userBean.setIdcard(UserIndexBean.IDCARD_MINE);
+            userBean.setUserImage(netUserInfo.getHeadImage());
             userBean.setSymbol(netUserInfo.getSymbol());
             userBean.setShowName(netUserInfo.getShowName());
-//            userBean.setRemark("");
+            userBean.setRegisterAddress(netUserInfo.getRegisterAddress());
+            userBean.setUserCircleBackImage(netUserInfo.getCircleBackImage());
+            userBean.setUserLifeNotes(netUserInfo.getLifeNotes());
         } else {
-            userBean.setFriend(false);
+            userBean.setIdcard(UserIndexBean.IDCARD_OTHER);
         }
         indexListener = new UserIndexListener();
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_user_index);
         binding.setAction(indexListener);
-        binding.setImage(new ImageViewBean(userBean.getUserImage()));
-        binding.setUser(userBean);
 
         binding.tbTitle.setTitle("用户详情")
                 .setImageRightResource(R.drawable.v_more)
@@ -94,6 +107,98 @@ public class ActivityUserIndex extends FragmentActivity {
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        initData();
+        loadFriendInfo();
+    }
+
+    private void initData() {
+        ImageViewBean.loadImage(binding.ivHeader, userBean.getUserImage());
+        binding.tvName.setText(userBean.getShowName());
+        binding.tvArea.setText(userBean.getRegisterAddress());
+
+        if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
+            binding.tvSymbol.setVisibility(View.GONE);
+        } else {
+            binding.tvSymbol.setVisibility(View.VISIBLE);
+            binding.tvSymbol.setText(userBean.getSymbol());
+        }
+
+        if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
+            binding.llRemark.setVisibility(View.VISIBLE);
+            binding.tvRemark.setText(userBean.getRemark());
+        } else {
+            binding.llRemark.setVisibility(View.GONE);
+        }
+
+        this.setCircleImages();
+        this.setCircleTexts();
+    }
+
+    private void setCircleImages() {
+        if (userBean.getCircleImages() == null || userBean.getCircleImages().length <= 0) return;
+
+        binding.fblCircleContainer.removeAllViews();
+        int size = DisplayUtils.dp2px(activity, 25);
+        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
+        params.leftMargin = 10;
+        for (int i = 0; i < userBean.getCircleImages().length; i++) {
+            ImageView iv = new ImageView(activity);
+            iv.setLayoutParams(params);
+            ImageViewBean.loadImage(iv, userBean.getCircleImages()[i]);
+            binding.fblCircleContainer.addView(iv);
+        }
+    }
+
+    private void setCircleTexts() {
+        if (userBean.getCircleTexts() == null || userBean.getCircleTexts().length <= 0) return;
+
+        binding.fblCircleContainer.removeAllViews();
+        int size = DisplayUtils.dp2px(activity, 25);
+        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
+        params.leftMargin = 5;
+        params.rightMargin = 5;
+        params.topMargin = 5;
+        params.bottomMargin = 5;
+        for (int i = 0; i < userBean.getCircleTexts().length; i++) {
+            TextView tv = new TextView(activity);
+            tv.setLayoutParams(params);
+            binding.fblCircleContainer.addView(tv);
+        }
+    }
+
+    private void loadFriendInfo() {
+        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) return;
+        UserService.getUserDetails(userBean.getUserId())
+                .subscribe(new NetDefaultObserver<GetUserDetailsResponse>() {
+                    @Override
+                    protected void onSuccess(GetUserDetailsResponse response) {
+                        if (response.getUserDetailsInfo() != null) {
+
+                            userBean.setShowName(response.getUserDetailsInfo().getName());
+                            userBean.setUserImage(response.getUserDetailsInfo().getHeadImage());
+                            userBean.setRegisterAddress(response.getUserDetailsInfo().getCountry());
+                            userBean.setRemark(response.getUserDetailsInfo().getNameRemark());
+                            userBean.setSymbol(response.getUserDetailsInfo().getSymbol());
+                            userBean.setUserCircleBackImage(response.getUserDetailsInfo().getCircleBackImage());
+                            userBean.setUserLifeNotes(response.getUserDetailsInfo().getLifeNotes());
+
+                            initData();
+
+                            if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND && friend != null) {
+                                Friend tempFriend = DBFriendAction.convertToFriendInfo(response.getUserDetailsInfo());
+                                if (!tempFriend.toString().equals(friend.toString())) {
+                                    DaoUtils.getFriendManagerInstance().save(tempFriend);
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
     private void showUserActionDialog() {
         final Dialog actionDialog = new Dialog(activity, R.style.BottomDialog);
         LinearLayout root = (LinearLayout) LayoutInflater.from(activity).inflate(
@@ -102,7 +207,7 @@ public class ActivityUserIndex extends FragmentActivity {
         root.findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!userBean.isFriend()) {
+                if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
                     Toast.makeText(activity, "对方还不是你的好友", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -134,11 +239,10 @@ public class ActivityUserIndex extends FragmentActivity {
         actionDialog.setContentView(root);
         Window dialogWindow = actionDialog.getWindow();
         dialogWindow.setGravity(Gravity.BOTTOM);
-//        dialogWindow.setWindowAnimations(R.style.dialogstyle); // 添加动画
         WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
         lp.x = 0; // 新位置X坐标
         lp.y = 0; // 新位置Y坐标
-        lp.width = (int) getResources().getDisplayMetrics().widthPixels; // 宽度
+        lp.width = getResources().getDisplayMetrics().widthPixels; // 宽度
         root.measure(0, 0);
         lp.height = root.getMeasuredHeight();
 
@@ -156,7 +260,7 @@ public class ActivityUserIndex extends FragmentActivity {
 
         @Override
         public void onCircleClick() {
-
+            UITransfer.toCircleUserIndexActivity(activity, userBean.getUserId(), userBean.getShowName(), userBean.getUserImage(), userBean.getUserCircleBackImage(), userBean.getUserLifeNotes());
         }
 
         @Override

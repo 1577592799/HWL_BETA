@@ -11,7 +11,7 @@ public class NetCircleInfo {
     private int ContentType;
     private String CircleContent;
     private Date PublishTime;
-    private Date UpdateTime;
+    private String UpdateTime;
     private int PosId;
     private String PosDesc;
     private double Lon;
@@ -33,11 +33,11 @@ public class NetCircleInfo {
     private String PublishUserName;
     private String PublishUserImage;
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return UpdateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         UpdateTime = updateTime;
     }
 
