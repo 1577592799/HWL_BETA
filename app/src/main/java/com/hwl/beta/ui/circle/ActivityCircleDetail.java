@@ -367,7 +367,6 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onContentClick(CircleComment comment) {
             itemListener.onCommentContentClick(comment);
-
         }
     }
 }
