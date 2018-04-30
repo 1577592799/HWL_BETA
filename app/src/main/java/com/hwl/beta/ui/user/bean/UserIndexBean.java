@@ -1,5 +1,7 @@
 package com.hwl.beta.ui.user.bean;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2018/4/2.
  */
@@ -19,26 +21,26 @@ public class UserIndexBean {
     private String userCircleBackImage;
     private String userLifeNotes;
     private int idcard;
-    private String[] circleImages;
-    private String[] circleTexts;
+    private List<String> circleImages;
+    private List<String> circleTexts;
 
-    public boolean isFriend;
-
-    public String[] getCircleImages() {
+    public List<String> getCircleImages() {
         return circleImages;
     }
 
-    public void setCircleImages(String[] circleImages) {
+    public void setCircleImages(List<String> circleImages) {
         this.circleImages = circleImages;
     }
 
-    public String[] getCircleTexts() {
+    public List<String> getCircleTexts() {
         return circleTexts;
     }
 
-    public void setCircleTexts(String[] circleTexts) {
+    public void setCircleTexts(List<String> circleTexts) {
         this.circleTexts = circleTexts;
     }
+
+    public boolean isFriend;
 
     public int getIdcard() {
         return idcard;

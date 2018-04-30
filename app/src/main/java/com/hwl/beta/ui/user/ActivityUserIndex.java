@@ -16,11 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayout;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityUserIndexBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.Friend;
+import com.hwl.beta.emotion.widget.EmotionTextView;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.net.user.UserService;
@@ -119,12 +121,24 @@ public class ActivityUserIndex extends FragmentActivity {
         ImageViewBean.loadImage(binding.ivHeader, userBean.getUserImage());
         binding.tvName.setText(userBean.getShowName());
         binding.tvArea.setText(userBean.getRegisterAddress());
+        binding.tvNotes.setText(userBean.getUserLifeNotes());
 
         if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
             binding.tvSymbol.setVisibility(View.GONE);
+            binding.llNotes.setVisibility(View.GONE);
+            binding.llCircles.setVisibility(View.GONE);
+            binding.llArea.setVisibility(View.GONE);
+            binding.btnAddFriend.setVisibility(View.VISIBLE);
         } else {
             binding.tvSymbol.setVisibility(View.VISIBLE);
+            binding.llNotes.setVisibility(View.VISIBLE);
+            binding.llCircles.setVisibility(View.VISIBLE);
+            binding.llArea.setVisibility(View.VISIBLE);
+            binding.btnAddFriend.setVisibility(View.GONE);
             binding.tvSymbol.setText(userBean.getSymbol());
+
+            this.setCircleImages();
+            this.setCircleTexts();
         }
 
         if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
@@ -133,38 +147,41 @@ public class ActivityUserIndex extends FragmentActivity {
         } else {
             binding.llRemark.setVisibility(View.GONE);
         }
-
-        this.setCircleImages();
-        this.setCircleTexts();
     }
 
     private void setCircleImages() {
-        if (userBean.getCircleImages() == null || userBean.getCircleImages().length <= 0) return;
+        if (userBean.getCircleImages() == null || userBean.getCircleImages().size() <= 0) return;
 
         binding.fblCircleContainer.removeAllViews();
-        int size = DisplayUtils.dp2px(activity, 25);
+        int size = DisplayUtils.dp2px(activity, 80);
         FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
         params.leftMargin = 10;
-        for (int i = 0; i < userBean.getCircleImages().length; i++) {
+        for (int i = 0; i < userBean.getCircleImages().size(); i++) {
             ImageView iv = new ImageView(activity);
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            ImageViewBean.loadImage(iv, userBean.getCircleImages().get(i));
             iv.setLayoutParams(params);
-            ImageViewBean.loadImage(iv, userBean.getCircleImages()[i]);
             binding.fblCircleContainer.addView(iv);
         }
     }
 
     private void setCircleTexts() {
-        if (userBean.getCircleTexts() == null || userBean.getCircleTexts().length <= 0) return;
+        if (userBean.getCircleTexts() == null || userBean.getCircleTexts().size() <= 0) return;
 
         binding.fblCircleContainer.removeAllViews();
-        int size = DisplayUtils.dp2px(activity, 25);
-        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
+        binding.fblCircleContainer.setFlexWrap(FlexWrap.WRAP);
+        binding.fblCircleContainer.setBackgroundColor(getResources().getColor(R.color.color_f3f3f3));
+        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(FlexboxLayout.LayoutParams.MATCH_PARENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+//        params.width= FlexboxLayout.LayoutParams.MATCH_PARENT;
+//        params.height=FlexboxLayout.LayoutParams.WRAP_CONTENT;
         params.leftMargin = 5;
         params.rightMargin = 5;
         params.topMargin = 5;
         params.bottomMargin = 5;
-        for (int i = 0; i < userBean.getCircleTexts().length; i++) {
-            TextView tv = new TextView(activity);
+        for (int i = 0; i < userBean.getCircleTexts().size(); i++) {
+            EmotionTextView tv = new EmotionTextView(activity);
+            tv.setPadding(5,5,5,5);
+            tv.setText(userBean.getCircleTexts().get(i));
             tv.setLayoutParams(params);
             binding.fblCircleContainer.addView(tv);
         }
@@ -185,6 +202,8 @@ public class ActivityUserIndex extends FragmentActivity {
                             userBean.setSymbol(response.getUserDetailsInfo().getSymbol());
                             userBean.setUserCircleBackImage(response.getUserDetailsInfo().getCircleBackImage());
                             userBean.setUserLifeNotes(response.getUserDetailsInfo().getLifeNotes());
+                            userBean.setCircleImages(response.getUserDetailsInfo().getCircleImages());
+                            userBean.setCircleTexts(response.getUserDetailsInfo().getCircleTexts());
 
                             initData();
 

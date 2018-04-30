@@ -250,7 +250,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<NetCircleInfo, CircleExt>() {
                     @Override
-                    public CircleExt apply(NetCircleInfo info) throws Exception {
+                    public CircleExt apply(NetCircleInfo info) {
                         CircleExt circleBean = new CircleExt(CircleExt.CircleIndexItem);
                         if (info != null && info.getCircleId() > 0) {
                             circleBean.setInfo(DBCircleAction.convertToCircleInfo(info));
@@ -264,7 +264,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                 })
                 .doOnNext(new Consumer<CircleExt>() {
                     @Override
-                    public void accept(CircleExt circleExt) throws Exception {
+                    public void accept(CircleExt circleExt) {
                         if (circleExt != null && circleExt.getInfo() != null) {
                             DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
                             DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
@@ -449,7 +449,7 @@ public class ActivityCircleIndex extends FragmentActivity {
         }
 
         @Override
-        public void onDeleteClick() {
+        public void onDeleteClick(Circle info) {
             new AlertDialog.Builder(activity)
                     .setMessage("信息删除后,不能恢复,确认删除 ?")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {

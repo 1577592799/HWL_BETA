@@ -108,8 +108,7 @@
             android:background="@color/white"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:visibility="@{ user.isFriend?View.VISIBLE : View.GONE}">
+            android:paddingTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -125,6 +124,34 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:text="registerAddress"
+                android:textColor="@color/color_424242" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="个性签名" />
+
+            <TextView
+                android:id="@+id/tv_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="lifenotes"
                 android:textColor="@color/color_424242" />
 
         </LinearLayout>
@@ -151,8 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginRight="@dimen/dp_20"
-                android:background="@color/color_f3f3f3">
+                android:layout_marginRight="@dimen/dp_20">
 
             </com.google.android.flexbox.FlexboxLayout>
 

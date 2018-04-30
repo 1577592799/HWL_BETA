@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.utils.StringUtils;
 
@@ -38,7 +39,7 @@ public class ImageViewBean {
     public static void loadImage(ImageView view, String imageUrl) {
         if (StringUtils.isBlank(imageUrl))
             return;
-        Glide.with(view.getContext()).load(imageUrl)
+        Glide.with(HWLApp.getContext()).load(imageUrl)
                 .placeholder(R.drawable.empty_photo)
                 .error(R.drawable.empty_photo)
                 .dontAnimate()

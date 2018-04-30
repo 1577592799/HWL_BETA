@@ -1,5 +1,7 @@
 package com.hwl.beta.net.user;
 
+import java.util.List;
+
 public class UserDetailsInfo {
     private int Id;
     private String Symbol;
@@ -17,6 +19,24 @@ public class UserDetailsInfo {
     private boolean IsFriend;
     private String FirstSpell;
     private String UpdateTime;
+    private List<String> CircleImages;
+    private List<String> CircleTexts;
+
+    public List<String> getCircleImages() {
+        return CircleImages;
+    }
+
+    public void setCircleImages(List<String> circleImages) {
+        CircleImages = circleImages;
+    }
+
+    public List<String> getCircleTexts() {
+        return CircleTexts;
+    }
+
+    public void setCircleTexts(List<String> circleTexts) {
+        CircleTexts = circleTexts;
+    }
 
     public int getId() {
         return Id;

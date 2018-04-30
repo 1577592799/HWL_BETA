@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:background="@color/white"
+        android:background="@drawable/bg_bottom_border"
         android:padding="@dimen/dp_10">
 
         <ImageView
@@ -55,6 +55,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/ic_delete"
+            android:onClick="@{(view)->action.onDeleteClick(info)}"
             android:visibility="gone" />
 
         <com.hwl.beta.emotion.widget.EmotionTextView
@@ -213,6 +214,5 @@
             </RelativeLayout>
 
         </LinearLayout>
-
     </RelativeLayout>
 </layout>

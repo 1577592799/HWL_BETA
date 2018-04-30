@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.hwl.beta.R;
@@ -76,6 +77,12 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else if (holder instanceof CircleIndexItemViewHolder) {
             CircleIndexItemViewHolder viewHolder = (CircleIndexItemViewHolder) holder;
             viewHolder.setItemBinding(itemListener, position, new ImageViewBean(info.getInfo().getPublishUserImage()), info.getInfo(), info.getImages(), info.getLikes(), info.getComments());
+
+            if (info.getInfo().getPublishUserId() == myUserId) {
+                viewHolder.getItemBinding().ivDelete.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.getItemBinding().ivDelete.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -99,11 +106,7 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if (comments == null) return;
         comments.add(comment);
-        if (position == -1) {
-            notifyItemChanged(0);
-        } else {
-            notifyItemChanged(position);
-        }
+        notifyItemChanged(position);
     }
 
     public void removeComment(CircleComment comment) {

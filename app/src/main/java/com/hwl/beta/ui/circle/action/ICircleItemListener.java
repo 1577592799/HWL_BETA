@@ -32,7 +32,7 @@ public interface ICircleItemListener {
 
     void onMoreCommentClick();
 
-    void onDeleteClick();
+    void onDeleteClick(Circle info);
 
     void onPublishClick();
 

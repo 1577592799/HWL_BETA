@@ -111,12 +111,12 @@ public class ActivityNewFriend extends FragmentActivity {
         @Override
         public void onAddClick(View view, final FriendRequest friendRequest) {
             LoadingDialog.show(activity);
-            UserService.addFriend(friendRequest.getFriendId(), friendRequest.getRemark())
+            UserService.addFriend(friendRequest.getFriendId(), friendRequest.getFriendName())
                     .subscribe(new NetDefaultObserver<AddFriendResponse>() {
                         @Override
                         protected void onSuccess(AddFriendResponse response) {
                             if (response != null && response.getStatus() == NetConstant.RESULT_SUCCESS && response.getFriendInfo() != null) {
-                                Toast.makeText(activity, "添加成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, "添加好友成功", Toast.LENGTH_SHORT).show();
                                 Friend friend = DBFriendAction.convertToFriendInfo(response.getFriendInfo());
                                 sendSuccessMessage(friend);//发送好友添加成功的聊天消息
                                 DaoUtils.getFriendManagerInstance().save(friend);
