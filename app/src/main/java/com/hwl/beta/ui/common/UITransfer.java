@@ -1,6 +1,7 @@
 package com.hwl.beta.ui.common;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -17,6 +18,8 @@ import com.hwl.beta.ui.entry.ActivityLogin;
 import com.hwl.beta.ui.entry.ActivityMain;
 import com.hwl.beta.ui.entry.ActivityRegister;
 import com.hwl.beta.ui.entry.ActivityWelcome;
+import com.hwl.beta.ui.group.ActivityGroup;
+import com.hwl.beta.ui.group.ActivityGroupAdd;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.near.ActivityCommentPublish;
 import com.hwl.beta.ui.near.ActivityNearPublish;
@@ -141,11 +144,15 @@ public class UITransfer {
         }
     }
 
-    public static void toChatGroupActivity(Activity context, String groupGuid, String groupName) {
+//    public static void toChatGroupActivity(Activity context, String groupGuid, String groupName) {
+//        toChatGroupActivity(context, groupGuid, groupName, 0);
+//    }
+
+    public static void toChatGroupActivity(Context context, String groupGuid, String groupName) {
         toChatGroupActivity(context, groupGuid, groupName, 0);
     }
 
-    public static void toChatGroupActivity(Activity context, String groupGuid, String groupName, long recordId) {
+    public static void toChatGroupActivity(Context context, String groupGuid, String groupName, long recordId) {
         Intent intent = new Intent(context, ActivityChatGroup.class);
         intent.putExtra("groupguid", groupGuid);
         intent.putExtra("groupname", groupName);
@@ -218,6 +225,16 @@ public class UITransfer {
             intent.putExtras(bundle);
         }
         intent.putExtra("circleid", circleId);
+        context.startActivity(intent);
+    }
+
+    public static void toGroupActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityGroup.class);
+        context.startActivity(intent);
+    }
+
+    public static void toGroupAddActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityGroupAdd.class);
         context.startActivity(intent);
     }
 }

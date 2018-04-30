@@ -204,6 +204,7 @@ public class FragmentUser extends BaseFragment {
                         UITransfer.toCircleIndexActivity(activity);
                         break;
                     case -2:
+                        UITransfer.toGroupActivity(activity);
                         break;
                     case -3:
                         UITransfer.toNewFriendActivity(activity);

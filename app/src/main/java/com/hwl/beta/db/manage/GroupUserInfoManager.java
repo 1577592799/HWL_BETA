@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.dao.GroupUserInfoDao;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
 
 import java.util.ArrayList;

@@ -1,11 +1,15 @@
 package com.hwl.beta.db.entity;
 
+import com.hwl.beta.db.ListStringConverter;
+
+import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Unique;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/2/10.
@@ -17,16 +21,20 @@ public class GroupInfo {
     private String groupName;
     private String groupImage;
     private int groupUserCount;
+    @Convert(columnType = String.class, converter = ListStringConverter.class)
+    private List<String> userImages;
     private String groupNote;
     @OrderBy("buildTime desc")
     private Date buildTime;
-    @Generated(hash = 1438844928)
+    @Generated(hash = 15614768)
     public GroupInfo(String groupGuid, String groupName, String groupImage,
-            int groupUserCount, String groupNote, Date buildTime) {
+            int groupUserCount, List<String> userImages, String groupNote,
+            Date buildTime) {
         this.groupGuid = groupGuid;
         this.groupName = groupName;
         this.groupImage = groupImage;
         this.groupUserCount = groupUserCount;
+        this.userImages = userImages;
         this.groupNote = groupNote;
         this.buildTime = buildTime;
     }
@@ -68,6 +76,12 @@ public class GroupInfo {
     }
     public void setBuildTime(Date buildTime) {
         this.buildTime = buildTime;
+    }
+    public List<String> getUserImages() {
+        return this.userImages;
+    }
+    public void setUserImages(List<String> userImages) {
+        this.userImages = userImages;
     }
 
 }

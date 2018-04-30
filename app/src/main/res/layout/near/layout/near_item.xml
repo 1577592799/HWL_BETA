@@ -68,7 +68,7 @@
             android:onClick="@{(view)->action.onContentClick(info)}"
             android:paddingBottom="@dimen/dp_5"
             android:paddingTop="@dimen/dp_5"
-            android:paddingLeft="@dimen/dp_20"
+            android:paddingRight="@dimen/dp_20"
             android:text="@{info.content}"
             android:textColor="@color/color_727270"
             android:textSize="15dp"

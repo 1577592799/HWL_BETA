@@ -7,6 +7,8 @@ import com.hwl.beta.db.dao.GroupInfoDao;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.utils.StringUtils;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 
 /**
@@ -19,9 +21,19 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
     }
 
     public void add(GroupInfo groupInfo) {
-        if(groupInfo==null||StringUtils.isBlank(groupInfo.getGroupGuid()))
+        if (groupInfo == null || StringUtils.isBlank(groupInfo.getGroupGuid()))
             return;
         daoSession.getGroupInfoDao().insertOrReplace(groupInfo);
+    }
+
+    public List<String> getGroupUserImages(String groupGuid) {
+        GroupInfo groupInfo = daoSession.getGroupInfoDao().queryBuilder()
+                .where(GroupInfoDao.Properties.GroupGuid.eq(groupGuid))
+                .unique();
+        if (groupInfo != null) {
+            return groupInfo.getUserImages();
+        }
+        return null;
     }
 
     public GroupInfo get(String groupGuid) {
@@ -40,5 +52,9 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
             return true;
         }
         return false;
+    }
+
+    public List<GroupInfo> getAll() {
+        return daoSession.getGroupInfoDao().loadAll();
     }
 }

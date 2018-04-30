@@ -15,12 +15,13 @@ import java.util.List;
 
 public class DBGroupAction {
 
-    public static GroupInfo convertToNearGroupInfo(String groupGuid, int groupUserCount) {
+    public static GroupInfo convertToNearGroupInfo(String groupGuid, int groupUserCount,List<String> groupUserImages) {
         GroupInfo groupInfo = new GroupInfo();
         groupInfo.setGroupGuid(groupGuid);
         groupInfo.setGroupName(UserPosSP.getNearDesc());
         groupInfo.setBuildTime(new Date());
         groupInfo.setGroupUserCount(groupUserCount);
+        groupInfo.setUserImages(groupUserImages);
         return groupInfo;
     }
 

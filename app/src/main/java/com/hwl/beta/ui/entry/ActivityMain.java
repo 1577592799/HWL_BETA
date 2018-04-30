@@ -244,14 +244,19 @@ public class ActivityMain extends FragmentActivity {
                             .subscribe(new NetDefaultObserver<SetUserPosResponse>() {
                                 @Override
                                 protected void onSuccess(SetUserPosResponse res) {
-                                    if (res != null && res.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                    if (res.getStatus() == NetConstant.RESULT_SUCCESS) {
                                         binding.tbTitle.setTitle(UserPosSP.getNearDesc());
 
                                         //往本地存储一份定位数据
                                         UserPosSP.setUserPos(res.getUserPosId(), res.getUserGroupGuid(), Float.parseFloat(request.getLatitude()), Float.parseFloat(request.getLongitude()), request.getCountry(), request.getProvince(), request.getCity(), request.getDistrict(), request.getStreet(), request.getDetails());
                                         if (res.getGroupUserInfos() != null && res.getGroupUserInfos().size() > 0) {
+                                            List<String> groupUserImages = new ArrayList<>();
+                                            for (int i = 0; i < res.getGroupUserInfos().size(); i++) {
+                                                groupUserImages.add(res.getGroupUserInfos().get(i).getUserHeadImage());
+                                                if (i >= 8) break;
+                                            }
                                             //保存组和组用户数据到本地
-                                            DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToNearGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size()));
+                                            DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToNearGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size(), groupUserImages));
                                             DaoUtils.getGroupUserInfoManagerInstance().addListAsync(DBGroupAction.convertToGroupUserInfos(res.getGroupUserInfos()));
                                         }
                                     }

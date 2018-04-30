@@ -58,10 +58,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
             case MQConstant.CHAT_RECORD_TYPE_GROUP:
                 itemBinding.ivGroupImage.setVisibility(View.VISIBLE);
                 itemBinding.ivRecordImage.setVisibility(View.GONE);
-                itemBinding.ivGroupImage.displayImage(DaoUtils.getGroupUserInfoManagerInstance().getTopUserImages(record.getGruopGuid()))
-                        .synthesizedWidthHeight(imageSize, imageSize)
-                        .defaultImage(R.drawable.empty_photo)
-                        .load();
+                List<String> groupUserImages = DaoUtils.getGroupInfoManagerInstance().getGroupUserImages(record.getGruopGuid());
+                if (groupUserImages != null && groupUserImages.size() > 0) {
+                    itemBinding.ivGroupImage.displayImage(groupUserImages)
+                            .synthesizedWidthHeight(imageSize, imageSize)
+                            .defaultImage(R.drawable.empty_photo)
+                            .load();
+                }
                 break;
             default:
                 itemBinding.ivGroupImage.setVisibility(View.GONE);
