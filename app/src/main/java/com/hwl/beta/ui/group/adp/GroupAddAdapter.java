@@ -25,10 +25,12 @@ public class GroupAddAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Friend> users;
     private UserActionItemBinding itemBinding;
+    private IGroupAddItemListener itemListener;
 
-    public GroupAddAdapter(Context context, List<Friend> users) {
+    public GroupAddAdapter(Context context, List<Friend> users, IGroupAddItemListener itemListener) {
         this.context = context;
         this.users = users;
+        this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
     }
 
@@ -59,6 +61,12 @@ public class GroupAddAdapter extends BaseAdapter {
         final Friend user = users.get(position);
         itemBinding.setUser(user);
         itemBinding.setImage(new ImageViewBean(user.getHeadImage()));
+        itemBinding.cbSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemListener.onCheckBoxClick(v, user, position);
+            }
+        });
 
         if (user.getId() <= 0) {
             itemBinding.tvLetter.setVisibility(View.GONE);
@@ -98,5 +106,9 @@ public class GroupAddAdapter extends BaseAdapter {
             }
         }
         return -1;
+    }
+
+    public interface IGroupAddItemListener {
+        void onCheckBoxClick(View v, Friend friend, int position);
     }
 }

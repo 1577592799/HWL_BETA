@@ -50,7 +50,7 @@ public abstract class NetDefaultObserver<T> implements Observer<ResponseBase<T>>
                     T t = response.getResponseBody();
                     onSuccess(t);
                 } else if (head.getResultCode().equals(NetConstant.RESPONSE_RELOGIN)) {
-                    relogin();
+                    onRelogin();
                 } else {
                     onError(head.getResultMessage());
                 }
@@ -67,8 +67,11 @@ public abstract class NetDefaultObserver<T> implements Observer<ResponseBase<T>>
             onError("网络请求超时");
         } else {
             //onError("网络请求异常，请稍后再试");
-            onError("网络请求异常:"+e.getMessage());
+            onError("网络请求异常:" + e.getMessage());
         }
+    }
+
+    protected void onRelogin() {
     }
 
     @Override
@@ -85,24 +88,5 @@ public abstract class NetDefaultObserver<T> implements Observer<ResponseBase<T>>
                 resultMessage = "数据请求失败";
             Toast.makeText(mContext, resultMessage, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void relogin() {
-//        final ReloginDialogFragment reloginFragment = new ReloginDialogFragment();
-//        reloginFragment.setReloginClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                UserSP.clearUserInfo();
-//                UserPosSP.clearPosInfo();
-//
-//                Intent intent = new Intent(context, WelcomeActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//
-//                reloginFragment.dismiss();
-//            }
-//        });
-//        reloginFragment.show(getSupportFragmentManager(), "ReloginDialogFragment");
     }
 }

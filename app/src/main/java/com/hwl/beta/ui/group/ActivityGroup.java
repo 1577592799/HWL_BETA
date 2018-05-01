@@ -13,8 +13,14 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityGroupBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.GroupInfo;
+import com.hwl.beta.ui.busbean.EventActionGroup;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.group.adp.GroupAdapter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +30,38 @@ public class ActivityGroup extends FragmentActivity {
     ActivityGroupBinding binding;
     Activity activity;
     List<GroupInfo> groupInfos;
+    GroupAdapter groupAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
         groupInfos = this.getGroupInfos();
-
+        groupAdapter = new GroupAdapter(activity, groupInfos);
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_group);
 
         initView();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateGroupInfo(EventActionGroup actionGroup) {
+        if (actionGroup == null || actionGroup.getGroupInfo() == null) return;
+        if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
+            groupInfos.add(actionGroup.getGroupInfo());
+            groupAdapter.notifyItemInserted(groupInfos.size() - 1);
+        } else if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            groupInfos.remove(actionGroup.getGroupInfo());
+            groupAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -51,7 +79,7 @@ public class ActivityGroup extends FragmentActivity {
                         UITransfer.toGroupAddActivity(activity);
                     }
                 });
-        binding.rvGroupContainer.setAdapter(new GroupAdapter(activity, groupInfos));
+        binding.rvGroupContainer.setAdapter(groupAdapter);
         binding.rvGroupContainer.setLayoutManager(new LinearLayoutManager(activity));
     }
 

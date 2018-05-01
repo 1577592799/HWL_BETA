@@ -7,6 +7,7 @@ import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.ChatUserMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
+import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.utils.ByteUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -63,6 +64,16 @@ public class MessageForward {
                 messageProcess = MessageProcess.getChatUserMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, ChatUserMessageBean.class));
+                }
+                break;
+            case MQConstant.GROUP_CREATE_MESSAGE:
+                int buildUserIdLength = bodyBytes[0];
+                int groupCreateIdLength = bodyBytes[1];
+                byte[] msgGroupBytes = ByteUtils.getPositionBytes(2 + buildUserIdLength + groupCreateIdLength, 0, bodyBytes);
+                bodyJson = new String(msgGroupBytes);
+                messageProcess = MessageProcess.getGroupCreateMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, GroupCreateMessageBean.class));
                 }
                 break;
         }

@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.sp.UserPosSP;
+import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.chat.ActivityChatGroup;
 import com.hwl.beta.ui.chat.ActivityChatUser;
 import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
@@ -13,6 +17,7 @@ import com.hwl.beta.ui.circle.ActivityCircleDetail;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
 import com.hwl.beta.ui.circle.ActivityCirclePublish;
 import com.hwl.beta.ui.circle.ActivityCircleUserIndex;
+import com.hwl.beta.ui.dialog.ReloginDialogFragment;
 import com.hwl.beta.ui.entry.ActivityGetpwd;
 import com.hwl.beta.ui.entry.ActivityLogin;
 import com.hwl.beta.ui.entry.ActivityMain;
@@ -20,6 +25,7 @@ import com.hwl.beta.ui.entry.ActivityRegister;
 import com.hwl.beta.ui.entry.ActivityWelcome;
 import com.hwl.beta.ui.group.ActivityGroup;
 import com.hwl.beta.ui.group.ActivityGroupAdd;
+import com.hwl.beta.ui.group.ActivityGroupSetting;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.near.ActivityCommentPublish;
 import com.hwl.beta.ui.near.ActivityNearPublish;
@@ -235,6 +241,31 @@ public class UITransfer {
 
     public static void toGroupAddActivity(Activity context) {
         Intent intent = new Intent(context, ActivityGroupAdd.class);
+        context.startActivity(intent);
+    }
+
+    public static void toReloginDialog(final FragmentActivity fragmentActivity) {
+        final ReloginDialogFragment reloginFragment = new ReloginDialogFragment();
+        reloginFragment.setReloginClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                UserSP.clearUserInfo();
+                UserPosSP.clearPosInfo();
+
+                Intent intent = new Intent(fragmentActivity, ActivityWelcome.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                fragmentActivity.startActivity(intent);
+
+                reloginFragment.dismiss();
+            }
+        });
+        reloginFragment.show(fragmentActivity.getSupportFragmentManager(), "ReloginDialogFragment");
+    }
+
+    public static void toGroupSettingActivity(Activity context, String groupGuid) {
+        Intent intent = new Intent(context, ActivityGroupSetting.class);
+        intent.putExtra("groupguid", groupGuid);
         context.startActivity(intent);
     }
 }

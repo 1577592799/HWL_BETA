@@ -10,6 +10,7 @@ public class MQConstant {
     public final static byte CHAT_FRIEND_REQUEST = 2;//添加成功后的消息
     public final static byte CHAT_USER_MESSAGE = 3;
     public final static byte CHAT_GROUP_MESSAGE = 4;
+    public final static byte GROUP_CREATE_MESSAGE = 5;
 
     public final static int CHAT_RECORD_TYPE_USER = 1;
     public final static int CHAT_RECORD_TYPE_GROUP = 2;

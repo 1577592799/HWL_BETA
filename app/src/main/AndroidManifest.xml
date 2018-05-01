@@ -74,6 +74,7 @@
         <activity android:name=".ui.circle.ActivityCircleDetail" />
         <activity android:name=".ui.group.ActivityGroup" />
         <activity android:name=".ui.group.ActivityGroupAdd" />
+        <activity android:name=".ui.group.ActivityGroupSetting" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

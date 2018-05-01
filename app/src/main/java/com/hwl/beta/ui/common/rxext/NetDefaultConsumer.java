@@ -35,6 +35,7 @@ public abstract class NetDefaultConsumer<T> implements Consumer<ResponseBase<T>>
                     T t = response.getResponseBody();
                     onSuccess(t);
                 } else if (head.getResultCode().equals(NetConstant.RESPONSE_RELOGIN)) {
+                    onRelogin();
                 } else {
                     onError(head.getResultMessage());
                 }
@@ -45,6 +46,9 @@ public abstract class NetDefaultConsumer<T> implements Consumer<ResponseBase<T>>
     }
 
     protected abstract void onSuccess(T response);
+
+    protected void onRelogin() {
+    }
 
     protected void onError(String resultMessage) {
         if (StringUtils.isBlank(resultMessage))

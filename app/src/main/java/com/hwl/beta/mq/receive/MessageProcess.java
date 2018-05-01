@@ -14,9 +14,18 @@ public class MessageProcess {
     private static IMessageProcess<ChatFriendRequestBean> chatFriendRequestProcess;
     private static IMessageProcess chatUserMessageProcess;
     private static IMessageProcess chatGroupMessageProcess;
+    private static IMessageProcess groupCreateMessageProcess;
 
     public static IMessageProcess getChatUserMessageProcess() {
         return chatUserMessageProcess;
+    }
+
+    public static IMessageProcess getGroupCreateMessageProcess() {
+        return groupCreateMessageProcess;
+    }
+
+    public static void registerGroupCreateMessageProces(IMessageProcess process) {
+        groupCreateMessageProcess = process;
     }
 
     public static void registerChatUserMessageProcess(IMessageProcess process) {
