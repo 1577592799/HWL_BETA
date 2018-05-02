@@ -16,7 +16,7 @@ public class NetUserInfo {
     }
 
     public String getRegisterAddress() {
-        if (this.RegisterPosList != null) {
+        if (this.RegisterPosList != null && this.RegisterPosList.length >= 2) {
             return this.RegisterPosList[0] + " " + this.RegisterPosList[1];
         }
         return "";

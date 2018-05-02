@@ -93,7 +93,9 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
                 });
     }
 
-    public List<GroupUserInfo> getAll() {
-        return daoSession.getGroupUserInfoDao().loadAll();
+    public List<GroupUserInfo> getUsers(String groupGuid) {
+        return daoSession.getGroupUserInfoDao().queryBuilder()
+                .where(GroupUserInfoDao.Properties.GroupGuid.eq(groupGuid))
+                .list();
     }
 }

@@ -34,6 +34,9 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         public final static Property UserImages = new Property(4, String.class, "userImages", false, "USER_IMAGES");
         public final static Property GroupNote = new Property(5, String.class, "groupNote", false, "GROUP_NOTE");
         public final static Property BuildTime = new Property(6, java.util.Date.class, "buildTime", false, "BUILD_TIME");
+        public final static Property MyUserName = new Property(7, String.class, "myUserName", false, "MY_USER_NAME");
+        public final static Property GroupBackImage = new Property(8, String.class, "groupBackImage", false, "GROUP_BACK_IMAGE");
+        public final static Property IsShield = new Property(9, boolean.class, "isShield", false, "IS_SHIELD");
     }
 
     private final ListStringConverter userImagesConverter = new ListStringConverter();
@@ -56,7 +59,10 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
                 "\"GROUP_USER_COUNT\" INTEGER NOT NULL ," + // 3: groupUserCount
                 "\"USER_IMAGES\" TEXT," + // 4: userImages
                 "\"GROUP_NOTE\" TEXT," + // 5: groupNote
-                "\"BUILD_TIME\" INTEGER);"); // 6: buildTime
+                "\"BUILD_TIME\" INTEGER," + // 6: buildTime
+                "\"MY_USER_NAME\" TEXT," + // 7: myUserName
+                "\"GROUP_BACK_IMAGE\" TEXT," + // 8: groupBackImage
+                "\"IS_SHIELD\" INTEGER NOT NULL );"); // 9: isShield
     }
 
     /** Drops the underlying database table. */
@@ -99,6 +105,17 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         if (buildTime != null) {
             stmt.bindLong(7, buildTime.getTime());
         }
+ 
+        String myUserName = entity.getMyUserName();
+        if (myUserName != null) {
+            stmt.bindString(8, myUserName);
+        }
+ 
+        String groupBackImage = entity.getGroupBackImage();
+        if (groupBackImage != null) {
+            stmt.bindString(9, groupBackImage);
+        }
+        stmt.bindLong(10, entity.getIsShield() ? 1L: 0L);
     }
 
     @Override
@@ -135,6 +152,17 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         if (buildTime != null) {
             stmt.bindLong(7, buildTime.getTime());
         }
+ 
+        String myUserName = entity.getMyUserName();
+        if (myUserName != null) {
+            stmt.bindString(8, myUserName);
+        }
+ 
+        String groupBackImage = entity.getGroupBackImage();
+        if (groupBackImage != null) {
+            stmt.bindString(9, groupBackImage);
+        }
+        stmt.bindLong(10, entity.getIsShield() ? 1L: 0L);
     }
 
     @Override
@@ -151,7 +179,10 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
             cursor.getInt(offset + 3), // groupUserCount
             cursor.isNull(offset + 4) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 4)), // userImages
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // groupNote
-            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)) // buildTime
+            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)), // buildTime
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // myUserName
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // groupBackImage
+            cursor.getShort(offset + 9) != 0 // isShield
         );
         return entity;
     }
@@ -165,6 +196,9 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         entity.setUserImages(cursor.isNull(offset + 4) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 4)));
         entity.setGroupNote(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setBuildTime(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
+        entity.setMyUserName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setGroupBackImage(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setIsShield(cursor.getShort(offset + 9) != 0);
      }
     
     @Override

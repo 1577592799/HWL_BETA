@@ -54,6 +54,7 @@
         <activity android:name=".ui.video.ActivityVideoPlay" />
         <activity android:name=".ui.video.ActivityVideoSelect" />
         <activity android:name=".ui.chat.ActivityChatGroup" />
+        <activity android:name=".ui.chat.ActivityChatUserSetting" />
         <activity
             android:name=".ui.chat.ActivityChatUser"
             android:windowSoftInputMode="stateHidden" />

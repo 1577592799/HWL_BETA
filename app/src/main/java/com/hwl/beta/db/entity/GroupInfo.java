@@ -26,10 +26,16 @@ public class GroupInfo {
     private String groupNote;
     @OrderBy("buildTime desc")
     private Date buildTime;
-    @Generated(hash = 15614768)
+
+    private String myUserName;
+    private String groupBackImage;
+    private boolean isShield;
+
+    @Generated(hash = 950932202)
     public GroupInfo(String groupGuid, String groupName, String groupImage,
             int groupUserCount, List<String> userImages, String groupNote,
-            Date buildTime) {
+            Date buildTime, String myUserName, String groupBackImage,
+            boolean isShield) {
         this.groupGuid = groupGuid;
         this.groupName = groupName;
         this.groupImage = groupImage;
@@ -37,6 +43,9 @@ public class GroupInfo {
         this.userImages = userImages;
         this.groupNote = groupNote;
         this.buildTime = buildTime;
+        this.myUserName = myUserName;
+        this.groupBackImage = groupBackImage;
+        this.isShield = isShield;
     }
     @Generated(hash = 1250265142)
     public GroupInfo() {
@@ -82,6 +91,24 @@ public class GroupInfo {
     }
     public void setUserImages(List<String> userImages) {
         this.userImages = userImages;
+    }
+    public String getMyUserName() {
+        return this.myUserName;
+    }
+    public void setMyUserName(String myUserName) {
+        this.myUserName = myUserName;
+    }
+    public String getGroupBackImage() {
+        return this.groupBackImage;
+    }
+    public void setGroupBackImage(String groupBackImage) {
+        this.groupBackImage = groupBackImage;
+    }
+    public boolean getIsShield() {
+        return this.isShield;
+    }
+    public void setIsShield(boolean isShield) {
+        this.isShield = isShield;
     }
 
 }

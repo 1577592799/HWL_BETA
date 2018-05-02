@@ -96,7 +96,8 @@ public class ActivityChatUser extends FragmentActivity {
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(activity, "用户聊天信息设置", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity, "用户聊天信息设置", Toast.LENGTH_SHORT).show();
+                        UITransfer.toChatUserSettingActivity(activity, user.getId(), user.getName(), user.getHeadImage());
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {

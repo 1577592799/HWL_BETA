@@ -12,6 +12,7 @@ import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.chat.ActivityChatGroup;
 import com.hwl.beta.ui.chat.ActivityChatUser;
+import com.hwl.beta.ui.chat.ActivityChatUserSetting;
 import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
 import com.hwl.beta.ui.circle.ActivityCircleDetail;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
@@ -266,6 +267,14 @@ public class UITransfer {
     public static void toGroupSettingActivity(Activity context, String groupGuid) {
         Intent intent = new Intent(context, ActivityGroupSetting.class);
         intent.putExtra("groupguid", groupGuid);
+        context.startActivity(intent);
+    }
+
+    public static void toChatUserSettingActivity(Activity context, long userId,String userName,String userImage) {
+        Intent intent = new Intent(context, ActivityChatUserSetting.class);
+        intent.putExtra("userid", userId);
+        intent.putExtra("username", userName);
+        intent.putExtra("userimage", userImage);
         context.startActivity(intent);
     }
 }
