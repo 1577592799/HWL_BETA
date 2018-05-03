@@ -82,7 +82,7 @@ public class ActivityChatGroup extends FragmentActivity {
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UITransfer.toGroupSettingActivity(activity, currGroupGuid);
+                        UITransfer.toChatGroupSettingActivity(activity, currGroupGuid);
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {

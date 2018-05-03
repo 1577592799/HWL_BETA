@@ -54,6 +54,8 @@
         <activity android:name=".ui.video.ActivityVideoPlay" />
         <activity android:name=".ui.video.ActivityVideoSelect" />
         <activity android:name=".ui.chat.ActivityChatGroup" />
+        <activity android:name=".ui.chat.ActivityChatGroupSetting" />
+        <activity android:name=".ui.chat.ActivityChatGroupSettingEdit" />
         <activity android:name=".ui.chat.ActivityChatUserSetting" />
         <activity
             android:name=".ui.chat.ActivityChatUser"
@@ -75,7 +77,6 @@
         <activity android:name=".ui.circle.ActivityCircleDetail" />
         <activity android:name=".ui.group.ActivityGroup" />
         <activity android:name=".ui.group.ActivityGroupAdd" />
-        <activity android:name=".ui.group.ActivityGroupSetting" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

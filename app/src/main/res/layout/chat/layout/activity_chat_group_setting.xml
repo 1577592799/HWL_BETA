@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <variable
+            name="action"
+            type="com.hwl.beta.ui.chat.action.IChatGroupSettingListener" />
+
+        <variable
+            name="setting"
+            type="com.hwl.beta.db.entity.GroupInfo" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,6 +53,7 @@
                     android:layout_marginBottom="1dp"
                     android:layout_marginTop="20dp"
                     android:background="@color/white"
+                    android:onClick="@{view->action.onGroupNoteClick()}"
                     android:padding="15dp">
 
                     <TextView
@@ -59,10 +71,11 @@
                         android:layout_alignParentTop="true"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="30dp"
                         android:layout_marginRight="10dp"
                         android:layout_toRightOf="@+id/tv_note_title"
-                        android:text="这个错误表示文件重复。在创建9.patch图片时，自动生成的文件名和原来的名字一样，只是后缀变成了.9.png。比如说要创建这个文件的9.patch文件，系统会自动给出的文件名。如果出现错误Error:Duplicate resources.将改成其他任意不重复的名字即可，如aaaaaaa.9.png" />
+                        android:gravity="right"
+                        android:text="@{setting.groupNote}" />
 
                 </RelativeLayout>
 
@@ -72,6 +85,7 @@
                     android:layout_marginBottom="1dp"
                     android:layout_marginTop="20dp"
                     android:background="@color/white"
+                    android:onClick="@{view->action.onGroupNameClick()}"
                     android:padding="15dp">
 
                     <TextView
@@ -92,7 +106,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:text="我的附近" />
+                        android:text="@{setting.groupName}" />
 
                 </RelativeLayout>
 
@@ -101,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="1dp"
                     android:background="@color/white"
+                    android:onClick="@{view->action.onMyNameClick()}"
                     android:padding="15dp">
 
                     <TextView
@@ -121,7 +136,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:text="username" />
+                        android:text="@{setting.myUserName}" />
 
                 </RelativeLayout>
 
@@ -144,13 +159,14 @@
                         android:id="@+id/switch_shield"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:switchMinWidth="50dp"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:checked="false"
-                        android:textOn="  "
+                        android:checked="@{setting.isShield}"
+                        android:onCheckedChanged="@{action::onShieldCheckedChanged}"
+                        android:switchMinWidth="50dp"
                         android:textOff="  "
+                        android:textOn="  "
                         android:thumb="@drawable/switch_thumb"
                         android:track="@drawable/switch_track" />
 
@@ -160,6 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:onClick="@{view->action.onSearchClick()}"
                     android:padding="15dp">
 
                     <TextView
@@ -176,6 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:onClick="@{view->action.onClearClick()}"
                     android:padding="15dp">
 
                     <TextView
@@ -197,6 +215,7 @@
                     android:layout_marginTop="20dp"
                     android:background="@color/main"
                     android:gravity="center"
+                    android:onClick="@{view->action.onExitClick()}"
                     android:padding="10dp"
                     android:text="我要退出"
                     android:textColor="@color/white"

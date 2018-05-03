@@ -5,6 +5,7 @@ import android.content.Context;
 import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.dao.ChatUserMessageDao;
 import com.hwl.beta.db.entity.ChatUserMessage;
+import com.hwl.beta.db.entity.ChatUserSetting;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
     }
 
     public boolean deleteMessage(ChatUserMessage message) {
-        if (message==null||message.getMsgId() <= 0) return false;
+        if (message == null || message.getMsgId() <= 0) return false;
         daoSession.getChatUserMessageDao().delete(message);
         return true;
     }
@@ -68,5 +69,15 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
         if (messages == null || messages.size() <= 0) return true;
         daoSession.getChatUserMessageDao().deleteInTx(messages);
         return true;
+    }
+
+    public ChatUserSetting getChatUserSetting(long userId) {
+        if (userId <= 0) return null;
+        return daoSession.getChatUserSettingDao().load(userId);
+    }
+
+    public void setChatUserSetting(ChatUserSetting userSetting) {
+        if (userSetting == null) return;
+        daoSession.getChatUserSettingDao().insertOrReplace(userSetting);
     }
 }
