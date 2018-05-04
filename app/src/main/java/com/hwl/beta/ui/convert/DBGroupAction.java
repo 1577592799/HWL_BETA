@@ -4,6 +4,7 @@ import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.mq.bean.MQGroupUserInfo;
+import com.hwl.beta.net.group.NetGroupInfo;
 import com.hwl.beta.net.user.NetGroupUserInfo;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.utils.StringUtils;
@@ -17,6 +18,29 @@ import java.util.List;
  */
 
 public class DBGroupAction {
+
+    public static List<GroupInfo> convertToGroupInfos(List<NetGroupInfo> groupInfos) {
+        if(groupInfos==null||groupInfos.size()<=0) return null;
+        List<GroupInfo> groups=new ArrayList<>(groupInfos.size());
+        for (int i = 0; i < groupInfos.size(); i++) {
+            GroupInfo groupInfo = new GroupInfo();
+            groupInfo.setGroupGuid(groupInfos.get(i).getGroupGuid());
+            groupInfo.setGroupNote(groupInfos.get(i).getGroupNote());
+            groupInfo.setGroupName(groupInfos.get(i).getGroupName());
+            groupInfo.setBuildUserId(groupInfos.get(i).getBuildUserId());
+            groupInfo.setGroupBackImage("");
+            groupInfo.setBuildTime(groupInfos.get(i).getBuildDate());
+            groupInfo.setUpdateTime(groupInfos.get(i).getUpdateDate());
+            groupInfo.setGroupUserCount(groupInfos.get(i).getGroupUserCount());
+            groupInfo.setUserImages(new ArrayList<String>());
+            for (int j = 0; j < groupInfos.get(i).getGroupUsers().size(); j++) {
+                groupInfo.getUserImages().add(groupInfos.get(i).getGroupUsers().get(j).getUserHeadImage());
+                if (j >= 8) break;
+            }
+            groups.add(groupInfo);
+        }
+        return groups;
+    }
 
     public static GroupInfo convertToGroupInfo(String groupGuid, int groupUserCount, List<String> groupUserImages) {
         return convertToGroupInfo(groupGuid, UserPosSP.getNearDesc(), groupUserCount, groupUserImages, new Date());

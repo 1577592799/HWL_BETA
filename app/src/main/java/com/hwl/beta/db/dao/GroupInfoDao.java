@@ -31,12 +31,14 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         public final static Property GroupName = new Property(1, String.class, "groupName", false, "GROUP_NAME");
         public final static Property GroupImage = new Property(2, String.class, "groupImage", false, "GROUP_IMAGE");
         public final static Property GroupUserCount = new Property(3, int.class, "groupUserCount", false, "GROUP_USER_COUNT");
-        public final static Property UserImages = new Property(4, String.class, "userImages", false, "USER_IMAGES");
-        public final static Property GroupNote = new Property(5, String.class, "groupNote", false, "GROUP_NOTE");
-        public final static Property BuildTime = new Property(6, java.util.Date.class, "buildTime", false, "BUILD_TIME");
-        public final static Property MyUserName = new Property(7, String.class, "myUserName", false, "MY_USER_NAME");
-        public final static Property GroupBackImage = new Property(8, String.class, "groupBackImage", false, "GROUP_BACK_IMAGE");
-        public final static Property IsShield = new Property(9, boolean.class, "isShield", false, "IS_SHIELD");
+        public final static Property BuildUserId = new Property(4, long.class, "buildUserId", false, "BUILD_USER_ID");
+        public final static Property UserImages = new Property(5, String.class, "userImages", false, "USER_IMAGES");
+        public final static Property GroupNote = new Property(6, String.class, "groupNote", false, "GROUP_NOTE");
+        public final static Property BuildTime = new Property(7, java.util.Date.class, "buildTime", false, "BUILD_TIME");
+        public final static Property UpdateTime = new Property(8, String.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property MyUserName = new Property(9, String.class, "myUserName", false, "MY_USER_NAME");
+        public final static Property GroupBackImage = new Property(10, String.class, "groupBackImage", false, "GROUP_BACK_IMAGE");
+        public final static Property IsShield = new Property(11, boolean.class, "isShield", false, "IS_SHIELD");
     }
 
     private final ListStringConverter userImagesConverter = new ListStringConverter();
@@ -57,12 +59,14 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
                 "\"GROUP_NAME\" TEXT," + // 1: groupName
                 "\"GROUP_IMAGE\" TEXT," + // 2: groupImage
                 "\"GROUP_USER_COUNT\" INTEGER NOT NULL ," + // 3: groupUserCount
-                "\"USER_IMAGES\" TEXT," + // 4: userImages
-                "\"GROUP_NOTE\" TEXT," + // 5: groupNote
-                "\"BUILD_TIME\" INTEGER," + // 6: buildTime
-                "\"MY_USER_NAME\" TEXT," + // 7: myUserName
-                "\"GROUP_BACK_IMAGE\" TEXT," + // 8: groupBackImage
-                "\"IS_SHIELD\" INTEGER NOT NULL );"); // 9: isShield
+                "\"BUILD_USER_ID\" INTEGER NOT NULL ," + // 4: buildUserId
+                "\"USER_IMAGES\" TEXT," + // 5: userImages
+                "\"GROUP_NOTE\" TEXT," + // 6: groupNote
+                "\"BUILD_TIME\" INTEGER," + // 7: buildTime
+                "\"UPDATE_TIME\" TEXT," + // 8: updateTime
+                "\"MY_USER_NAME\" TEXT," + // 9: myUserName
+                "\"GROUP_BACK_IMAGE\" TEXT," + // 10: groupBackImage
+                "\"IS_SHIELD\" INTEGER NOT NULL );"); // 11: isShield
     }
 
     /** Drops the underlying database table. */
@@ -90,32 +94,38 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
             stmt.bindString(3, groupImage);
         }
         stmt.bindLong(4, entity.getGroupUserCount());
+        stmt.bindLong(5, entity.getBuildUserId());
  
         List userImages = entity.getUserImages();
         if (userImages != null) {
-            stmt.bindString(5, userImagesConverter.convertToDatabaseValue(userImages));
+            stmt.bindString(6, userImagesConverter.convertToDatabaseValue(userImages));
         }
  
         String groupNote = entity.getGroupNote();
         if (groupNote != null) {
-            stmt.bindString(6, groupNote);
+            stmt.bindString(7, groupNote);
         }
  
         java.util.Date buildTime = entity.getBuildTime();
         if (buildTime != null) {
-            stmt.bindLong(7, buildTime.getTime());
+            stmt.bindLong(8, buildTime.getTime());
+        }
+ 
+        String updateTime = entity.getUpdateTime();
+        if (updateTime != null) {
+            stmt.bindString(9, updateTime);
         }
  
         String myUserName = entity.getMyUserName();
         if (myUserName != null) {
-            stmt.bindString(8, myUserName);
+            stmt.bindString(10, myUserName);
         }
  
         String groupBackImage = entity.getGroupBackImage();
         if (groupBackImage != null) {
-            stmt.bindString(9, groupBackImage);
+            stmt.bindString(11, groupBackImage);
         }
-        stmt.bindLong(10, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(12, entity.getIsShield() ? 1L: 0L);
     }
 
     @Override
@@ -137,32 +147,38 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
             stmt.bindString(3, groupImage);
         }
         stmt.bindLong(4, entity.getGroupUserCount());
+        stmt.bindLong(5, entity.getBuildUserId());
  
         List userImages = entity.getUserImages();
         if (userImages != null) {
-            stmt.bindString(5, userImagesConverter.convertToDatabaseValue(userImages));
+            stmt.bindString(6, userImagesConverter.convertToDatabaseValue(userImages));
         }
  
         String groupNote = entity.getGroupNote();
         if (groupNote != null) {
-            stmt.bindString(6, groupNote);
+            stmt.bindString(7, groupNote);
         }
  
         java.util.Date buildTime = entity.getBuildTime();
         if (buildTime != null) {
-            stmt.bindLong(7, buildTime.getTime());
+            stmt.bindLong(8, buildTime.getTime());
+        }
+ 
+        String updateTime = entity.getUpdateTime();
+        if (updateTime != null) {
+            stmt.bindString(9, updateTime);
         }
  
         String myUserName = entity.getMyUserName();
         if (myUserName != null) {
-            stmt.bindString(8, myUserName);
+            stmt.bindString(10, myUserName);
         }
  
         String groupBackImage = entity.getGroupBackImage();
         if (groupBackImage != null) {
-            stmt.bindString(9, groupBackImage);
+            stmt.bindString(11, groupBackImage);
         }
-        stmt.bindLong(10, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(12, entity.getIsShield() ? 1L: 0L);
     }
 
     @Override
@@ -177,12 +193,14 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // groupName
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // groupImage
             cursor.getInt(offset + 3), // groupUserCount
-            cursor.isNull(offset + 4) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 4)), // userImages
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // groupNote
-            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)), // buildTime
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // myUserName
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // groupBackImage
-            cursor.getShort(offset + 9) != 0 // isShield
+            cursor.getLong(offset + 4), // buildUserId
+            cursor.isNull(offset + 5) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 5)), // userImages
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // groupNote
+            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // buildTime
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // updateTime
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // myUserName
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // groupBackImage
+            cursor.getShort(offset + 11) != 0 // isShield
         );
         return entity;
     }
@@ -193,12 +211,14 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
         entity.setGroupName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setGroupImage(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setGroupUserCount(cursor.getInt(offset + 3));
-        entity.setUserImages(cursor.isNull(offset + 4) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 4)));
-        entity.setGroupNote(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setBuildTime(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
-        entity.setMyUserName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setGroupBackImage(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setIsShield(cursor.getShort(offset + 9) != 0);
+        entity.setBuildUserId(cursor.getLong(offset + 4));
+        entity.setUserImages(cursor.isNull(offset + 5) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 5)));
+        entity.setGroupNote(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setBuildTime(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
+        entity.setUpdateTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setMyUserName(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setGroupBackImage(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setIsShield(cursor.getShort(offset + 11) != 0);
      }
     
     @Override

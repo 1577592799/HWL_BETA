@@ -2,6 +2,7 @@ package com.hwl.beta.db.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 
 import java.util.Date;
@@ -11,15 +12,18 @@ import java.util.Date;
  */
 @Entity
 public class GroupUserInfo {
+    @Id(autoincrement = true)
+    private Long id;
     private String groupGuid;
     private long userId;
     private String userName;
     private String userHeadImage;
     @OrderBy("addTime desc")
     private Date addTime;
-    @Generated(hash = 260341934)
-    public GroupUserInfo(String groupGuid, long userId, String userName,
+    @Generated(hash = 625310360)
+    public GroupUserInfo(Long id, String groupGuid, long userId, String userName,
             String userHeadImage, Date addTime) {
+        this.id = id;
         this.groupGuid = groupGuid;
         this.userId = userId;
         this.userName = userName;
@@ -28,6 +32,12 @@ public class GroupUserInfo {
     }
     @Generated(hash = 397523636)
     public GroupUserInfo() {
+    }
+    public Long getId() {
+        return this.id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
     public String getGroupGuid() {
         return this.groupGuid;

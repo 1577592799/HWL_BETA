@@ -1,7 +1,11 @@
 package com.hwl.beta.mq.receive;
 
 import com.hwl.beta.mq.bean.ChatFriendRequestBean;
+import com.hwl.beta.mq.bean.ChatGroupMessageBean;
+import com.hwl.beta.mq.bean.ChatUserMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
+import com.hwl.beta.mq.bean.GroupCreateMessageBean;
+import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 /**
@@ -12,31 +16,40 @@ public class MessageProcess {
     //在这里注册消息处理
     private static IMessageProcess<FriendRequestBean> friendRequestProcess;
     private static IMessageProcess<ChatFriendRequestBean> chatFriendRequestProcess;
-    private static IMessageProcess chatUserMessageProcess;
-    private static IMessageProcess chatGroupMessageProcess;
-    private static IMessageProcess groupCreateMessageProcess;
+    private static IMessageProcess<ChatUserMessageBean> chatUserMessageProcess;
+    private static IMessageProcess<ChatGroupMessageBean> chatGroupMessageProcess;
+    private static IMessageProcess<GroupCreateMessageBean> groupCreateMessageProcess;
+    private static IMessageProcess<GroupEditMessageBean> groupEditMessageProcess;
 
-    public static IMessageProcess getChatUserMessageProcess() {
-        return chatUserMessageProcess;
+    public static IMessageProcess<GroupEditMessageBean> getGroupEditMessageProcess() {
+        return groupEditMessageProcess;
     }
 
-    public static IMessageProcess getGroupCreateMessageProcess() {
+    public static void registerGroupEditMessageProces(IMessageProcess<GroupEditMessageBean> process) {
+        groupEditMessageProcess = process;
+    }
+
+    public static IMessageProcess<GroupCreateMessageBean> getGroupCreateMessageProcess() {
         return groupCreateMessageProcess;
     }
 
-    public static void registerGroupCreateMessageProces(IMessageProcess process) {
+    public static void registerGroupCreateMessageProces(IMessageProcess<GroupCreateMessageBean> process) {
         groupCreateMessageProcess = process;
     }
 
-    public static void registerChatUserMessageProcess(IMessageProcess process) {
+    public static IMessageProcess<ChatUserMessageBean> getChatUserMessageProcess() {
+        return chatUserMessageProcess;
+    }
+
+    public static void registerChatUserMessageProcess(IMessageProcess<ChatUserMessageBean> process) {
         chatUserMessageProcess = process;
     }
 
-    public static IMessageProcess getChatGroupMessageProcess() {
+    public static IMessageProcess<ChatGroupMessageBean> getChatGroupMessageProcess() {
         return chatGroupMessageProcess;
     }
 
-    public static void registerChatGroupMessageProcess(IMessageProcess process) {
+    public static void registerChatGroupMessageProcess(IMessageProcess<ChatGroupMessageBean> process) {
         chatGroupMessageProcess = process;
     }
 

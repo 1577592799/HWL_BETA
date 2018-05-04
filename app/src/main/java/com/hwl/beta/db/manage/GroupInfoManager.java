@@ -26,6 +26,11 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
         daoSession.getGroupInfoDao().insertOrReplace(groupInfo);
     }
 
+    public void addList(List<GroupInfo> groupInfos) {
+        if (groupInfos == null || groupInfos.size() <= 0) return;
+        daoSession.getGroupInfoDao().insertInTx(groupInfos);
+    }
+
     public List<String> getGroupUserImages(String groupGuid) {
         GroupInfo groupInfo = daoSession.getGroupInfoDao().queryBuilder()
                 .where(GroupInfoDao.Properties.GroupGuid.eq(groupGuid))
@@ -56,5 +61,26 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
 
     public List<GroupInfo> getAll() {
         return daoSession.getGroupInfoDao().loadAll();
+    }
+
+    public GroupInfo setGroupNote(String groupGuid, String content) {
+        GroupInfo groupInfo = get(groupGuid);
+        groupInfo.setGroupNote(content);
+        add(groupInfo);
+        return groupInfo;
+    }
+
+    public GroupInfo setGroupName(String groupGuid, String content) {
+        GroupInfo groupInfo = get(groupGuid);
+        groupInfo.setGroupName(content);
+        add(groupInfo);
+        return groupInfo;
+    }
+
+    public GroupInfo setGroupMyName(String groupGuid, String myUserName) {
+        GroupInfo groupInfo = get(groupGuid);
+        groupInfo.setMyUserName(myUserName);
+        add(groupInfo);
+        return groupInfo;
     }
 }

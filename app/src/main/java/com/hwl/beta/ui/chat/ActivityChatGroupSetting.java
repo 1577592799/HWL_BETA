@@ -16,9 +16,13 @@ import com.hwl.beta.databinding.ActivityChatGroupSettingBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
+import com.hwl.beta.net.group.GroupService;
+import com.hwl.beta.net.group.body.GroupUsersResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.chat.action.IChatGroupSettingListener;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
+import com.hwl.beta.ui.convert.DBGroupAction;
 import com.hwl.beta.ui.group.adp.GroupUserAdapter;
 import com.hwl.beta.utils.StringUtils;
 
@@ -30,7 +34,9 @@ public class ActivityChatGroupSetting extends FragmentActivity {
     Activity activity;
     ActivityChatGroupSettingBinding binding;
     List<GroupUserInfo> users;
+    GroupUserAdapter userAdapter;
     GroupInfo group;
+    long myUserId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +56,7 @@ public class ActivityChatGroupSetting extends FragmentActivity {
             group.setMyUserName(UserSP.getUserName());
         }
 
+        myUserId = UserSP.getUserId();
         users = DaoUtils.getGroupUserInfoManagerInstance().getUsers(groupGuid);
         if (users == null) {
             users = new ArrayList<>();
@@ -70,7 +77,8 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                         onBackPressed();
                     }
                 });
-        binding.gvUserContainer.setAdapter(new GroupUserAdapter(activity, users));
+        userAdapter = new GroupUserAdapter(activity, users);
+        binding.gvUserContainer.setAdapter(userAdapter);
         binding.gvUserContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -80,13 +88,31 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                 }
             }
         });
+
+        loadGroupUserFromServer();
+    }
+
+    private void loadGroupUserFromServer() {
+        if (users.size() > 0) return;
+        GroupService.groupUsers(group.getGroupGuid())
+                .subscribe(new NetDefaultObserver<GroupUsersResponse>() {
+                    @Override
+                    protected void onSuccess(GroupUsersResponse response) {
+                        if (response.getGroupUserInfos() != null) {
+                            List<GroupUserInfo> userInfos = DBGroupAction.convertToGroupUserInfos(response.getGroupUserInfos());
+                            DaoUtils.getGroupUserInfoManagerInstance().addListAsync(userInfos);
+                            users.addAll(userInfos);
+                            userAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==Activity.RESULT_OK){
-            switch (requestCode){
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
                 case 1:
                     group.setGroupNote(data.getStringExtra("content"));
                     break;
@@ -94,7 +120,17 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                     group.setGroupName(data.getStringExtra("content"));
                     break;
                 case 3:
-                    group.setMyUserName(data.getStringExtra("content"));
+                    String myName = data.getStringExtra("content");
+                    if (group.getMyUserName().equals(myName))
+                        return;
+                    group.setMyUserName(myName);
+                    for (int i = 0; i < users.size(); i++) {
+                        if (users.get(i).getUserId() == myUserId) {
+                            users.get(i).setUserName(group.getMyUserName());
+                            userAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
                     break;
             }
         }
@@ -104,17 +140,17 @@ public class ActivityChatGroupSetting extends FragmentActivity {
 
         @Override
         public void onGroupNoteClick() {
-            UITransfer.toChatGroupSettingEditActivity(activity, 1, group.getGroupNote());
+            UITransfer.toChatGroupSettingEditActivity(activity, group.getGroupGuid(), 1, group.getGroupNote());
         }
 
         @Override
         public void onGroupNameClick() {
-            UITransfer.toChatGroupSettingEditActivity(activity, 2, group.getGroupName());
+            UITransfer.toChatGroupSettingEditActivity(activity, group.getGroupGuid(), 2, group.getGroupName());
         }
 
         @Override
         public void onMyNameClick() {
-            UITransfer.toChatGroupSettingEditActivity(activity, 3, group.getMyUserName());
+            UITransfer.toChatGroupSettingEditActivity(activity, group.getGroupGuid(), 3, group.getMyUserName());
         }
 
         @Override

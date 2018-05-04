@@ -25,35 +25,40 @@ public class GroupInfo extends BaseObservable {
     private String groupName;
     private String groupImage;
     private int groupUserCount;
+    private long buildUserId;
     @Convert(columnType = String.class, converter = ListStringConverter.class)
     private List<String> userImages;
     private String groupNote;
     @OrderBy("buildTime desc")
     private Date buildTime;
+    private String updateTime;
 
     private String myUserName;
     private String groupBackImage;
     private boolean isShield;
 
-    @Generated(hash = 950932202)
+
+    @Generated(hash = 1250265142)
+    public GroupInfo() {
+    }
+
+    @Generated(hash = 1092245692)
     public GroupInfo(String groupGuid, String groupName, String groupImage,
-                     int groupUserCount, List<String> userImages, String groupNote,
-                     Date buildTime, String myUserName, String groupBackImage,
-                     boolean isShield) {
+            int groupUserCount, long buildUserId, List<String> userImages,
+            String groupNote, Date buildTime, String updateTime, String myUserName,
+            String groupBackImage, boolean isShield) {
         this.groupGuid = groupGuid;
         this.groupName = groupName;
         this.groupImage = groupImage;
         this.groupUserCount = groupUserCount;
+        this.buildUserId = buildUserId;
         this.userImages = userImages;
         this.groupNote = groupNote;
         this.buildTime = buildTime;
+        this.updateTime = updateTime;
         this.myUserName = myUserName;
         this.groupBackImage = groupBackImage;
         this.isShield = isShield;
-    }
-
-    @Generated(hash = 1250265142)
-    public GroupInfo() {
     }
 
     public String getGroupGuid() {
@@ -140,6 +145,22 @@ public class GroupInfo extends BaseObservable {
 
     public void setIsShield(boolean isShield) {
         this.isShield = isShield;
+    }
+
+    public long getBuildUserId() {
+        return this.buildUserId;
+    }
+
+    public void setBuildUserId(long buildUserId) {
+        this.buildUserId = buildUserId;
+    }
+
+    public String getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
 }

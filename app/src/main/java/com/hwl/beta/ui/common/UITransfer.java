@@ -271,8 +271,9 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toChatGroupSettingEditActivity(Activity context, int editType, String content) {
+    public static void toChatGroupSettingEditActivity(Activity context,String groupGuid, int editType, String content) {
         Intent intent = new Intent(context, ActivityChatGroupSettingEdit.class);
+        intent.putExtra("groupguid", groupGuid);
         intent.putExtra("edittype", editType);
         intent.putExtra("content", content);
         context.startActivityForResult(intent, editType);

@@ -11,8 +11,14 @@ import com.hwl.beta.net.group.body.DeleteGroupRequest;
 import com.hwl.beta.net.group.body.DeleteGroupResponse;
 import com.hwl.beta.net.group.body.DeleteGroupUserRequest;
 import com.hwl.beta.net.group.body.DeleteGroupUserResponse;
+import com.hwl.beta.net.group.body.GetGroupsRequest;
+import com.hwl.beta.net.group.body.GetGroupsResponse;
 import com.hwl.beta.net.group.body.GroupUsersRequest;
 import com.hwl.beta.net.group.body.GroupUsersResponse;
+import com.hwl.beta.net.group.body.SetGroupNameRequest;
+import com.hwl.beta.net.group.body.SetGroupNameResponse;
+import com.hwl.beta.net.group.body.SetGroupNoteRequest;
+import com.hwl.beta.net.group.body.SetGroupNoteResponse;
 import com.hwl.beta.sp.UserSP;
 
 import java.util.List;
@@ -24,6 +30,16 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public class GroupService {
+
+    public static Observable<ResponseBase<GetGroupsResponse>> getGroups() {
+        GetGroupsRequest requestBody = new GetGroupsRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        Observable<ResponseBase<GetGroupsResponse>> response = RetrofitUtils.createApi(IGroupService.class)
+                .getGroups(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
 
     public static Observable<ResponseBase<GroupUsersResponse>> groupUsers(String groupGuid) {
         GroupUsersRequest requestBody = new GroupUsersRequest();
@@ -69,6 +85,30 @@ public class GroupService {
         return response;
     }
 
+    public static Observable<ResponseBase<SetGroupNameResponse>> setGroupName(String groupGuid, String groupName) {
+        SetGroupNameRequest requestBody = new SetGroupNameRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setGroupGuid(groupGuid);
+        requestBody.setGroupName(groupName);
+        Observable<ResponseBase<SetGroupNameResponse>> response = RetrofitUtils.createApi(IGroupService.class)
+                .setGroupName(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
+    public static Observable<ResponseBase<SetGroupNoteResponse>> setGroupNote(String groupGuid, String groupNote) {
+        SetGroupNoteRequest requestBody = new SetGroupNoteRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setGroupGuid(groupGuid);
+        requestBody.setGroupNote(groupNote);
+        Observable<ResponseBase<SetGroupNoteResponse>> response = RetrofitUtils.createApi(IGroupService.class)
+                .setGroupNote(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public static Observable<ResponseBase<DeleteGroupUserResponse>> deleteGroupUser(String groupGuid) {
         DeleteGroupUserRequest requestBody = new DeleteGroupUserRequest();
         requestBody.setUserId(UserSP.getUserId());
@@ -81,6 +121,9 @@ public class GroupService {
     }
 
     private interface IGroupService {
+        @POST("api/GetGroups")
+        Observable<ResponseBase<GetGroupsResponse>> getGroups(@Body RequestBase<GetGroupsRequest> request);
+
         @POST("api/GroupUsers")
         Observable<ResponseBase<GroupUsersResponse>> groupUsers(@Body RequestBase<GroupUsersRequest> request);
 
@@ -95,5 +138,11 @@ public class GroupService {
 
         @POST("api/DeleteGroupUser")
         Observable<ResponseBase<DeleteGroupUserResponse>> deleteGroupUser(@Body RequestBase<DeleteGroupUserRequest> request);
+
+        @POST("api/SetGroupName")
+        Observable<ResponseBase<SetGroupNameResponse>> setGroupName(@Body RequestBase<SetGroupNameRequest> request);
+
+        @POST("api/SetGroupNote")
+        Observable<ResponseBase<SetGroupNoteResponse>> setGroupNote(@Body RequestBase<SetGroupNoteRequest> request);
     }
 }

@@ -15,6 +15,7 @@ public class MQProcess {
         MessageProcess.registerChatUserMessageProcess(new ChatUserMessageProcess());
         MessageProcess.registerChatGroupMessageProcess(new ChatGroupMessageProcess());
         MessageProcess.registerGroupCreateMessageProces(new GroupCreateMessageProcess());
+        MessageProcess.registerGroupEditMessageProces(new GroupEditMessageProcess());
         MQManager.registerConnectionStatusEvent(new DefaultConnectionStatus());
     }
 

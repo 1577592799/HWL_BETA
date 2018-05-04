@@ -88,7 +88,7 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
                     @Override
                     public void accept(GroupUserInfo userInfo) throws Exception {
                         if (userInfo != null && userInfo.getUserId() > 0)
-                            daoSession.getGroupUserInfoDao().insertInTx(userInfo);
+                            daoSession.getGroupUserInfoDao().insertOrReplace(userInfo);
                     }
                 });
     }
@@ -97,5 +97,14 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
         return daoSession.getGroupUserInfoDao().queryBuilder()
                 .where(GroupUserInfoDao.Properties.GroupGuid.eq(groupGuid))
                 .list();
+    }
+
+    public GroupUserInfo setUserName(String groupGuid, long userId, String userName) {
+        GroupUserInfo userInfo = get(groupGuid, userId);
+        if (userInfo != null) {
+            userInfo.setUserName(userName);
+            daoSession.getGroupUserInfoDao().update(userInfo);
+        }
+        return userInfo;
     }
 }

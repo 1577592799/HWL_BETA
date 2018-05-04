@@ -13,9 +13,15 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityGroupBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.GroupInfo;
+import com.hwl.beta.db.entity.GroupUserInfo;
+import com.hwl.beta.net.group.GroupService;
+import com.hwl.beta.net.group.body.GetGroupsResponse;
+import com.hwl.beta.net.user.NetGroupUserInfo;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
+import com.hwl.beta.ui.convert.DBGroupAction;
 import com.hwl.beta.ui.group.adp.GroupAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,6 +87,30 @@ public class ActivityGroup extends FragmentActivity {
                 });
         binding.rvGroupContainer.setAdapter(groupAdapter);
         binding.rvGroupContainer.setLayoutManager(new LinearLayoutManager(activity));
+
+        loadGroupFromServer();
+    }
+
+    private void loadGroupFromServer() {
+        if (groupInfos.size() > 1) return;
+
+        GroupService.getGroups()
+                .subscribe(new NetDefaultObserver<GetGroupsResponse>() {
+                    @Override
+                    protected void onSuccess(GetGroupsResponse response) {
+                        if (response.getGroupInfos() != null && response.getGroupInfos().size() > 0) {
+                            List<GroupInfo> groups = DBGroupAction.convertToGroupInfos(response.getGroupInfos());
+                            DaoUtils.getGroupInfoManagerInstance().addList(groups);
+                            groupInfos.addAll(groups);
+                            groupAdapter.notifyDataSetChanged();
+                            List<NetGroupUserInfo> groupUserInfos = new ArrayList<>();
+                            for (int i = 0; i < response.getGroupInfos().size(); i++) {
+                                groupUserInfos.addAll(response.getGroupInfos().get(i).getGroupUsers());
+                            }
+                            DaoUtils.getGroupUserInfoManagerInstance().addListAsync(DBGroupAction.convertToGroupUserInfos(groupUserInfos));
+                        }
+                    }
+                });
     }
 
     public List<GroupInfo> getGroupInfos() {
