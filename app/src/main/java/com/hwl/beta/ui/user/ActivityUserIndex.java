@@ -21,18 +21,26 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityUserIndexBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.Friend;
+import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.emotion.widget.EmotionTextView;
+import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.DeleteFriendResponse;
 import com.hwl.beta.net.user.body.GetUserDetailsResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionChatRecord;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventDeleteFriend;
+import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBFriendAction;
+import com.hwl.beta.ui.dialog.AddFriendDialogFragment;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.user.action.IUserIndexListener;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
@@ -40,6 +48,9 @@ import com.hwl.beta.ui.user.bean.UserIndexBean;
 import com.hwl.beta.utils.DisplayUtils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/1/9.
@@ -86,6 +97,7 @@ public class ActivityUserIndex extends FragmentActivity {
             userBean.setRegisterAddress(netUserInfo.getRegisterAddress());
             userBean.setUserCircleBackImage(netUserInfo.getCircleBackImage());
             userBean.setUserLifeNotes(netUserInfo.getLifeNotes());
+            setCircles();
         } else {
             userBean.setIdcard(UserIndexBean.IDCARD_OTHER);
         }
@@ -107,6 +119,29 @@ public class ActivityUserIndex extends FragmentActivity {
                         showUserActionDialog();
                     }
                 });
+    }
+
+    private void setCircles() {
+        List<CircleExt> circleExts = DaoUtils.getCircleManagerInstance().getTop3Circles(userBean.getUserId());
+        if (circleExts != null && circleExts.size() > 0) {
+            List<String> imgs = new ArrayList<>();
+            List<String> texts = new ArrayList<>();
+            for (int i = 0; i < circleExts.size(); i++) {
+                if (circleExts.get(i).getInfo() != null && circleExts.get(i).getInfo().getCircleId() > 0) {
+                    texts.add(circleExts.get(i).getInfo().getContent());
+                }
+                if (circleExts.get(i).getImages() != null && circleExts.get(i).getImages().size() > 0) {
+                    for (int j = 0; j < circleExts.get(i).getImages().size(); j++) {
+                        imgs.add(circleExts.get(i).getImages().get(j).getImageUrl());
+                    }
+                }
+            }
+            if (imgs.size() > 0) {
+                userBean.setCircleImages(imgs);
+            } else {
+                userBean.setCircleTexts(texts);
+            }
+        }
     }
 
     @Override
@@ -147,6 +182,12 @@ public class ActivityUserIndex extends FragmentActivity {
         } else {
             binding.llRemark.setVisibility(View.GONE);
         }
+
+        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
+            binding.btnSendMessage.setVisibility(View.GONE);
+        } else {
+            binding.btnSendMessage.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setCircleImages() {
@@ -180,7 +221,7 @@ public class ActivityUserIndex extends FragmentActivity {
         params.bottomMargin = 5;
         for (int i = 0; i < userBean.getCircleTexts().size(); i++) {
             EmotionTextView tv = new EmotionTextView(activity);
-            tv.setPadding(5,5,5,5);
+            tv.setPadding(5, 5, 5, 5);
             tv.setText(userBean.getCircleTexts().get(i));
             tv.setLayoutParams(params);
             binding.fblCircleContainer.addView(tv);
@@ -271,6 +312,7 @@ public class ActivityUserIndex extends FragmentActivity {
     }
 
     public class UserIndexListener implements IUserIndexListener {
+        private AddFriendDialogFragment addFriendDialogFragment;
 
         @Override
         public void onRemarkClick() {
@@ -283,8 +325,38 @@ public class ActivityUserIndex extends FragmentActivity {
         }
 
         @Override
-        public void onAddUserClick(View view) {
-            Toast.makeText(activity, "添加好友功能稍后开放...", Toast.LENGTH_SHORT).show();
+        public void onAddUserClick(final View view) {
+            //Toast.makeText(activity, "添加好友功能稍后开放...", Toast.LENGTH_SHORT).show();
+            if (addFriendDialogFragment == null) {
+                addFriendDialogFragment = new AddFriendDialogFragment();
+            }
+            final String remark = "我是 " + UserSP.getUserShowName();
+            addFriendDialogFragment.setRemark(remark);
+            addFriendDialogFragment.setTitle(userBean.getShowName());
+            addFriendDialogFragment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    LoadingDialog.show(activity, "请求发送中...");
+                    KeyBoardAction.hideSoftInput(activity);
+
+                    UserMessageSend.sendFriendRequestMessage(userBean.getUserId(), remark).subscribe(new MQDefaultObserver() {
+                        @Override
+                        protected void onSuccess() {
+                            view.setVisibility(View.GONE);
+                            Toast.makeText(activity, "好友请求发送成功", Toast.LENGTH_SHORT).show();
+                            addFriendDialogFragment.dismiss();
+                            LoadingDialog.hide();
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            LoadingDialog.hide();
+                        }
+                    });
+                }
+            });
+            addFriendDialogFragment.show(getFragmentManager(), "AddFriendDialogFragment");
         }
 
         @Override
@@ -302,11 +374,14 @@ public class ActivityUserIndex extends FragmentActivity {
                             if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
                                 Toast.makeText(activity, "成功删除好友", Toast.LENGTH_SHORT).show();
                                 DaoUtils.getFriendManagerInstance().deleteFriend(userBean.getUserId());
-                                UserSP.deleteOneFriendCount();
+                                UserMessageSend.sendFriendDeleteMessage(userBean.getUserId()).subscribe();
                                 EventBus.getDefault().post(new EventDeleteFriend(userBean.getUserId()));
+                                UserSP.deleteOneFriendCount();
                                 //删除好友聊天数据
-                                if (DaoUtils.getChatRecordMessageManagerInstance().deleteUserRecords(UserSP.getUserId(), userBean.getUserId())) {
+                                ChatRecordMessage record = DaoUtils.getChatRecordMessageManagerInstance().deleteUserRecords(UserSP.getUserId(), userBean.getUserId());
+                                if (record != null) {
                                     DaoUtils.getChatUserMessageManagerInstance().deleteUserMessages(UserSP.getUserId(), userBean.getUserId());
+                                    EventBus.getDefault().post(new EventActionChatRecord(EventBusConstant.EB_TYPE_ACTINO_REMOVE, record));
                                 }
                                 activity.finish();
                             } else {

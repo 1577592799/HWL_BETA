@@ -88,15 +88,15 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
         }
     }
 
-    public boolean deleteUserRecords(long myUserId, long friendUserId) {
-        if (myUserId <= 0 || friendUserId <= 0 || myUserId == friendUserId) return false;
-        List<ChatRecordMessage> records = daoSession.getChatRecordMessageDao().queryBuilder()
+    public ChatRecordMessage deleteUserRecords(long myUserId, long friendUserId) {
+        if (myUserId <= 0 || friendUserId <= 0 || myUserId == friendUserId) return null;
+        ChatRecordMessage record = daoSession.getChatRecordMessageDao().queryBuilder()
                 .whereOr(ChatRecordMessageDao.Properties.FromUserId.eq(myUserId), ChatRecordMessageDao.Properties.FromUserId.eq(friendUserId))
                 .whereOr(ChatRecordMessageDao.Properties.ToUserId.eq(myUserId), ChatRecordMessageDao.Properties.ToUserId.eq(friendUserId))
-                .list();
-        if (records == null || records.size() <= 0) return false;
-        daoSession.getChatRecordMessageDao().deleteInTx(records);
-        return true;
+                .unique();
+        if (record == null) return null;
+        daoSession.getChatRecordMessageDao().delete(record);
+        return record;
     }
 
     public List<ChatRecordMessage> getAll() {

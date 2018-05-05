@@ -3,6 +3,7 @@ package com.hwl.beta.mq.receive;
 import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.ChatUserMessageBean;
+import com.hwl.beta.mq.bean.FriendDeleteMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
@@ -20,6 +21,15 @@ public class MessageProcess {
     private static IMessageProcess<ChatGroupMessageBean> chatGroupMessageProcess;
     private static IMessageProcess<GroupCreateMessageBean> groupCreateMessageProcess;
     private static IMessageProcess<GroupEditMessageBean> groupEditMessageProcess;
+    private static IMessageProcess<FriendDeleteMessageBean> friendDeleteMessageProcess;
+
+    public static IMessageProcess<FriendDeleteMessageBean> getFriendDeleteMessageProcess() {
+        return friendDeleteMessageProcess;
+    }
+
+    public static void registerFriendDeleteMessageProces(IMessageProcess<FriendDeleteMessageBean> process) {
+        friendDeleteMessageProcess = process;
+    }
 
     public static IMessageProcess<GroupEditMessageBean> getGroupEditMessageProcess() {
         return groupEditMessageProcess;

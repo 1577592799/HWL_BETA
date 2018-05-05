@@ -165,7 +165,7 @@ public class FragmentRecord extends BaseFragment {
     public void updateRecord(ChatRecordMessage record) {
         if (record == null) return;
         for (int i = 0; i < records.size(); i++) {
-            if (record.getRecordId() == records.get(i).getRecordId()) {
+            if (record.getRecordId().equals(records.get(i).getRecordId())) {
                 records.remove(records.get(i));
                 break;
             }

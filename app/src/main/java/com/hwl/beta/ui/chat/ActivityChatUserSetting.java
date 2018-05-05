@@ -105,5 +105,17 @@ public class ActivityChatUserSetting extends FragmentActivity {
                         .show();
             }
         });
+        binding.ivHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toUserIndexActivity(activity,viewUserId,viewUserName,viewUserImage);
+            }
+        });
+        binding.tvName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toUserIndexActivity(activity,viewUserId,viewUserName,viewUserImage);
+            }
+        });
     }
 }

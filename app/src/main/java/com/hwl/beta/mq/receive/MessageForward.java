@@ -6,6 +6,7 @@ import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.ChatUserMessageBean;
+import com.hwl.beta.mq.bean.FriendDeleteMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
@@ -41,6 +42,13 @@ public class MessageForward {
                 messageProcess = MessageProcess.getFriendRequestProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, FriendRequestBean.class));
+                }
+                break;
+            case MQConstant.FRIEND_DELETE_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getFriendDeleteMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, FriendDeleteMessageBean.class));
                 }
                 break;
             case MQConstant.CHAT_FRIEND_REQUEST:

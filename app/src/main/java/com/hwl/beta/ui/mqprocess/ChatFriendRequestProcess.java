@@ -62,6 +62,7 @@ public class ChatFriendRequestProcess implements IMessageProcess<ChatFriendReque
         message.setSendTime(model.getSendTime());
         DaoUtils.getChatUserMessageManagerInstance().save(message);
 
+        EventBus.getDefault().post(friend);
         EventBus.getDefault().post(message);
         EventBus.getDefault().post(record);
     }

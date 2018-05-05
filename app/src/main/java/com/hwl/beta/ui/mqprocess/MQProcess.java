@@ -11,6 +11,7 @@ public class MQProcess {
 
     public static void register() {
         MessageProcess.registerFriendRequestProcess(new FriendRequestProcess());
+        MessageProcess.registerFriendDeleteMessageProces(new FriendDeleteMessageProcess());
         MessageProcess.registerChatFriendRequestProcess(new ChatFriendRequestProcess());
         MessageProcess.registerChatUserMessageProcess(new ChatUserMessageProcess());
         MessageProcess.registerChatGroupMessageProcess(new ChatGroupMessageProcess());

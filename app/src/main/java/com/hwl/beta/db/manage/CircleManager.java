@@ -155,4 +155,23 @@ public class CircleManager extends BaseDao<Circle> {
         );
         return info;
     }
+
+    public List<CircleExt> getTop3Circles(long userId) {
+        if (userId <= 0) return null;
+        List<Circle> infos = daoSession.getCircleDao().queryBuilder()
+                .where(CircleDao.Properties.PublishUserId.eq(userId))
+                .orderDesc(CircleDao.Properties.CircleId)
+                .limit(3)
+                .list();
+        if (infos == null || infos.size() <= 0) return null;
+        List<CircleExt> exts = new ArrayList<>(infos.size());
+        CircleExt ext;
+        for (int i = 0; i < infos.size(); i++) {
+            ext = new CircleExt(CircleExt.CircleIndexItem);
+            ext.setInfo(infos.get(i));
+            ext.setImages(getImages(infos.get(i).getCircleId()));
+            exts.add(ext);
+        }
+        return exts;
+    }
 }
