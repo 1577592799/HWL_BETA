@@ -1,15 +1,18 @@
 package com.hwl.beta.ui.chat.imp;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatGroupMessage;
 import com.hwl.beta.db.entity.ChatRecordMessage;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.emotion.IEmotionPannelListener;
 import com.hwl.beta.emotion.audio.AudioPlay;
 import com.hwl.beta.emotion.audio.AudioRecorderButton;
@@ -51,15 +54,17 @@ import okhttp3.ResponseBody;
 public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
 
     Activity activity;
-    String groupGuid;
-    String groupName;
+    GroupInfo groupInfo;
     File cameraTempFile;
     AudioPlay audioPlay;
 
-    public ChatGroupEmotionPannelListener(Activity activity, String groupGuid, String groupName) {
+    public ChatGroupEmotionPannelListener(Activity activity, GroupInfo groupInfo) {
         this.activity = activity;
-        this.groupGuid = groupGuid;
-        this.groupName = groupName;
+        this.groupInfo = groupInfo;
+    }
+
+    public void setGroupInfo(GroupInfo groupInfo) {
+        this.groupInfo = groupInfo;
     }
 
     @Override
@@ -132,16 +137,34 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
         sendChatMessage(0, MQConstant.CHAT_MESSAGE_CONTENT_TYPE_IMAGE, "图片", file.getAbsolutePath(), 0, 0);
     }
 
+    private boolean checkGroupDismiss() {
+        if (groupInfo == null || groupInfo.getIsDismiss()) {
+            new AlertDialog.Builder(activity)
+                    .setMessage("已经被解散群组不能发送消息!")
+                    .setPositiveButton("返回", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+            return true;
+        }
+        return false;
+    }
+
     public void sendChatMessage(long messageId, int contentType, String content, String localPath, long size, long playTime) {
+        if (checkGroupDismiss()) return;
+
         final ChatGroupMessage message = new ChatGroupMessage();
         if (messageId > 0) {
             message.setMsgId(messageId);
         }
-        message.setGroupGuid(groupGuid);
-        message.setGroupName(groupName);
+        message.setGroupGuid(groupInfo.getGroupGuid());
+        message.setGroupName(groupInfo.getGroupName());
         message.setGroupImage("");
         message.setFromUserId(UserSP.getUserId());
-        message.setFromUserName(UserSP.getUserShowName());
+        message.setFromUserName((StringUtils.isBlank(groupInfo.getMyUserName()) ? UserSP.getUserShowName() : groupInfo.getMyUserName()));
         message.setFromUserHeadImage(UserSP.getUserHeadImage());
         message.setContentType(contentType);
         message.setContent(content);
@@ -358,7 +381,6 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
                     }
                 });
     }
-
 
     public void playAudio(final ImageView iv, final ChatGroupMessage message) {
         if (message == null) return;

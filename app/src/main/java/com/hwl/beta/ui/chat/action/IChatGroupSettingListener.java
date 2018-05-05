@@ -16,4 +16,6 @@ public interface IChatGroupSettingListener {
     void onClearClick();
 
     void onExitClick();
+
+    void onDismissClick();
 }

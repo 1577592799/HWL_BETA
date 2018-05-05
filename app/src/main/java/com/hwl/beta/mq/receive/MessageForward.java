@@ -80,6 +80,8 @@ public class MessageForward {
             case MQConstant.GROUP_EDIT_NAME_MESSAGE:
             case MQConstant.GROUP_EDIT_NOTE_MESSAGE:
             case MQConstant.GROUP_EDIT_USER_NAME_MESSAGE:
+            case MQConstant.GROUP_EXIT_USER_MESSAGE:
+            case MQConstant.GROUP_DISMISS_MESSAGE:
                 int buildUserIdLength2 = bodyBytes[0];
                 int groupCreateIdLength2 = bodyBytes[1];
                 byte[] msgGroupBytes2 = ByteUtils.getPositionBytes(2 + buildUserIdLength2 + groupCreateIdLength2, 0, bodyBytes);

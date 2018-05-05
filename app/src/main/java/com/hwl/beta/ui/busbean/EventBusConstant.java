@@ -23,4 +23,6 @@ public class EventBusConstant {
 
     public static final int EB_TYPE_ACTINO_ADD = 8;
     public static final int EB_TYPE_ACTINO_REMOVE = 9;
+    public static final int EB_TYPE_ACTINO_CLEAR = 10;
+    public static final int EB_TYPE_ACTINO_EXIT = 11;
 }

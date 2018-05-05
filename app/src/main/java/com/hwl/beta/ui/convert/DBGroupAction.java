@@ -20,8 +20,8 @@ import java.util.List;
 public class DBGroupAction {
 
     public static List<GroupInfo> convertToGroupInfos(List<NetGroupInfo> groupInfos) {
-        if(groupInfos==null||groupInfos.size()<=0) return null;
-        List<GroupInfo> groups=new ArrayList<>(groupInfos.size());
+        if (groupInfos == null || groupInfos.size() <= 0) return null;
+        List<GroupInfo> groups = new ArrayList<>(groupInfos.size());
         for (int i = 0; i < groupInfos.size(); i++) {
             GroupInfo groupInfo = new GroupInfo();
             groupInfo.setGroupGuid(groupInfos.get(i).getGroupGuid());
@@ -42,14 +42,15 @@ public class DBGroupAction {
         return groups;
     }
 
-    public static GroupInfo convertToGroupInfo(String groupGuid, int groupUserCount, List<String> groupUserImages) {
-        return convertToGroupInfo(groupGuid, UserPosSP.getNearDesc(), groupUserCount, groupUserImages, new Date());
+    public static GroupInfo convertToNearGroupInfo(String groupGuid, int groupUserCount, List<String> groupUserImages) {
+        return convertToGroupInfo(groupGuid, UserPosSP.getNearDesc(),0, groupUserCount, groupUserImages, new Date());
     }
 
-    public static GroupInfo convertToGroupInfo(String groupGuid, String groupName, int groupUserCount, List<String> groupUserImages, Date buildTime) {
+    public static GroupInfo convertToGroupInfo(String groupGuid, String groupName, long buildUserId, int groupUserCount, List<String> groupUserImages, Date buildTime) {
         GroupInfo groupInfo = new GroupInfo();
         groupInfo.setGroupGuid(groupGuid);
         groupInfo.setGroupName(groupName);
+        groupInfo.setBuildUserId(buildUserId);
         groupInfo.setBuildTime(buildTime);
         groupInfo.setGroupUserCount(groupUserCount);
         groupInfo.setUserImages(groupUserImages);

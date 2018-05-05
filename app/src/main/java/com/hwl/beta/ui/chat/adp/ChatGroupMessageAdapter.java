@@ -110,20 +110,20 @@ public class ChatGroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.V
         ChatGroupMessage message = messages.get(position);
         if (holder instanceof ChatMessageSendMessageViewHolder) {
             ChatMessageSendMessageViewHolder viewHolder = (ChatMessageSendMessageViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getContent());
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getFromUserName(), message.getContent());
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageSendImageViewHolder) {
             ChatMessageSendImageViewHolder viewHolder = (ChatMessageSendImageViewHolder) holder;
             String showUrl = ChatImageViewBean.getShowUrl(message.getLocalUrl(), message.getPreviewUrl(), message.getOriginalUrl());
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), position);
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), null, position);
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageSendAudioViewHolder) {
             ChatMessageSendAudioViewHolder viewHolder = (ChatMessageSendAudioViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getPlayTime());
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, null, message.getPlayTime());
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageSendVideoViewHolder) {
             ChatMessageSendVideoViewHolder viewHolder = (ChatMessageSendVideoViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), position);
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), null, position);
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageReceivedMessageViewHolder) {
             ChatMessageReceivedMessageViewHolder viewHolder = (ChatMessageReceivedMessageViewHolder) holder;

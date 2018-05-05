@@ -58,7 +58,7 @@ public class ActivityGroup extends FragmentActivity {
         if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_ADD) {
             groupInfos.add(actionGroup.getGroupInfo());
             groupAdapter.notifyItemInserted(groupInfos.size() - 1);
-        } else if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+        } else if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE || actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_EXIT) {
             groupInfos.remove(actionGroup.getGroupInfo());
             groupAdapter.notifyDataSetChanged();
         }
@@ -95,7 +95,7 @@ public class ActivityGroup extends FragmentActivity {
         if (groupInfos.size() > 1) return;
 
         GroupService.getGroups()
-                .subscribe(new NetDefaultObserver<GetGroupsResponse>() {
+                .subscribe(new NetDefaultObserver<GetGroupsResponse>(false) {
                     @Override
                     protected void onSuccess(GetGroupsResponse response) {
                         if (response.getGroupInfos() != null && response.getGroupInfos().size() > 0) {

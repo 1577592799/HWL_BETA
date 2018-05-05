@@ -7,6 +7,7 @@ import com.hwl.beta.db.dao.ChatRecordMessageDao;
 import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -19,6 +20,20 @@ import java.util.List;
 public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
     public ChatRecordMessageManager(Context context) {
         super(context);
+    }
+
+    public ChatRecordMessage getGroupRecord(String groupGuid) {
+        if (StringUtils.isBlank(groupGuid)) return null;
+        return daoSession.getChatRecordMessageDao().queryBuilder()
+                .where(ChatRecordMessageDao.Properties.GruopGuid.eq(groupGuid))
+                .unique();
+    }
+
+    public ChatRecordMessage deleteGroupRecord(String groupGuid) {
+        ChatRecordMessage message = getGroupRecord(groupGuid);
+        if (message == null) return null;
+        daoSession.getChatRecordMessageDao().delete(message);
+        return message;
     }
 
     public ChatRecordMessage addOrUpdate(ChatRecordMessage request) {

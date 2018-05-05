@@ -129,7 +129,7 @@ public class ActivityMain extends FragmentActivity {
                         UITransfer.toUserSearchActivity(activity);
                         break;
                     case R.id.pop_near_group:
-                        UITransfer.toChatGroupActivity(activity, UserPosSP.getGroupGuid(), UserPosSP.getNearDesc());
+                        UITransfer.toChatGroupActivity(activity, UserPosSP.getGroupGuid());
                         break;
                     case R.id.pop_near_publish:
                         UITransfer.toNearPublishActivity(activity);
@@ -256,7 +256,7 @@ public class ActivityMain extends FragmentActivity {
                                                 if (i >= 8) break;
                                             }
                                             //保存组和组用户数据到本地
-                                            DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size(), groupUserImages));
+                                            DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToNearGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size(), groupUserImages));
                                             DaoUtils.getGroupUserInfoManagerInstance().addListAsync(DBGroupAction.convertToGroupUserInfos(res.getGroupUserInfos()));
                                         }
                                     }

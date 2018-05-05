@@ -51,7 +51,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((GroupItemViewHolder) holder).setItemBinding(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UITransfer.toChatGroupActivity(v.getContext(), groupInfo.getGroupGuid(), groupInfo.getGroupName());
+                    UITransfer.toChatGroupActivity(v.getContext(), groupInfo.getGroupGuid());
                 }
             }, groupInfo.getUserImages(), groupInfo.getGroupName());
         }

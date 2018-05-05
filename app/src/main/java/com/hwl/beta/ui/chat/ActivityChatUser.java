@@ -26,6 +26,8 @@ import com.hwl.beta.emotion.EmotionControlPannel;
 import com.hwl.beta.emotion.audio.AudioPlay;
 import com.hwl.beta.emotion.audio.MediaManager;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventClearUserMessages;
 import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatUserMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
@@ -191,6 +193,15 @@ public class ActivityChatUser extends FragmentActivity {
 
         messageAdapter.notifyDataSetChanged();
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMessage(EventClearUserMessages info) {
+        if (info == null || info.getMyUserId() <= 0 || info.getViewUserId() <= 0) return;
+        if (info.getActionType() == EventBusConstant.EB_TYPE_ACTINO_CLEAR && info.getViewUserId() == user.getId()) {
+            messages.clear();
+            messageAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

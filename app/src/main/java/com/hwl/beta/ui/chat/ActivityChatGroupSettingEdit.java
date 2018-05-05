@@ -184,6 +184,7 @@ public class ActivityChatGroupSettingEdit extends FragmentActivity {
                 .subscribe(new NetDefaultObserver<SetGroupNameResponse>() {
                     @Override
                     protected void onSuccess(SetGroupNameResponse response) {
+                        LoadingDialog.hide();
                         if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
                             DaoUtils.getGroupInfoManagerInstance().setGroupName(groupGuid, content);
                             GroupActionMessageSend.sendEditGroupNameMessage(groupGuid, content, UserSP.getUserName() + " 修改了群名称").subscribe();

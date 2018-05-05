@@ -147,7 +147,7 @@ public class ActivityGroupAdd extends FragmentActivity {
         userImages.add(UserSP.getUserHeadImage());
         userInfos.add(new MQGroupUserInfo(UserSP.getUserId(), UserSP.getUserName(), UserSP.getUserHeadImage()));
 
-        final GroupInfo groupInfo = DBGroupAction.convertToGroupInfo("", groupName, selectUsers.size(), userImages, null);
+        final GroupInfo groupInfo = DBGroupAction.convertToGroupInfo("", groupName, UserSP.getUserId(), selectUsers.size(), userImages, null);
         LoadingDialog.show(activity);
         GroupService.addGroup(groupName, userIds)
                 .subscribe(new NetDefaultObserver<AddGroupResponse>() {

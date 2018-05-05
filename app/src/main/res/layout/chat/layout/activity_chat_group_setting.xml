@@ -203,8 +203,23 @@
                         android:layout_gravity="center_vertical"
                         android:text="清空记录" />
 
-
                 </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btn_dismiss"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginRight="40px"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/main"
+                    android:gravity="center"
+                    android:onClick="@{view->action.onDismissClick()}"
+                    android:padding="10dp"
+                    android:text="解散群组"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btn_exit"

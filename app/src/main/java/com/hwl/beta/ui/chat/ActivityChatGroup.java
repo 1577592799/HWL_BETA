@@ -21,8 +21,11 @@ import com.hwl.beta.R;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatGroupMessage;
 import com.hwl.beta.db.entity.ChatRecordMessage;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.emotion.EmotionControlPannel;
 import com.hwl.beta.emotion.audio.MediaManager;
+import com.hwl.beta.ui.busbean.EventActionGroup;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatGroupMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
@@ -49,13 +52,13 @@ import java.util.List;
 public class ActivityChatGroup extends FragmentActivity {
 
     Activity activity;
-    String currGroupGuid;
-    String currGroupName;
-    long currentRecordId = 0;
+    GroupInfo groupInfo;
+    ChatRecordMessage record;
     RecyclerView rvMessageContainer;
     List<ChatGroupMessage> messages = null;
     ChatGroupMessageAdapter messageAdapter;
     ChatGroupEmotionPannelListener emotionPannelListener;
+    TitleBar tbTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,26 +66,34 @@ public class ActivityChatGroup extends FragmentActivity {
         setContentView(R.layout.activity_chat_group);
         activity = this;
 
-        currentRecordId = getIntent().getLongExtra("recordid", 0);
-        currGroupGuid = getIntent().getStringExtra("groupguid");
-        currGroupName = getIntent().getStringExtra("groupname");
-        if (StringUtils.isBlank(currGroupGuid)) {
-            Toast.makeText(activity, "群组不存在", Toast.LENGTH_SHORT).show();
+        groupInfo = DaoUtils.getGroupInfoManagerInstance().get(getIntent().getStringExtra("groupguid"));
+        if (groupInfo == null) {
+            Toast.makeText(activity, "群组不存在或者已经被解散了", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
-        messages = DaoUtils.getChatGroupMessageManagerInstance().getGroupMessages(currGroupGuid);
+        if (groupInfo.getIsDismiss()) {
+            Toast.makeText(activity, "已经被解散群组不能发送消息", Toast.LENGTH_SHORT).show();
+        }
+
+        record = DaoUtils.getChatRecordMessageManagerInstance().getGroupRecord(groupInfo.getGroupGuid());
+        if (record == null) {
+            record = new ChatRecordMessage();
+        }
+
+        messages = DaoUtils.getChatGroupMessageManagerInstance().getGroupMessages(groupInfo.getGroupGuid());
         if (messages == null) {
             messages = new ArrayList<>();
         }
 
-        TitleBar tbTitle = findViewById(R.id.tb_title);
-        tbTitle.setTitle(currGroupName)
+        tbTitle = findViewById(R.id.tb_title);
+        tbTitle.setTitle(groupInfo.getGroupName())
                 .setImageRightResource(R.drawable.ic_setting)
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UITransfer.toChatGroupSettingActivity(activity, currGroupGuid);
+                        UITransfer.toChatGroupSettingActivity(activity, groupInfo.getGroupGuid());
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {
@@ -92,7 +103,7 @@ public class ActivityChatGroup extends FragmentActivity {
                     }
                 });
 
-        emotionPannelListener = new ChatGroupEmotionPannelListener(activity, currGroupGuid, currGroupName);
+        emotionPannelListener = new ChatGroupEmotionPannelListener(activity, groupInfo);
         final EmotionControlPannel ecpEmotion = findViewById(R.id.ecp_emotion);
         ecpEmotion.setEmotionPannelListener(emotionPannelListener);
 
@@ -141,9 +152,31 @@ public class ActivityChatGroup extends FragmentActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateGroupInfo(GroupInfo group) {
+        if (group == null || !group.getGroupGuid().equals(groupInfo.getGroupGuid())) return;
+        if (!group.getGroupName().equals(tbTitle.getTitle())) {
+            tbTitle.setTitle(group.getGroupName());
+        }
+        groupInfo = group;
+        emotionPannelListener.setGroupInfo(groupInfo);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void clearGroupMessage(EventActionGroup actionGroup) {
+        if (actionGroup == null || actionGroup.getGroupInfo() == null || !actionGroup.getGroupInfo().getGroupGuid().equals(groupInfo.getGroupGuid()))
+            return;
+        if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_CLEAR) {
+            messages.clear();
+            messageAdapter.notifyDataSetChanged();
+        } else if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_ACTINO_EXIT) {
+            finish();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateGroupMessage(ChatGroupMessage message) {
         if (message == null) return;
-        if (!message.getGroupGuid().equals(currGroupGuid)) return;
+        if (!message.getGroupGuid().equals(groupInfo.getGroupGuid())) return;
 
         boolean isExists = false;
         int position = 0;
@@ -170,8 +203,8 @@ public class ActivityChatGroup extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         MediaManager.release();
-        if (currentRecordId > 0) {
-            ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().clearUnreadCount(currentRecordId);
+        if (record != null && record.getRecordId() != null && record.getRecordId() > 0 && record.getUnreadCount() > 0) {
+            ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().clearUnreadCount(record.getRecordId());
             if (recordMessage != null) {
                 EventBus.getDefault().post(recordMessage);
             }

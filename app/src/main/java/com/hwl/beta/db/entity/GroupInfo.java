@@ -9,6 +9,7 @@ import com.hwl.beta.db.ListStringConverter;
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Unique;
 
@@ -20,6 +21,8 @@ import java.util.List;
  */
 @Entity
 public class GroupInfo extends BaseObservable {
+    @Id(autoincrement = true)
+    private Long id;
     @Unique
     private String groupGuid;
     private String groupName;
@@ -36,17 +39,18 @@ public class GroupInfo extends BaseObservable {
     private String myUserName;
     private String groupBackImage;
     private boolean isShield;
-
+    private boolean isDismiss;
 
     @Generated(hash = 1250265142)
     public GroupInfo() {
     }
 
-    @Generated(hash = 1092245692)
-    public GroupInfo(String groupGuid, String groupName, String groupImage,
-            int groupUserCount, long buildUserId, List<String> userImages,
-            String groupNote, Date buildTime, String updateTime, String myUserName,
-            String groupBackImage, boolean isShield) {
+    @Generated(hash = 312376364)
+    public GroupInfo(Long id, String groupGuid, String groupName, String groupImage,
+            int groupUserCount, long buildUserId, List<String> userImages, String groupNote,
+            Date buildTime, String updateTime, String myUserName, String groupBackImage,
+            boolean isShield, boolean isDismiss) {
+        this.id = id;
         this.groupGuid = groupGuid;
         this.groupName = groupName;
         this.groupImage = groupImage;
@@ -59,6 +63,7 @@ public class GroupInfo extends BaseObservable {
         this.myUserName = myUserName;
         this.groupBackImage = groupBackImage;
         this.isShield = isShield;
+        this.isDismiss = isDismiss;
     }
 
     public String getGroupGuid() {
@@ -161,6 +166,22 @@ public class GroupInfo extends BaseObservable {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean getIsDismiss() {
+        return this.isDismiss;
+    }
+
+    public void setIsDismiss(boolean isDismiss) {
+        this.isDismiss = isDismiss;
     }
 
 }

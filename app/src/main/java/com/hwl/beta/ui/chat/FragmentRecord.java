@@ -21,6 +21,7 @@ import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.adp.RecordAdapter;
 import com.hwl.beta.ui.common.BaseFragment;
@@ -90,7 +91,7 @@ public class FragmentRecord extends BaseFragment {
                         UITransfer.toChatUserActivity(activity, record.getFromUserId(), record.getFromUserName(), record.getFromUserHeadImage(), record.getRecordId());
                     }
                 } else if (record.getRecordType() == MQConstant.CHAT_RECORD_TYPE_GROUP) {
-                    UITransfer.toChatGroupActivity(activity, record.getGruopGuid(), record.getGroupName(), record.getRecordId());
+                    UITransfer.toChatGroupActivity(activity, record.getGruopGuid());
                 }
             }
 
@@ -172,6 +173,20 @@ public class FragmentRecord extends BaseFragment {
         records.add(record);
         Collections.sort(records, dateComparator);
         recordAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void deleteRecord(EventActionChatRecord actionChatRecord) {
+        if (actionChatRecord == null || actionChatRecord.getRecord() == null) return;
+        if (actionChatRecord.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
+            for (int i = 0; i < records.size(); i++) {
+                if (actionChatRecord.getRecord().getRecordId() == records.get(i).getRecordId()) {
+                    records.remove(records.get(i));
+                    break;
+                }
+            }
+            recordAdapter.notifyDataSetChanged();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

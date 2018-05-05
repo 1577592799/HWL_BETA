@@ -107,4 +107,17 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
         }
         return userInfo;
     }
+
+    public void deleteGroupUserInfo(String groupGuid) {
+        String sql = "delete from " + GroupUserInfoDao.TABLENAME +
+                " where " + GroupUserInfoDao.Properties.GroupGuid.columnName + " = '" + groupGuid + "'";
+        daoSession.getDatabase().execSQL(sql);
+    }
+
+    public void deleteGroupUserInfo(String groupGuid, long userId) {
+        String sql = "delete from " + GroupUserInfoDao.TABLENAME +
+                " where " + GroupUserInfoDao.Properties.GroupGuid.columnName + " = '" + groupGuid + "'" +
+                " and " + GroupUserInfoDao.Properties.UserId.columnName + "=" + userId;
+        daoSession.getDatabase().execSQL(sql);
+    }
 }

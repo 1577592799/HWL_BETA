@@ -14,6 +14,8 @@ public class MQConstant {
     public final static byte GROUP_EDIT_NOTE_MESSAGE = 6;
     public final static byte GROUP_EDIT_NAME_MESSAGE = 7;
     public final static byte GROUP_EDIT_USER_NAME_MESSAGE = 8;
+    public final static byte GROUP_EXIT_USER_MESSAGE = 9;
+    public final static byte GROUP_DISMISS_MESSAGE = 10;
 
     public final static int CHAT_RECORD_TYPE_USER = 1;
     public final static int CHAT_RECORD_TYPE_GROUP = 2;

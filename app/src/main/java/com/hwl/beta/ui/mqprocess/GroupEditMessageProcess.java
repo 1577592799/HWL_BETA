@@ -20,12 +20,19 @@ public class GroupEditMessageProcess implements IMessageProcess<GroupEditMessage
         GroupInfo groupInfo = null;
         if (messageType == MQConstant.GROUP_EDIT_NAME_MESSAGE) {
             groupInfo = DaoUtils.getGroupInfoManagerInstance().setGroupName(model.getGroupGuid(), model.getGroupName());
+            EventBus.getDefault().post(groupInfo);
         } else if (messageType == MQConstant.GROUP_EDIT_NOTE_MESSAGE) {
             groupInfo = DaoUtils.getGroupInfoManagerInstance().setGroupNote(model.getGroupGuid(), model.getGroupNote());
         } else if (messageType == MQConstant.GROUP_EDIT_USER_NAME_MESSAGE) {
-            groupInfo = DaoUtils.getGroupInfoManagerInstance().get(model.getGroupGuid());
             DaoUtils.getGroupUserInfoManagerInstance().setUserName(model.getGroupGuid(), model.getUserId(), model.getUserName());
             return;
+        } else if (messageType == MQConstant.GROUP_EXIT_USER_MESSAGE) {
+            groupInfo = DaoUtils.getGroupInfoManagerInstance().get(model.getGroupGuid());
+            DaoUtils.getGroupUserInfoManagerInstance().deleteGroupUserInfo(model.getGroupGuid(), model.getUserId());
+        } else if (messageType == MQConstant.GROUP_DISMISS_MESSAGE) {
+            groupInfo = DaoUtils.getGroupInfoManagerInstance().setGroupDismiss(model.getGroupGuid());
+            DaoUtils.getGroupUserInfoManagerInstance().deleteGroupUserInfo(model.getGroupGuid(), model.getUserId());
+            EventBus.getDefault().post(groupInfo);
         }
         if (groupInfo == null) return;
 

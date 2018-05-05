@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatGroupMessage;
 import com.hwl.beta.db.entity.ChatRecordMessage;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
@@ -26,17 +27,19 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
 
     @Override
     public void execute(byte messageType, ChatGroupMessageBean model) {
+//        GroupInfo groupInfo=DaoUtils.getGroupInfoManagerInstance().get(model.getGroupGuid());
+//        if(groupInfo==null) return;
 
-        //将用户添加到组中
-        if(model.getFromUserId()>0){
-            GroupUserInfo user = new GroupUserInfo();
-            user.setUserId(model.getFromUserId());
-            user.setUserName(model.getFromUserName());
-            user.setUserHeadImage(model.getFromUserHeadImage());
-            user.setGroupGuid(model.getGroupGuid());
-            user.setAddTime(DateUtils.getNow());
-            DaoUtils.getGroupUserInfoManagerInstance().add(user);
-        }
+//        //将用户添加到组中
+//        if(model.getFromUserId()>0){
+//            GroupUserInfo user = new GroupUserInfo();
+//            user.setUserId(model.getFromUserId());
+//            user.setUserName(model.getFromUserName());
+//            user.setUserHeadImage(model.getFromUserHeadImage());
+//            user.setGroupGuid(model.getGroupGuid());
+//            user.setAddTime(DateUtils.getNow());
+//            DaoUtils.getGroupUserInfoManagerInstance().add(user);
+//        }
 
         ChatRecordMessage record = new ChatRecordMessage();
         //record.setRecordId(1);

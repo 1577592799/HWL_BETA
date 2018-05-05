@@ -17,8 +17,8 @@ import com.hwl.beta.R;
 public class TitleBar extends RelativeLayout {
 
     final Context currContext;
-    ImageView imgLeft,imgRight;
-    TextView tvTitle,tvTitleRightInfo;
+    ImageView imgLeft, imgRight;
+    TextView tvTitle, tvTitleRightInfo;
 
     public TitleBar(Context context) {
         super(context);
@@ -42,9 +42,9 @@ public class TitleBar extends RelativeLayout {
         View view = LayoutInflater.from(currContext).inflate(R.layout.title_bar, this, false);
 
         imgLeft = (ImageView) view.findViewById(R.id.img_title_left_back);
-        imgRight=(ImageView)view.findViewById(R.id.img_title_right_info);
+        imgRight = (ImageView) view.findViewById(R.id.img_title_right_info);
         tvTitle = (TextView) view.findViewById(R.id.tv_title_content);
-        tvTitleRightInfo=(TextView)view.findViewById(R.id.tv_title_right_info);
+        tvTitleRightInfo = (TextView) view.findViewById(R.id.tv_title_right_info);
 
         this.addView(view);
     }
@@ -70,21 +70,26 @@ public class TitleBar extends RelativeLayout {
         return this;
     }
 
-    public TitleBar setTitleRightShow(){
+    public String getTitle() {
+        return tvTitle.getText() + "";
+    }
+
+    public TitleBar setTitleRightShow() {
         tvTitleRightInfo.setVisibility(View.VISIBLE);
         return this;
     }
 
-    public TitleBar setTitleRightHide(){
+    public TitleBar setTitleRightHide() {
         tvTitleRightInfo.setVisibility(View.GONE);
         return this;
     }
 
-    public TitleBar setTitleRightText(String text){
+    public TitleBar setTitleRightText(String text) {
         tvTitleRightInfo.setText(text);
         return this;
     }
-    public TitleBar setTitleRightBackground(int res){
+
+    public TitleBar setTitleRightBackground(int res) {
         tvTitleRightInfo.setBackgroundResource(res);
         return this;
     }
@@ -99,19 +104,20 @@ public class TitleBar extends RelativeLayout {
         return this;
     }
 
-    public ImageView getImageRightView(){
+    public ImageView getImageRightView() {
         return imgRight;
     }
 
-    public TitleBar setImageRightResource(int resId){
+    public TitleBar setImageRightResource(int resId) {
         imgRight.setImageResource(resId);
         return this;
     }
 
-    public TitleBar setImageRightClick(OnClickListener click){
+    public TitleBar setImageRightClick(OnClickListener click) {
         imgRight.setOnClickListener(click);
         return this;
     }
+
     public TitleBar setImageRightHide() {
         imgRight.setVisibility(View.GONE);
         return this;

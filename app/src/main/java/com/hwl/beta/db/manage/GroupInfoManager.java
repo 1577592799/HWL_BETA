@@ -83,4 +83,16 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
         add(groupInfo);
         return groupInfo;
     }
+
+    public GroupInfo setGroupDismiss(String groupGuid) {
+        GroupInfo groupInfo = get(groupGuid);
+        groupInfo.setIsDismiss(true);
+        add(groupInfo);
+        return groupInfo;
+    }
+
+    public void deleteGroupInfo(GroupInfo groupInfo) {
+        if(groupInfo==null) return;
+        daoSession.getGroupInfoDao().delete(groupInfo);
+    }
 }

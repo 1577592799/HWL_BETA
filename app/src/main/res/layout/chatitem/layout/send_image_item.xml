@@ -15,6 +15,10 @@
             type="int"></variable>
 
         <variable
+            name="userName"
+            type="String"></variable>
+
+        <variable
             name="action"
             type="com.hwl.beta.ui.chat.action.IChatMessageItemListener"></variable>
     </data>
@@ -35,12 +39,25 @@
             android:src="@drawable/empty_photo"
             app:imageUrl="@{image.imageUrl}" />
 
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_userhead"
+            android:layout_marginRight="@dimen/dp_15"
+            android:layout_toLeftOf="@+id/iv_userhead"
+            android:paddingBottom="5dp"
+            android:text="@{userName}"
+            android:textSize="@dimen/dp_12"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/iv_image_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
+            android:layout_below="@+id/tv_username"
             android:layout_toLeftOf="@+id/iv_userhead"
             android:layout_toStartOf="@+id/iv_userhead"
             android:adjustViewBounds="true"

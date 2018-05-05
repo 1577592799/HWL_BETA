@@ -18,7 +18,7 @@ import com.hwl.beta.db.entity.GroupInfo;
 /** 
  * DAO for table "GROUP_INFO".
 */
-public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
+public class GroupInfoDao extends AbstractDao<GroupInfo, Long> {
 
     public static final String TABLENAME = "GROUP_INFO";
 
@@ -27,18 +27,20 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property GroupGuid = new Property(0, String.class, "groupGuid", false, "GROUP_GUID");
-        public final static Property GroupName = new Property(1, String.class, "groupName", false, "GROUP_NAME");
-        public final static Property GroupImage = new Property(2, String.class, "groupImage", false, "GROUP_IMAGE");
-        public final static Property GroupUserCount = new Property(3, int.class, "groupUserCount", false, "GROUP_USER_COUNT");
-        public final static Property BuildUserId = new Property(4, long.class, "buildUserId", false, "BUILD_USER_ID");
-        public final static Property UserImages = new Property(5, String.class, "userImages", false, "USER_IMAGES");
-        public final static Property GroupNote = new Property(6, String.class, "groupNote", false, "GROUP_NOTE");
-        public final static Property BuildTime = new Property(7, java.util.Date.class, "buildTime", false, "BUILD_TIME");
-        public final static Property UpdateTime = new Property(8, String.class, "updateTime", false, "UPDATE_TIME");
-        public final static Property MyUserName = new Property(9, String.class, "myUserName", false, "MY_USER_NAME");
-        public final static Property GroupBackImage = new Property(10, String.class, "groupBackImage", false, "GROUP_BACK_IMAGE");
-        public final static Property IsShield = new Property(11, boolean.class, "isShield", false, "IS_SHIELD");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property GroupGuid = new Property(1, String.class, "groupGuid", false, "GROUP_GUID");
+        public final static Property GroupName = new Property(2, String.class, "groupName", false, "GROUP_NAME");
+        public final static Property GroupImage = new Property(3, String.class, "groupImage", false, "GROUP_IMAGE");
+        public final static Property GroupUserCount = new Property(4, int.class, "groupUserCount", false, "GROUP_USER_COUNT");
+        public final static Property BuildUserId = new Property(5, long.class, "buildUserId", false, "BUILD_USER_ID");
+        public final static Property UserImages = new Property(6, String.class, "userImages", false, "USER_IMAGES");
+        public final static Property GroupNote = new Property(7, String.class, "groupNote", false, "GROUP_NOTE");
+        public final static Property BuildTime = new Property(8, java.util.Date.class, "buildTime", false, "BUILD_TIME");
+        public final static Property UpdateTime = new Property(9, String.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property MyUserName = new Property(10, String.class, "myUserName", false, "MY_USER_NAME");
+        public final static Property GroupBackImage = new Property(11, String.class, "groupBackImage", false, "GROUP_BACK_IMAGE");
+        public final static Property IsShield = new Property(12, boolean.class, "isShield", false, "IS_SHIELD");
+        public final static Property IsDismiss = new Property(13, boolean.class, "isDismiss", false, "IS_DISMISS");
     }
 
     private final ListStringConverter userImagesConverter = new ListStringConverter();
@@ -55,18 +57,20 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"GROUP_INFO\" (" + //
-                "\"GROUP_GUID\" TEXT UNIQUE ," + // 0: groupGuid
-                "\"GROUP_NAME\" TEXT," + // 1: groupName
-                "\"GROUP_IMAGE\" TEXT," + // 2: groupImage
-                "\"GROUP_USER_COUNT\" INTEGER NOT NULL ," + // 3: groupUserCount
-                "\"BUILD_USER_ID\" INTEGER NOT NULL ," + // 4: buildUserId
-                "\"USER_IMAGES\" TEXT," + // 5: userImages
-                "\"GROUP_NOTE\" TEXT," + // 6: groupNote
-                "\"BUILD_TIME\" INTEGER," + // 7: buildTime
-                "\"UPDATE_TIME\" TEXT," + // 8: updateTime
-                "\"MY_USER_NAME\" TEXT," + // 9: myUserName
-                "\"GROUP_BACK_IMAGE\" TEXT," + // 10: groupBackImage
-                "\"IS_SHIELD\" INTEGER NOT NULL );"); // 11: isShield
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"GROUP_GUID\" TEXT UNIQUE ," + // 1: groupGuid
+                "\"GROUP_NAME\" TEXT," + // 2: groupName
+                "\"GROUP_IMAGE\" TEXT," + // 3: groupImage
+                "\"GROUP_USER_COUNT\" INTEGER NOT NULL ," + // 4: groupUserCount
+                "\"BUILD_USER_ID\" INTEGER NOT NULL ," + // 5: buildUserId
+                "\"USER_IMAGES\" TEXT," + // 6: userImages
+                "\"GROUP_NOTE\" TEXT," + // 7: groupNote
+                "\"BUILD_TIME\" INTEGER," + // 8: buildTime
+                "\"UPDATE_TIME\" TEXT," + // 9: updateTime
+                "\"MY_USER_NAME\" TEXT," + // 10: myUserName
+                "\"GROUP_BACK_IMAGE\" TEXT," + // 11: groupBackImage
+                "\"IS_SHIELD\" INTEGER NOT NULL ," + // 12: isShield
+                "\"IS_DISMISS\" INTEGER NOT NULL );"); // 13: isDismiss
     }
 
     /** Drops the underlying database table. */
@@ -79,163 +83,182 @@ public class GroupInfoDao extends AbstractDao<GroupInfo, Void> {
     protected final void bindValues(DatabaseStatement stmt, GroupInfo entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         String groupGuid = entity.getGroupGuid();
         if (groupGuid != null) {
-            stmt.bindString(1, groupGuid);
+            stmt.bindString(2, groupGuid);
         }
  
         String groupName = entity.getGroupName();
         if (groupName != null) {
-            stmt.bindString(2, groupName);
+            stmt.bindString(3, groupName);
         }
  
         String groupImage = entity.getGroupImage();
         if (groupImage != null) {
-            stmt.bindString(3, groupImage);
+            stmt.bindString(4, groupImage);
         }
-        stmt.bindLong(4, entity.getGroupUserCount());
-        stmt.bindLong(5, entity.getBuildUserId());
+        stmt.bindLong(5, entity.getGroupUserCount());
+        stmt.bindLong(6, entity.getBuildUserId());
  
         List userImages = entity.getUserImages();
         if (userImages != null) {
-            stmt.bindString(6, userImagesConverter.convertToDatabaseValue(userImages));
+            stmt.bindString(7, userImagesConverter.convertToDatabaseValue(userImages));
         }
  
         String groupNote = entity.getGroupNote();
         if (groupNote != null) {
-            stmt.bindString(7, groupNote);
+            stmt.bindString(8, groupNote);
         }
  
         java.util.Date buildTime = entity.getBuildTime();
         if (buildTime != null) {
-            stmt.bindLong(8, buildTime.getTime());
+            stmt.bindLong(9, buildTime.getTime());
         }
  
         String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindString(9, updateTime);
+            stmt.bindString(10, updateTime);
         }
  
         String myUserName = entity.getMyUserName();
         if (myUserName != null) {
-            stmt.bindString(10, myUserName);
+            stmt.bindString(11, myUserName);
         }
  
         String groupBackImage = entity.getGroupBackImage();
         if (groupBackImage != null) {
-            stmt.bindString(11, groupBackImage);
+            stmt.bindString(12, groupBackImage);
         }
-        stmt.bindLong(12, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(13, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(14, entity.getIsDismiss() ? 1L: 0L);
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, GroupInfo entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         String groupGuid = entity.getGroupGuid();
         if (groupGuid != null) {
-            stmt.bindString(1, groupGuid);
+            stmt.bindString(2, groupGuid);
         }
  
         String groupName = entity.getGroupName();
         if (groupName != null) {
-            stmt.bindString(2, groupName);
+            stmt.bindString(3, groupName);
         }
  
         String groupImage = entity.getGroupImage();
         if (groupImage != null) {
-            stmt.bindString(3, groupImage);
+            stmt.bindString(4, groupImage);
         }
-        stmt.bindLong(4, entity.getGroupUserCount());
-        stmt.bindLong(5, entity.getBuildUserId());
+        stmt.bindLong(5, entity.getGroupUserCount());
+        stmt.bindLong(6, entity.getBuildUserId());
  
         List userImages = entity.getUserImages();
         if (userImages != null) {
-            stmt.bindString(6, userImagesConverter.convertToDatabaseValue(userImages));
+            stmt.bindString(7, userImagesConverter.convertToDatabaseValue(userImages));
         }
  
         String groupNote = entity.getGroupNote();
         if (groupNote != null) {
-            stmt.bindString(7, groupNote);
+            stmt.bindString(8, groupNote);
         }
  
         java.util.Date buildTime = entity.getBuildTime();
         if (buildTime != null) {
-            stmt.bindLong(8, buildTime.getTime());
+            stmt.bindLong(9, buildTime.getTime());
         }
  
         String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindString(9, updateTime);
+            stmt.bindString(10, updateTime);
         }
  
         String myUserName = entity.getMyUserName();
         if (myUserName != null) {
-            stmt.bindString(10, myUserName);
+            stmt.bindString(11, myUserName);
         }
  
         String groupBackImage = entity.getGroupBackImage();
         if (groupBackImage != null) {
-            stmt.bindString(11, groupBackImage);
+            stmt.bindString(12, groupBackImage);
         }
-        stmt.bindLong(12, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(13, entity.getIsShield() ? 1L: 0L);
+        stmt.bindLong(14, entity.getIsDismiss() ? 1L: 0L);
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public GroupInfo readEntity(Cursor cursor, int offset) {
         GroupInfo entity = new GroupInfo( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // groupGuid
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // groupName
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // groupImage
-            cursor.getInt(offset + 3), // groupUserCount
-            cursor.getLong(offset + 4), // buildUserId
-            cursor.isNull(offset + 5) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 5)), // userImages
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // groupNote
-            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // buildTime
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // updateTime
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // myUserName
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // groupBackImage
-            cursor.getShort(offset + 11) != 0 // isShield
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // groupGuid
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // groupName
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // groupImage
+            cursor.getInt(offset + 4), // groupUserCount
+            cursor.getLong(offset + 5), // buildUserId
+            cursor.isNull(offset + 6) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 6)), // userImages
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // groupNote
+            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // buildTime
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // updateTime
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // myUserName
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // groupBackImage
+            cursor.getShort(offset + 12) != 0, // isShield
+            cursor.getShort(offset + 13) != 0 // isDismiss
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, GroupInfo entity, int offset) {
-        entity.setGroupGuid(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setGroupName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setGroupImage(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setGroupUserCount(cursor.getInt(offset + 3));
-        entity.setBuildUserId(cursor.getLong(offset + 4));
-        entity.setUserImages(cursor.isNull(offset + 5) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 5)));
-        entity.setGroupNote(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setBuildTime(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
-        entity.setUpdateTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setMyUserName(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setGroupBackImage(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setIsShield(cursor.getShort(offset + 11) != 0);
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setGroupGuid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setGroupName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setGroupImage(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setGroupUserCount(cursor.getInt(offset + 4));
+        entity.setBuildUserId(cursor.getLong(offset + 5));
+        entity.setUserImages(cursor.isNull(offset + 6) ? null : userImagesConverter.convertToEntityProperty(cursor.getString(offset + 6)));
+        entity.setGroupNote(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setBuildTime(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
+        entity.setUpdateTime(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setMyUserName(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setGroupBackImage(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setIsShield(cursor.getShort(offset + 12) != 0);
+        entity.setIsDismiss(cursor.getShort(offset + 13) != 0);
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(GroupInfo entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(GroupInfo entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(GroupInfo entity) {
-        return null;
+    public Long getKey(GroupInfo entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(GroupInfo entity) {
-        // TODO
-        return false;
+        return entity.getId() != null;
     }
 
     @Override

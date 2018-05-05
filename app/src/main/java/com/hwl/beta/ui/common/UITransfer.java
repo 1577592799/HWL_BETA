@@ -152,19 +152,9 @@ public class UITransfer {
         }
     }
 
-//    public static void toChatGroupActivity(Activity context, String groupGuid, String groupName) {
-//        toChatGroupActivity(context, groupGuid, groupName, 0);
-//    }
-
-    public static void toChatGroupActivity(Context context, String groupGuid, String groupName) {
-        toChatGroupActivity(context, groupGuid, groupName, 0);
-    }
-
-    public static void toChatGroupActivity(Context context, String groupGuid, String groupName, long recordId) {
+    public static void toChatGroupActivity(Context context, String groupGuid) {
         Intent intent = new Intent(context, ActivityChatGroup.class);
         intent.putExtra("groupguid", groupGuid);
-        intent.putExtra("groupname", groupName);
-        intent.putExtra("recordid", recordId);
         context.startActivity(intent);
     }
 

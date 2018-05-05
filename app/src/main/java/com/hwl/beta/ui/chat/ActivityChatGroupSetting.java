@@ -1,11 +1,13 @@
 package com.hwl.beta.ui.chat;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
@@ -14,20 +16,42 @@ import android.widget.Toast;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityChatGroupSettingBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
+import com.hwl.beta.mq.send.GroupActionMessageSend;
+import com.hwl.beta.net.NetConstant;
+import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.group.GroupService;
+import com.hwl.beta.net.group.body.DeleteGroupResponse;
+import com.hwl.beta.net.group.body.DeleteGroupUserResponse;
 import com.hwl.beta.net.group.body.GroupUsersResponse;
+import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionChatRecord;
+import com.hwl.beta.ui.busbean.EventActionGroup;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.action.IChatGroupSettingListener;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
+import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBGroupAction;
+import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.group.adp.GroupUserAdapter;
 import com.hwl.beta.utils.StringUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 public class ActivityChatGroupSetting extends FragmentActivity {
 
@@ -42,22 +66,19 @@ public class ActivityChatGroupSetting extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
-        String groupGuid = getIntent().getStringExtra("groupguid");
-        if (StringUtils.isBlank(groupGuid)) {
-            Toast.makeText(activity, "群组参数错误", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        group = DaoUtils.getGroupInfoManagerInstance().get(groupGuid);
+
+        group = DaoUtils.getGroupInfoManagerInstance().get(getIntent().getStringExtra("groupguid"));
         if (group == null) {
-            Toast.makeText(activity, "群组不存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "群组不存在或者已经被解散了", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
         if (StringUtils.isBlank(group.getMyUserName())) {
             group.setMyUserName(UserSP.getUserName());
         }
 
         myUserId = UserSP.getUserId();
-        users = DaoUtils.getGroupUserInfoManagerInstance().getUsers(groupGuid);
+        users = DaoUtils.getGroupUserInfoManagerInstance().getUsers(group.getGroupGuid());
         if (users == null) {
             users = new ArrayList<>();
         }
@@ -89,6 +110,17 @@ public class ActivityChatGroupSetting extends FragmentActivity {
             }
         });
 
+        if (group.getBuildUserId() == myUserId) {
+            binding.btnDismiss.setVisibility(View.VISIBLE);
+        } else {
+            binding.btnDismiss.setVisibility(View.GONE);
+        }
+        if (group.getGroupGuid().equals(UserPosSP.getGroupGuid())) {
+            binding.btnExit.setVisibility(View.GONE);
+        } else {
+            binding.btnExit.setVisibility(View.VISIBLE);
+        }
+
         loadGroupUserFromServer();
     }
 
@@ -115,9 +147,11 @@ public class ActivityChatGroupSetting extends FragmentActivity {
             switch (requestCode) {
                 case 1:
                     group.setGroupNote(data.getStringExtra("content"));
+                    EventBus.getDefault().post(group);
                     break;
                 case 2:
                     group.setGroupName(data.getStringExtra("content"));
+                    EventBus.getDefault().post(group);
                     break;
                 case 3:
                     String myName = data.getStringExtra("content");
@@ -128,6 +162,7 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                         if (users.get(i).getUserId() == myUserId) {
                             users.get(i).setUserName(group.getMyUserName());
                             userAdapter.notifyDataSetChanged();
+                            EventBus.getDefault().post(group);
                             break;
                         }
                     }
@@ -161,17 +196,126 @@ public class ActivityChatGroupSetting extends FragmentActivity {
 
         @Override
         public void onSearchClick() {
-
+            Toast.makeText(activity, "搜索功能稍后开放...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onClearClick() {
-
+            new AlertDialog.Builder(activity)
+                    .setMessage("聊天数据清空后,不能恢复,确认清空 ?")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DaoUtils.getChatGroupMessageManagerInstance().deleteMessages(group.getGroupGuid());
+                            EventBus.getDefault().post(new EventActionGroup(EventBusConstant.EB_TYPE_ACTINO_CLEAR, group));
+                            Toast.makeText(activity, "聊天记录已经清空", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
         }
 
         @Override
         public void onExitClick() {
+            new AlertDialog.Builder(activity)
+                    .setMessage("退出群组后,会帮你清空掉所有聊天信息,确认退出 ?")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
 
+                            LoadingDialog.show(activity, "正在退出,请稍后...");
+                            GroupService.deleteGroupUser(group.getGroupGuid())
+                                    .subscribe(new NetDefaultObserver<DeleteGroupUserResponse>() {
+                                        @Override
+                                        protected void onSuccess(DeleteGroupUserResponse response) {
+                                            LoadingDialog.hide();
+                                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                                GroupActionMessageSend.sendExitGroupUserMessage(group.getGroupGuid(), myUserId, group.getMyUserName() + " 退出群组").subscribe();
+
+                                                DaoUtils.getGroupInfoManagerInstance().deleteGroupInfo(group);
+                                                DaoUtils.getGroupUserInfoManagerInstance().deleteGroupUserInfo(group.getGroupGuid());
+                                                DaoUtils.getChatGroupMessageManagerInstance().deleteMessages(group.getGroupGuid());
+                                                ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().deleteGroupRecord(group.getGroupGuid());
+
+                                                EventBus.getDefault().post(new EventActionGroup(EventBusConstant.EB_TYPE_ACTINO_EXIT, group));
+                                                EventBus.getDefault().post(new EventActionChatRecord(EventBusConstant.EB_TYPE_ACTINO_REMOVE, recordMessage));
+                                                finish();
+                                            } else {
+                                                onError("退出失败");
+                                            }
+                                        }
+
+                                        @Override
+                                        protected void onError(String resultMessage) {
+                                            super.onError(resultMessage);
+                                            LoadingDialog.hide();
+                                        }
+                                    });
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
+
+        @Override
+        public void onDismissClick() {
+            new AlertDialog.Builder(activity)
+                    .setMessage("确定要解散群组 ?")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+
+                            LoadingDialog.show(activity, "群组解散中,请稍后...");
+                            GroupActionMessageSend.sendDismissGroupUserMessage(group.getGroupGuid(), myUserId, group.getMyUserName() + " 解散了群组")
+                                    .subscribe(new MQDefaultObserver() {
+                                        @Override
+                                        protected void onSuccess() {
+                                            deleteGroupFromServer();
+                                        }
+
+                                        @Override
+                                        protected void onError(String resultMessage) {
+                                            super.onError(resultMessage);
+                                            LoadingDialog.hide();
+                                        }
+                                    });
+
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
+
+        private void deleteGroupFromServer() {
+            GroupService.deleteGroup(group.getGroupGuid())
+                    .subscribe(new NetDefaultObserver<DeleteGroupResponse>() {
+                        @Override
+                        protected void onSuccess(DeleteGroupResponse response) {
+                            LoadingDialog.hide();
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+
+                                DaoUtils.getGroupInfoManagerInstance().deleteGroupInfo(group);
+                                DaoUtils.getGroupUserInfoManagerInstance().deleteGroupUserInfo(group.getGroupGuid());
+                                DaoUtils.getChatGroupMessageManagerInstance().deleteMessages(group.getGroupGuid());
+                                ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().deleteGroupRecord(group.getGroupGuid());
+
+                                EventBus.getDefault().post(new EventActionGroup(EventBusConstant.EB_TYPE_ACTINO_EXIT, group));
+                                EventBus.getDefault().post(new EventActionChatRecord(EventBusConstant.EB_TYPE_ACTINO_REMOVE, recordMessage));
+                                finish();
+                            } else {
+                                onError("解散失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            LoadingDialog.hide();
+                        }
+                    });
         }
     }
 }

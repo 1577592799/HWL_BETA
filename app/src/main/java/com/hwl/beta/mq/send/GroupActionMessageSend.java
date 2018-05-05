@@ -60,23 +60,35 @@ public class GroupActionMessageSend {
     public static Observable<Boolean> sendEditGroupNameMessage(String groupGuid,
                                                                String groupName,
                                                                String content) {
-        return sendEditMessage(MQConstant.GROUP_EDIT_NAME_MESSAGE, groupGuid, groupName, null,0, null, content);
+        return sendEditMessage(MQConstant.GROUP_EDIT_NAME_MESSAGE,false, groupGuid, groupName, null, 0, null, content);
     }
 
     public static Observable<Boolean> sendEditGroupUserNameMessage(String groupGuid,
                                                                    long userId,
                                                                    String userName,
                                                                    String content) {
-        return sendEditMessage(MQConstant.GROUP_EDIT_NAME_MESSAGE, groupGuid, null, null, userId, userName, content);
+        return sendEditMessage(MQConstant.GROUP_EDIT_NAME_MESSAGE,false, groupGuid, null, null, userId, userName, content);
+    }
+
+    public static Observable<Boolean> sendExitGroupUserMessage(String groupGuid,
+                                                               long userId,
+                                                               String content) {
+        return sendEditMessage(MQConstant.GROUP_EXIT_USER_MESSAGE,true, groupGuid, null, null, userId, null, content);
+    }
+
+    public static Observable<Boolean> sendDismissGroupUserMessage(String groupGuid,
+                                                               long userId,
+                                                               String content) {
+        return sendEditMessage(MQConstant.GROUP_DISMISS_MESSAGE,true, groupGuid, null, null, userId, null, content);
     }
 
     public static Observable<Boolean> sendEditGroupNoteMessage(String groupGuid,
                                                                String groupNote,
                                                                String content) {
-        return sendEditMessage(MQConstant.GROUP_EDIT_NOTE_MESSAGE, groupGuid, null, groupNote, 0,null, content);
+        return sendEditMessage(MQConstant.GROUP_EDIT_NOTE_MESSAGE,false, groupGuid, null, groupNote, 0, null, content);
     }
 
-    private static Observable<Boolean> sendEditMessage(byte messageType, String groupGuid,
+    private static Observable<Boolean> sendEditMessage(byte messageType, boolean excludeUser, String groupGuid,
                                                        String groupName,
                                                        String groupNote,
                                                        long userId,
@@ -91,7 +103,12 @@ public class GroupActionMessageSend {
         message.setContentType(MQConstant.CHAT_MESSAGE_CONTENT_TYPE_WELCOME_TIP);
         message.setContent(content);
 
-        byte[] userIdBytes = new byte[]{0};
+        byte[] userIdBytes = null;
+        if (excludeUser) {
+            userIdBytes = ByteUtils.intToBytes((int) userId);
+        } else {
+            userIdBytes = new byte[]{0};
+        }
         byte[] groupIdBytes = groupGuid.getBytes();
         byte[] contentBytes = MessageReceive.convertToBytes(message);
         byte[] messageBytes = new byte[3 + userIdBytes.length + groupIdBytes.length + contentBytes.length];
