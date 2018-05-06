@@ -13,6 +13,7 @@ public class MessageCountSP {
     private static final String MESSAGECOUNTPREFERENCE = "com.hwl.beta.message.count";
     private static final String FRIENDREQUESTCOUNT = "friendrequestcount";
     private static final String CHATMESSAGECOUNT = "chatmessagecount";
+    private static final String NEARCIRCLEMESSAGECOUNT = "nearcirclemessagecount";
 
 
     private static SharedPreferences getSP() {
@@ -49,5 +50,17 @@ public class MessageCountSP {
         final SharedPreferences.Editor editor = getSP().edit();
         editor.putInt(CHATMESSAGECOUNT, count);
         editor.commit();
+    }
+
+    public static void setNearCircleMessageCountAuto() {
+        int count = getNearCircleMessageCount();
+        count++;
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putInt(NEARCIRCLEMESSAGECOUNT, count);
+        editor.commit();
+    }
+
+    public static int getNearCircleMessageCount() {
+        return getSP().getInt(NEARCIRCLEMESSAGECOUNT, 0);
     }
 }

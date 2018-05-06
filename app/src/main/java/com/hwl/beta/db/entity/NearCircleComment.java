@@ -5,6 +5,7 @@ import com.hwl.beta.utils.DateUtils;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.OrderBy;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -13,7 +14,8 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 
 @Entity
-public class NearCircleComment {
+public class NearCircleComment implements Serializable {
+    private static final long serialVersionUID = 11L;
     private int commentId;
     private long nearCircleId ;
     private long commentUserId;

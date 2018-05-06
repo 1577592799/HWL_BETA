@@ -20,9 +20,10 @@ public class EventBusConstant {
     public static final int EB_TYPE_NETWORK_BREAK_UPDATE = 6;
     public static final int EB_TYPE_NEAR_INFO_UPDATE = 7;
     public static final int EB_TYPE_CIRCLE_INFO_UPDATE = 10;
+    public static final int EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE = 11;
 
-    public static final int EB_TYPE_ACTINO_ADD = 8;
-    public static final int EB_TYPE_ACTINO_REMOVE = 9;
-    public static final int EB_TYPE_ACTINO_CLEAR = 10;
-    public static final int EB_TYPE_ACTINO_EXIT = 11;
+    public static final int EB_TYPE_ACTINO_ADD = 20000;
+    public static final int EB_TYPE_ACTINO_REMOVE = 20001;
+    public static final int EB_TYPE_ACTINO_CLEAR = 20002;
+    public static final int EB_TYPE_ACTINO_EXIT = 20003;
 }

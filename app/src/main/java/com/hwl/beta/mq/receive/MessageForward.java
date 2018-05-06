@@ -11,6 +11,7 @@ import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
+import com.hwl.beta.mq.bean.NearCircleMessageBean;
 import com.hwl.beta.utils.ByteUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -108,6 +109,13 @@ public class MessageForward {
                 messageProcess = MessageProcess.getGroupUsersAddMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, GroupUsersAddMessageBean.class));
+                }
+                break;
+            case MQConstant.NEAR_CIRCLE_ADD_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getNearCircleMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleMessageBean.class));
                 }
                 break;
         }

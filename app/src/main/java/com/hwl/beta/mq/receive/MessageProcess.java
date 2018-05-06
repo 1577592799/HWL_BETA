@@ -8,6 +8,7 @@ import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
+import com.hwl.beta.mq.bean.NearCircleMessageBean;
 import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 /**
@@ -24,6 +25,15 @@ public class MessageProcess {
     private static IMessageProcess<GroupEditMessageBean> groupEditMessageProcess;
     private static IMessageProcess<FriendDeleteMessageBean> friendDeleteMessageProcess;
     private static IMessageProcess<GroupUsersAddMessageBean> groupUsersAddMessageProcess;
+    private static IMessageProcess<NearCircleMessageBean> nearCircleMessageProcess;
+
+    public static IMessageProcess<NearCircleMessageBean> getNearCircleMessageProcess() {
+        return nearCircleMessageProcess;
+    }
+
+    public static void registerNearCircleMessageProcess(IMessageProcess<NearCircleMessageBean> process) {
+        nearCircleMessageProcess = process;
+    }
 
     public static IMessageProcess<GroupUsersAddMessageBean> getGroupUsersAddMessageProcess() {
         return groupUsersAddMessageProcess;
@@ -32,7 +42,6 @@ public class MessageProcess {
     public static void registerGroupUsersAddMessageProcess(IMessageProcess<GroupUsersAddMessageBean> process) {
         groupUsersAddMessageProcess = process;
     }
-
 
     public static IMessageProcess<FriendDeleteMessageBean> getFriendDeleteMessageProcess() {
         return friendDeleteMessageProcess;

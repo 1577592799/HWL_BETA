@@ -11,6 +11,7 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.db.entity.NearCircleLike;
+import com.hwl.beta.db.entity.NearCircleMessage;
 import com.hwl.beta.db.ext.NearCircleExt;
 
 import java.util.ArrayList;
@@ -132,5 +133,17 @@ public class NearCircleManager extends BaseDao<NearCircle> {
                 getLikes(model.getNearCircleId())
         );
         return info;
+    }
+
+    public List<NearCircleMessage> getNearCircleMessages() {
+        return daoSession.getNearCircleMessageDao().loadAll();
+    }
+
+    public boolean addNearCircleMessage(NearCircleMessage message) {
+        if (message == null) return false;
+        if (daoSession.getNearCircleMessageDao().insert(message) > 0) {
+            return true;
+        }
+        return false;
     }
 }

@@ -8,6 +8,9 @@
         android:id="@+id/pop_near_publish"
         android:title="发布信息"/>
     <item
+        android:id="@+id/pop_near_message"
+        android:title="附近消息"/>
+    <item
         android:id="@+id/pop_add_user"
         android:title="查找用户"/>
 

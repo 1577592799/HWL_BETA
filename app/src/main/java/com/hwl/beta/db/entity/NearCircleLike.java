@@ -4,6 +4,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,8 @@ import java.util.Date;
  */
 
 @Entity
-public class NearCircleLike {
+public class NearCircleLike implements Serializable {
+    private static final long serialVersionUID = 12L;
     private long nearCircleId;
     private long likeUserId;
     private String likeUserName;

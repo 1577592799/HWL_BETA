@@ -4,14 +4,16 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.db.entity.NearCircleLike;
+import com.hwl.beta.utils.StringUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/11.
  */
 
-public class NearCircleExt {
+public class NearCircleExt implements Serializable {
     private NearCircle info;
     private List<NearCircleImage> images;
     private List<NearCircleComment> comments;
@@ -66,5 +68,17 @@ public class NearCircleExt {
 
     public void setLikes(List<NearCircleLike> likes) {
         this.likes = likes;
+    }
+
+    public String getNearCircleMessageContent() {
+        if (this.info != null && this.info.getNearCircleId() > 0) {
+            if (StringUtils.isNotBlank(this.info.getContent())) {
+                return this.info.getContent();
+            }
+            if (this.images != null && this.images.size() > 0) {
+                return this.images.get(0).getImageUrl();
+            }
+        }
+        return "";
     }
 }

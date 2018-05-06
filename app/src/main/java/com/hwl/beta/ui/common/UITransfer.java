@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.db.ext.NearCircleExt;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.chat.ActivityChatGroup;
@@ -30,6 +31,8 @@ import com.hwl.beta.ui.group.ActivityGroupAdd;
 import com.hwl.beta.ui.chat.ActivityChatGroupSetting;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.near.ActivityCommentPublish;
+import com.hwl.beta.ui.near.ActivityNearDetail;
+import com.hwl.beta.ui.near.ActivityNearMessages;
 import com.hwl.beta.ui.near.ActivityNearPublish;
 import com.hwl.beta.ui.user.ActivityNewFriend;
 import com.hwl.beta.ui.user.ActivityUserEdit;
@@ -163,6 +166,22 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
+    public static void toNearDetailActivity(Activity context, long circleId, NearCircleExt info) {
+        Intent intent = new Intent(context, ActivityNearDetail.class);
+        if (info != null && info.getInfo() != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("nearcircleext", info);
+            intent.putExtras(bundle);
+        }
+        intent.putExtra("nearcircleid", circleId);
+        context.startActivity(intent);
+    }
+
+    public static void toNearMessagesActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityNearMessages.class);
+        context.startActivity(intent);
+    }
+
     public static void toNearCommentPublishActivity(Activity context, long nearCircleId) {
         toNearCommentPublishActivity(context, nearCircleId, 0, null);
     }
@@ -232,10 +251,10 @@ public class UITransfer {
     }
 
     public static void toGroupAddActivity(Activity context) {
-        toGroupAddActivity(context, ActivityGroupAdd.TYPE_CREATE,null);
+        toGroupAddActivity(context, ActivityGroupAdd.TYPE_CREATE, null);
     }
 
-    public static void toGroupAddActivity(Activity context, int actionType,String groupGuid) {
+    public static void toGroupAddActivity(Activity context, int actionType, String groupGuid) {
         Intent intent = new Intent(context, ActivityGroupAdd.class);
         intent.putExtra("actiontype", actionType);
         intent.putExtra("groupguid", groupGuid);

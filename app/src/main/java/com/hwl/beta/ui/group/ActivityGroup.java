@@ -92,7 +92,7 @@ public class ActivityGroup extends FragmentActivity {
     }
 
     private void loadGroupFromServer() {
-        if (groupInfos.size() > 1) return;
+        if (groupInfos.size() > 2) return;
 
         GroupService.getGroups()
                 .subscribe(new NetDefaultObserver<GetGroupsResponse>(false) {

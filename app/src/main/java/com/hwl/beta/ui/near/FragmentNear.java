@@ -21,12 +21,15 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
+import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.NetNearCircleInfo;
 import com.hwl.beta.net.near.body.GetNearCircleInfosResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
+import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
@@ -95,6 +98,19 @@ public class FragmentNear extends BaseFragment {
         nearCircleAdapter.addComment(comment);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMessage(Integer ebType) {
+        if (ebType == EventBusConstant.EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE) {
+            int count = MessageCountSP.getNearCircleMessageCount();
+            if (count > 0) {
+                binding.llMessageTip.setVisibility(View.VISIBLE);
+                binding.tvMessageCount.setText(count + "");
+            } else {
+                binding.llMessageTip.setVisibility(View.GONE);
+            }
+        }
+    }
+
     @Override
     protected void onFragmentFirstVisible() {
         binding.pbLoading.setVisibility(View.VISIBLE);
@@ -133,6 +149,14 @@ public class FragmentNear extends BaseFragment {
 
         binding.refreshLayout.setEnableLoadMore(false);
 //        binding.refreshLayout.autoRefresh();
+        binding.llMessageTip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toNearMessagesActivity(activity);
+            }
+        });
+
+        this.updateMessage(EventBusConstant.EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE);
     }
 
     private void showResult() {
@@ -400,6 +424,7 @@ public class FragmentNear extends BaseFragment {
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
                                     nearCircleAdapter.addLike(position, likeInfo);
+                                    UserMessageSend.sendNearCircleLikeMessage(info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");
