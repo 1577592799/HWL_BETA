@@ -7,6 +7,7 @@ import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.dao.GroupUserInfoDao;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
+import com.hwl.beta.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,7 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
     }
 
     public List<GroupUserInfo> getUsers(String groupGuid) {
+        if (StringUtils.isBlank(groupGuid)) return null;
         return daoSession.getGroupUserInfoDao().queryBuilder()
                 .where(GroupUserInfoDao.Properties.GroupGuid.eq(groupGuid))
                 .list();

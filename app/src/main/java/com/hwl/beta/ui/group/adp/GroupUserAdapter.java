@@ -20,9 +20,9 @@ public class GroupUserAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<GroupUserInfo> users;
 
-    public GroupUserAdapter(Context context,List<GroupUserInfo> users){
-        this.context=context;
-        this.users=users;
+    public GroupUserAdapter(Context context, List<GroupUserInfo> users) {
+        this.context = context;
+        this.users = users;
         inflater = LayoutInflater.from(context);
     }
 
@@ -38,12 +38,12 @@ public class GroupUserAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return users.get(position).getUserId();
+        return users.get(position).getId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        GroupUserInfo user=users.get(position);
+        GroupUserInfo user = users.get(position);
         ViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.group_user_item, parent, false);
@@ -54,12 +54,18 @@ public class GroupUserAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        ImageViewBean.loadImage(viewHolder.ivHeader,user.getUserHeadImage());
-        if(StringUtils.isBlank(user.getUserName()))
-        {
-            viewHolder.tvName.setText("--");
-        }else{
-            viewHolder.tvName.setText(StringUtils.cutString(user.getUserName(),10));
+        if (user.getId() == -1) {
+            viewHolder.ivHeader.setBackgroundResource(R.drawable.layout_border);
+            viewHolder.ivHeader.setImageResource(R.drawable.ic_add);
+            viewHolder.tvName.setText("");
+        } else {
+            viewHolder.ivHeader.setBackgroundResource(0);
+            ImageViewBean.loadImage(viewHolder.ivHeader, user.getUserHeadImage());
+            if (StringUtils.isBlank(user.getUserName())) {
+                viewHolder.tvName.setText("--");
+            } else {
+                viewHolder.tvName.setText(StringUtils.cutString(user.getUserName(), 10));
+            }
         }
         return convertView;
     }

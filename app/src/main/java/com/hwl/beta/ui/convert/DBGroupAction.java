@@ -43,13 +43,14 @@ public class DBGroupAction {
     }
 
     public static GroupInfo convertToNearGroupInfo(String groupGuid, int groupUserCount, List<String> groupUserImages) {
-        return convertToGroupInfo(groupGuid, UserPosSP.getNearDesc(),0, groupUserCount, groupUserImages, new Date());
+        return convertToGroupInfo(groupGuid, UserPosSP.getNearDesc(), null, 0, groupUserCount, groupUserImages, new Date());
     }
 
-    public static GroupInfo convertToGroupInfo(String groupGuid, String groupName, long buildUserId, int groupUserCount, List<String> groupUserImages, Date buildTime) {
+    public static GroupInfo convertToGroupInfo(String groupGuid, String groupName, String groupNote, long buildUserId, int groupUserCount, List<String> groupUserImages, Date buildTime) {
         GroupInfo groupInfo = new GroupInfo();
         groupInfo.setGroupGuid(groupGuid);
         groupInfo.setGroupName(groupName);
+        groupInfo.setGroupNote(groupNote);
         groupInfo.setBuildUserId(buildUserId);
         groupInfo.setBuildTime(buildTime);
         groupInfo.setGroupUserCount(groupUserCount);

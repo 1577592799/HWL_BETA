@@ -1,9 +1,12 @@
 package com.hwl.beta.mq.send;
 
+import com.hwl.beta.db.entity.GroupInfo;
+import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.mq.MQManager;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
+import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.bean.MQGroupUserInfo;
 import com.hwl.beta.mq.receive.MessageReceive;
 import com.hwl.beta.sp.UserSP;
@@ -114,6 +117,44 @@ public class GroupActionMessageSend {
         byte[] messageBytes = new byte[3 + userIdBytes.length + groupIdBytes.length + contentBytes.length];
 
         messageBytes[0] = messageType;
+        messageBytes[1] = (byte) userIdBytes.length;
+        messageBytes[2] = (byte) groupIdBytes.length;
+        ByteUtils.setPositionBytes(3, userIdBytes, messageBytes);
+        ByteUtils.setPositionBytes(3 + userIdBytes.length, groupIdBytes, messageBytes);
+        ByteUtils.setPositionBytes(3 + userIdBytes.length + groupIdBytes.length, contentBytes, messageBytes);
+
+        return Observable.just(messageBytes)
+                .subscribeOn(Schedulers.io())
+                .map(new Function<byte[], Boolean>() {
+                    @Override
+                    public Boolean apply(byte[] bytes) throws Exception {
+                        MQManager.sendMessage(MessageReceive.GROUP_QUEUE_NAME, bytes);
+                        return true;
+                    }
+                });
+    }
+
+    public static Observable<Boolean> sendAddGroupUsersMessage(GroupInfo groupInfo,
+                                                        String content,
+                                                        List<MQGroupUserInfo> users) {
+        GroupUsersAddMessageBean message = new GroupUsersAddMessageBean();
+        message.setActionUserId(UserSP.getUserId());
+        message.setGroupGuid(groupInfo.getGroupGuid());
+        message.setGroupName(groupInfo.getGroupName());
+        message.setBuildUserId(groupInfo.getBuildUserId());
+        message.setBuildTime(groupInfo.getBuildTime());
+        message.setGroupNote(groupInfo.getGroupNote());
+        message.setContentType(MQConstant.CHAT_MESSAGE_CONTENT_TYPE_WELCOME_TIP);
+        message.setContent(content);
+        message.setUserInfos(users);
+        message.setActoinTime(new Date());
+
+        byte[] userIdBytes = new byte[]{0};
+        byte[] groupIdBytes = groupInfo.getGroupGuid().getBytes();
+        byte[] contentBytes = MessageReceive.convertToBytes(message);
+        byte[] messageBytes = new byte[3 + userIdBytes.length + groupIdBytes.length + contentBytes.length];
+
+        messageBytes[0] = MQConstant.GROUP_USERS_ADD_MESSAGE;
         messageBytes[1] = (byte) userIdBytes.length;
         messageBytes[2] = (byte) groupIdBytes.length;
         ByteUtils.setPositionBytes(3, userIdBytes, messageBytes);

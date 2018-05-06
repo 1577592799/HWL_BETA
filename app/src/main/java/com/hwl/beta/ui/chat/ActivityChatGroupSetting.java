@@ -21,7 +21,6 @@ import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.mq.send.GroupActionMessageSend;
 import com.hwl.beta.net.NetConstant;
-import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.group.GroupService;
 import com.hwl.beta.net.group.body.DeleteGroupResponse;
 import com.hwl.beta.net.group.body.DeleteGroupUserResponse;
@@ -34,24 +33,21 @@ import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.action.IChatGroupSettingListener;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
-import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBGroupAction;
 import com.hwl.beta.ui.dialog.LoadingDialog;
+import com.hwl.beta.ui.group.ActivityGroupAdd;
 import com.hwl.beta.ui.group.adp.GroupUserAdapter;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class ActivityChatGroupSetting extends FragmentActivity {
 
@@ -82,11 +78,51 @@ public class ActivityChatGroupSetting extends FragmentActivity {
         if (users == null) {
             users = new ArrayList<>();
         }
+        addUserItem();
 
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_chat_group_setting);
         binding.setAction(new ChatGroupSettingListener());
         binding.setSetting(group);
         initView();
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateGroupUser(List<GroupUserInfo> userInfos) {
+        if (userInfos == null || userInfos.size() <= 0) return;
+
+        int addCount = 0;
+        for (int i = 0; i < userInfos.size(); i++) {
+            if (!users.contains(userInfos.get(i))) {
+                users.add(userInfos.get(i));
+                addCount++;
+            }
+        }
+        if (addCount > 0) {
+            removeUserItem();
+            addUserItem();
+            userAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void addUserItem() {
+        if (group.getIsDismiss() || group.getGroupGuid().equals(UserPosSP.getGroupGuid())) return;
+        GroupUserInfo groupUserInfo = new GroupUserInfo();
+        groupUserInfo.setId((long) -1);
+        users.add(users.size(), groupUserInfo);
+    }
+
+    private void removeUserItem() {
+        if (group.getIsDismiss() || group.getGroupGuid().equals(UserPosSP.getGroupGuid())) return;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == -1) {
+                users.remove(i);
+                break;
+            }
+        }
     }
 
     private void initView() {
@@ -96,6 +132,7 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                     @Override
                     public void onClick(View v) {
                         onBackPressed();
+                        finish();
                     }
                 });
         userAdapter = new GroupUserAdapter(activity, users);
@@ -103,9 +140,13 @@ public class ActivityChatGroupSetting extends FragmentActivity {
         binding.gvUserContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GroupUserInfo user = users.get(position);
-                if (user != null) {
-                    UITransfer.toUserIndexActivity(activity, user.getUserId(), user.getUserName(), user.getUserHeadImage());
+                if (id == -1) {
+                    UITransfer.toGroupAddActivity(activity, ActivityGroupAdd.TYPE_ADD, group.getGroupGuid());
+                } else {
+                    GroupUserInfo user = users.get(position);
+                    if (user != null) {
+                        UITransfer.toUserIndexActivity(activity, user.getUserId(), user.getUserName(), user.getUserHeadImage());
+                    }
                 }
             }
         });
@@ -127,13 +168,16 @@ public class ActivityChatGroupSetting extends FragmentActivity {
     private void loadGroupUserFromServer() {
         if (users.size() > 0) return;
         GroupService.groupUsers(group.getGroupGuid())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new NetDefaultObserver<GroupUsersResponse>() {
                     @Override
                     protected void onSuccess(GroupUsersResponse response) {
                         if (response.getGroupUserInfos() != null) {
+                            removeUserItem();
                             List<GroupUserInfo> userInfos = DBGroupAction.convertToGroupUserInfos(response.getGroupUserInfos());
                             DaoUtils.getGroupUserInfoManagerInstance().addListAsync(userInfos);
                             users.addAll(userInfos);
+                            addUserItem();
                             userAdapter.notifyDataSetChanged();
                         }
                     }
@@ -169,6 +213,12 @@ public class ActivityChatGroupSetting extends FragmentActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     public class ChatGroupSettingListener implements IChatGroupSettingListener {

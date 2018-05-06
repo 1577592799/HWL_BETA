@@ -232,7 +232,13 @@ public class UITransfer {
     }
 
     public static void toGroupAddActivity(Activity context) {
+        toGroupAddActivity(context, ActivityGroupAdd.TYPE_CREATE,null);
+    }
+
+    public static void toGroupAddActivity(Activity context, int actionType,String groupGuid) {
         Intent intent = new Intent(context, ActivityGroupAdd.class);
+        intent.putExtra("actiontype", actionType);
+        intent.putExtra("groupguid", groupGuid);
         context.startActivity(intent);
     }
 
@@ -261,7 +267,7 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toChatGroupSettingEditActivity(Activity context,String groupGuid, int editType, String content) {
+    public static void toChatGroupSettingEditActivity(Activity context, String groupGuid, int editType, String content) {
         Intent intent = new Intent(context, ActivityChatGroupSettingEdit.class);
         intent.putExtra("groupguid", groupGuid);
         intent.putExtra("edittype", editType);

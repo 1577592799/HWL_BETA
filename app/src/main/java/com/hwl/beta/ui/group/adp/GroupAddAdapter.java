@@ -12,6 +12,7 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.UserActionItemBinding;
 import com.hwl.beta.databinding.UserItemBinding;
 import com.hwl.beta.db.entity.Friend;
+import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 
 import java.util.List;
@@ -26,12 +27,17 @@ public class GroupAddAdapter extends BaseAdapter {
     private List<Friend> users;
     private UserActionItemBinding itemBinding;
     private IGroupAddItemListener itemListener;
+    private List<GroupUserInfo> groupUsers;
 
     public GroupAddAdapter(Context context, List<Friend> users, IGroupAddItemListener itemListener) {
         this.context = context;
         this.users = users;
         this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
+    }
+
+    public void setGroupUsers(List<GroupUserInfo> groupUsers) {
+        this.groupUsers = groupUsers;
     }
 
     @Override
@@ -61,12 +67,6 @@ public class GroupAddAdapter extends BaseAdapter {
         final Friend user = users.get(position);
         itemBinding.setUser(user);
         itemBinding.setImage(new ImageViewBean(user.getHeadImage()));
-        itemBinding.cbSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                itemListener.onCheckBoxClick(v, user, position);
-            }
-        });
 
         if (user.getId() <= 0) {
             itemBinding.tvLetter.setVisibility(View.GONE);
@@ -79,7 +79,30 @@ public class GroupAddAdapter extends BaseAdapter {
                 itemBinding.tvLetter.setVisibility(View.GONE);
             }
         }
+
+        if (groupUsers != null && groupUsers.size() > 0 && isExistsGroupUser(user.getId())) {
+            itemBinding.tvSelect.setVisibility(View.VISIBLE);
+            itemBinding.cbSelect.setVisibility(View.GONE);
+        } else {
+            itemBinding.tvSelect.setVisibility(View.GONE);
+            itemBinding.cbSelect.setVisibility(View.VISIBLE);
+            itemBinding.cbSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemListener.onCheckBoxClick(v, user, position);
+                }
+            });
+        }
         return convertView;
+    }
+
+    private boolean isExistsGroupUser(long userId) {
+        for (int i = 0; i < groupUsers.size(); i++) {
+            if (groupUsers.get(i).getUserId() == (userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean setCheckBox(View rootView) {

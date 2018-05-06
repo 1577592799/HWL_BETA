@@ -46,8 +46,8 @@ public class GroupService {
         requestBody.setGroupGuid(groupGuid);
         Observable<ResponseBase<GroupUsersResponse>> response = RetrofitUtils.createApi(IGroupService.class)
                 .groupUsers(new RequestBase(UserSP.getUserToken(), requestBody))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
+//                .observeOn(AndroidSchedulers.mainThread());
         return response;
     }
 

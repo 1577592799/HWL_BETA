@@ -18,7 +18,7 @@ public class GroupCreateMessageProcess implements IMessageProcess<GroupCreateMes
         if (model == null) return;
         if (DaoUtils.getGroupInfoManagerInstance().get(model.getGroupGuid()) != null) return;
 
-        DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToGroupInfo(model.getGroupGuid(), model.getGroupName(),model.getBuildUserId(), model.getGroupUsers().size(), model.getGroupImage(), model.getBuildTime()));
+        DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToGroupInfo(model.getGroupGuid(), model.getGroupName(),"",model.getBuildUserId(), model.getGroupUsers().size(), model.getGroupImage(), model.getBuildTime()));
         DaoUtils.getGroupUserInfoManagerInstance().addListAsync(DBGroupAction.convertToGroupUserInfos2(model.getGroupGuid(), model.getGroupUsers()));
 
         ChatRecordMessage record = new ChatRecordMessage();
