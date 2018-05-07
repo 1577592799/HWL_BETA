@@ -11,10 +11,10 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.db.entity.NearCircleLike;
-import com.hwl.beta.db.entity.NearCircleMessage;
 import com.hwl.beta.db.ext.NearCircleExt;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +29,11 @@ public class NearCircleManager extends BaseDao<NearCircle> {
     public long save(NearCircle model) {
         if (model == null) return 0;
         return daoSession.getNearCircleDao().insertOrReplace(model);
+    }
+
+    public NearCircle getNearCircle(long nearCircleId) {
+        if (nearCircleId <= 0) return null;
+        return daoSession.getNearCircleDao().load(nearCircleId);
     }
 
     public long save(NearCircle model, List<NearCircleImage> images) {
@@ -63,11 +68,30 @@ public class NearCircleManager extends BaseDao<NearCircle> {
         }
     }
 
+    public void deleteComment(long nearCircleId, long userId, int commentId) {
+        if (nearCircleId > 0) {
+            String deleteSql = "delete from " + NearCircleCommentDao.TABLENAME + " where " +
+                    NearCircleCommentDao.Properties.NearCircleId.columnName + "=" + nearCircleId + " and " +
+                    NearCircleCommentDao.Properties.CommentId.columnName + "=" + commentId + " and " +
+                    NearCircleCommentDao.Properties.CommentUserId.columnName + " = " + userId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
     public void deleteComments(long nearCircleId) {
         if (nearCircleId > 0) {
             String deleteSql = "delete from " + NearCircleCommentDao.TABLENAME + " where " + NearCircleCommentDao.Properties.NearCircleId.columnName + "=" + nearCircleId;
             daoSession.getDatabase().execSQL(deleteSql);
         }
+    }
+
+    public NearCircleComment getComment(long nearCircleId, long userId, int commentId) {
+        if (nearCircleId <= 0) return null;
+        return daoSession.getNearCircleCommentDao().queryBuilder()
+                .where(NearCircleCommentDao.Properties.NearCircleId.eq(nearCircleId))
+                .where(NearCircleCommentDao.Properties.CommentUserId.eq(userId))
+                .where(NearCircleCommentDao.Properties.CommentId.eq(commentId))
+                .unique();
     }
 
     public List<NearCircleComment> getComments(long nearCircleId) {
@@ -77,10 +101,24 @@ public class NearCircleManager extends BaseDao<NearCircle> {
                 .list();
     }
 
+    public void saveComment(long nearCircleId, NearCircleComment comment) {
+        if (nearCircleId > 0 && comment != null) {
+            daoSession.getNearCircleCommentDao().save(comment);
+        }
+    }
+
     public void saveComments(long nearCircleId, List<NearCircleComment> comments) {
         if (nearCircleId > 0 && comments != null && comments.size() > 0) {
             daoSession.getNearCircleCommentDao().saveInTx(comments);
         }
+    }
+
+    public NearCircleLike getLike(long nearCircleId, long userId) {
+        if (nearCircleId <= 0) return null;
+        return daoSession.getNearCircleLikeDao().queryBuilder()
+                .where(NearCircleLikeDao.Properties.NearCircleId.eq(nearCircleId))
+                .where(NearCircleLikeDao.Properties.LikeUserId.eq(userId))
+                .unique();
     }
 
     public List<NearCircleLike> getLikes(long nearCircleId) {
@@ -97,12 +135,26 @@ public class NearCircleManager extends BaseDao<NearCircle> {
         }
     }
 
+    public void deleteLike(long nearCircleId, long userId) {
+        if (nearCircleId > 0) {
+            String deleteSql = "delete from " + NearCircleLikeDao.TABLENAME + " where " +
+                    NearCircleLikeDao.Properties.NearCircleId.columnName + " = " + nearCircleId + " and " +
+                    NearCircleLikeDao.Properties.LikeUserId.columnName + " = " + userId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
     public void saveLikes(long nearCircleId, List<NearCircleLike> likes) {
         if (nearCircleId > 0 && likes != null && likes.size() > 0) {
             daoSession.getNearCircleLikeDao().saveInTx(likes);
         }
     }
 
+    public void saveLike(long nearCircleId, NearCircleLike likeInfo) {
+        if (nearCircleId > 0 && likeInfo != null) {
+            daoSession.getNearCircleLikeDao().save(likeInfo);
+        }
+    }
 
     public List<NearCircleExt> getAll() {
         List<NearCircle> infos = daoSession.getNearCircleDao().queryBuilder()
@@ -133,17 +185,5 @@ public class NearCircleManager extends BaseDao<NearCircle> {
                 getLikes(model.getNearCircleId())
         );
         return info;
-    }
-
-    public List<NearCircleMessage> getNearCircleMessages() {
-        return daoSession.getNearCircleMessageDao().loadAll();
-    }
-
-    public boolean addNearCircleMessage(NearCircleMessage message) {
-        if (message == null) return false;
-        if (daoSession.getNearCircleMessageDao().insert(message) > 0) {
-            return true;
-        }
-        return false;
     }
 }

@@ -21,6 +21,7 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
+import com.hwl.beta.mq.send.NearCircleMessageSend;
 import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
@@ -416,6 +417,7 @@ public class FragmentNear extends BaseFragment {
                             if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
                                 if (isLiked) {
                                     nearCircleAdapter.addLike(position, null);
+                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     NearCircleLike likeInfo = new NearCircleLike();
                                     likeInfo.setNearCircleId(info.getInfo().getNearCircleId());
@@ -424,7 +426,7 @@ public class FragmentNear extends BaseFragment {
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
                                     nearCircleAdapter.addLike(position, likeInfo);
-                                    UserMessageSend.sendNearCircleLikeMessage(info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
+                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");

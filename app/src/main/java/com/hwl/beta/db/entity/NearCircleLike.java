@@ -20,46 +20,69 @@ public class NearCircleLike implements Serializable {
     private String likeUserImage;
     @OrderBy("likeTime desc")
     private Date likeTime;
+
     @Generated(hash = 684760537)
     public NearCircleLike(long nearCircleId, long likeUserId, String likeUserName,
-            String likeUserImage, Date likeTime) {
+                          String likeUserImage, Date likeTime) {
         this.nearCircleId = nearCircleId;
         this.likeUserId = likeUserId;
         this.likeUserName = likeUserName;
         this.likeUserImage = likeUserImage;
         this.likeTime = likeTime;
     }
+
     @Generated(hash = 559624202)
     public NearCircleLike() {
     }
+
     public long getNearCircleId() {
         return this.nearCircleId;
     }
+
     public void setNearCircleId(long nearCircleId) {
         this.nearCircleId = nearCircleId;
     }
+
     public long getLikeUserId() {
         return this.likeUserId;
     }
+
     public void setLikeUserId(long likeUserId) {
         this.likeUserId = likeUserId;
     }
+
     public String getLikeUserName() {
         return this.likeUserName;
     }
+
     public void setLikeUserName(String likeUserName) {
         this.likeUserName = likeUserName;
     }
+
     public String getLikeUserImage() {
         return this.likeUserImage;
     }
+
     public void setLikeUserImage(String likeUserImage) {
         this.likeUserImage = likeUserImage;
     }
+
     public Date getLikeTime() {
         return this.likeTime;
     }
+
     public void setLikeTime(Date likeTime) {
         this.likeTime = likeTime;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof NearCircleLike) {
+            NearCircleLike like = (NearCircleLike) obj;
+            return this.getNearCircleId() == like.getNearCircleId()
+                    && this.getLikeUserId() == like.getLikeUserId();
+        }
+        return super.equals(obj);
     }
 }

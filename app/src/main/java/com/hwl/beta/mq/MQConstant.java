@@ -18,7 +18,8 @@ public class MQConstant {
     public final static byte GROUP_DISMISS_MESSAGE = 10;
     public final static byte FRIEND_DELETE_MESSAGE = 11;
     public final static byte GROUP_USERS_ADD_MESSAGE = 12;
-    public final static byte NEAR_CIRCLE_ADD_MESSAGE = 13;
+    public final static byte NEAR_CIRCLE_LIKE_MESSAGE = 13;
+    public final static byte NEAR_CIRCLE_COMMENT_MESSAGE = 14;
 
     public final static int CHAT_RECORD_TYPE_USER = 1;
     public final static int CHAT_RECORD_TYPE_GROUP = 2;
@@ -33,6 +34,6 @@ public class MQConstant {
     public final static int CHAT_SEND_SUCCESS = 2;
     public final static int CHAT_SEND_FAILD = 3;
 
-    public final static int CIRCLE_MESSAGE_LIKE = 1;
-    public final static int CIRCLE_MESSAGE_COMMENT = 2;
+    public final static int CIRCLE_MESSAGE_ACTION_ADD = 1;
+    public final static int CIRCLE_MESSAGE_ACTION_DELETE = 2;
 }

@@ -20,6 +20,7 @@ import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
+import com.hwl.beta.mq.send.NearCircleMessageSend;
 import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
@@ -270,6 +271,7 @@ public class ActivityNearDetail extends FragmentActivity {
                                     //取消点赞
                                     info.getInfo().setIsLiked(false);
                                     removeLikeView();
+                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     //点赞
                                     info.getInfo().setIsLiked(true);
@@ -285,7 +287,7 @@ public class ActivityNearDetail extends FragmentActivity {
                                     info.getLikes().add(likeInfo);
                                     setLikeView(likeInfo);
 //                                    EventBus.getDefault().post(new EventActionCircleLike(EventBusConstant.EB_TYPE_ACTINO_ADD, likeInfo));
-                                    UserMessageSend.sendNearCircleLikeMessage(info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
+                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");

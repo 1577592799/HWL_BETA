@@ -11,7 +11,8 @@ import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
-import com.hwl.beta.mq.bean.NearCircleMessageBean;
+import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
+import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
 import com.hwl.beta.utils.ByteUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -111,11 +112,18 @@ public class MessageForward {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, GroupUsersAddMessageBean.class));
                 }
                 break;
-            case MQConstant.NEAR_CIRCLE_ADD_MESSAGE:
+            case MQConstant.NEAR_CIRCLE_LIKE_MESSAGE:
                 bodyJson = new String(bodyBytes);
-                messageProcess = MessageProcess.getNearCircleMessageProcess();
+                messageProcess = MessageProcess.getNearCircleLikeMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
-                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleMessageBean.class));
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleLikeMessageBean.class));
+                }
+                break;
+            case MQConstant.NEAR_CIRCLE_COMMENT_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getNearCircleCommentMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleCommentMessageBean.class));
                 }
                 break;
         }

@@ -28,7 +28,7 @@ public class ActivityNearMessages extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
-        messages = DaoUtils.getNearCircleManagerInstance().getNearCircleMessages();
+        messages = DaoUtils.getNearCircleMessageManagerInstance().getAll();
         if (messages == null) {
             messages = new ArrayList<>();
         }

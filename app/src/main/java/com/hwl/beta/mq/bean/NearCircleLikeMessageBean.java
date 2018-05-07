@@ -2,15 +2,23 @@ package com.hwl.beta.mq.bean;
 
 import java.util.Date;
 
-public class NearCircleMessageBean {
+public class NearCircleLikeMessageBean {
+    private long nearCircleId;
     private long fromUserId;
     private String fromUserName;
     private String fromUserImage;
     private long toUserId;
-    private int actionType;
-    private String comment;
     private String content;
+    private int actionType;
     private Date actionTime;
+
+    public long getNearCircleId() {
+        return nearCircleId;
+    }
+
+    public void setNearCircleId(long nearCircleId) {
+        this.nearCircleId = nearCircleId;
+    }
 
     public long getFromUserId() {
         return fromUserId;
@@ -50,14 +58,6 @@ public class NearCircleMessageBean {
 
     public void setActionType(int actionType) {
         this.actionType = actionType;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public String getContent() {

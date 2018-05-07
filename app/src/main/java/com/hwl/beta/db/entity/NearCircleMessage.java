@@ -14,6 +14,7 @@ public class NearCircleMessage {
     @Id(autoincrement = true)
     private Long id;
     private int type;
+    private long nearCircleId;
     private long userId;
     private String userName;
     private String comment;
@@ -28,11 +29,13 @@ public class NearCircleMessage {
         return null;
     }
 
-    @Generated(hash = 517306441)
-    public NearCircleMessage(Long id, int type, long userId, String userName, String comment,
-            String content, String userImage, Date actionTime, int status) {
+    @Generated(hash = 1426049643)
+    public NearCircleMessage(Long id, int type, long nearCircleId, long userId,
+            String userName, String comment, String content, String userImage,
+            Date actionTime, int status) {
         this.id = id;
         this.type = type;
+        this.nearCircleId = nearCircleId;
         this.userId = userId;
         this.userName = userName;
         this.comment = comment;
@@ -116,5 +119,13 @@ public class NearCircleMessage {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public long getNearCircleId() {
+        return this.nearCircleId;
+    }
+
+    public void setNearCircleId(long nearCircleId) {
+        this.nearCircleId = nearCircleId;
     }
 }

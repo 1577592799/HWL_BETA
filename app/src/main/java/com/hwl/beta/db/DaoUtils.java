@@ -11,6 +11,7 @@ import com.hwl.beta.db.manage.FriendRequestManager;
 import com.hwl.beta.db.manage.GroupInfoManager;
 import com.hwl.beta.db.manage.GroupUserInfoManager;
 import com.hwl.beta.db.manage.NearCircleManager;
+import com.hwl.beta.db.manage.NearCircleMessageManager;
 
 /**
  * Created by adminstrator on 2016/6/16.
@@ -24,6 +25,7 @@ public class DaoUtils {
     private static GroupInfoManager groupInfoManager;
     private static GroupUserInfoManager groupUserInfoManager;
     private static NearCircleManager nearCircleManager;
+    private static NearCircleMessageManager nearCircleMessageManager;
     private static CircleManager circleManager;
 
     public static synchronized CircleManager getCircleManagerInstance() {
@@ -31,6 +33,13 @@ public class DaoUtils {
             circleManager = new CircleManager(HWLApp.getContext());
         }
         return circleManager;
+    }
+
+    public static synchronized NearCircleMessageManager getNearCircleMessageManagerInstance() {
+        if (nearCircleMessageManager == null) {
+            nearCircleMessageManager = new NearCircleMessageManager(HWLApp.getContext());
+        }
+        return nearCircleMessageManager;
     }
 
     public static synchronized NearCircleManager getNearCircleManagerInstance() {

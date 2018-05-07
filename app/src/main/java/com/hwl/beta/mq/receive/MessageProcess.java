@@ -8,7 +8,8 @@ import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
 import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
-import com.hwl.beta.mq.bean.NearCircleMessageBean;
+import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
+import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
 import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 /**
@@ -25,14 +26,23 @@ public class MessageProcess {
     private static IMessageProcess<GroupEditMessageBean> groupEditMessageProcess;
     private static IMessageProcess<FriendDeleteMessageBean> friendDeleteMessageProcess;
     private static IMessageProcess<GroupUsersAddMessageBean> groupUsersAddMessageProcess;
-    private static IMessageProcess<NearCircleMessageBean> nearCircleMessageProcess;
+    private static IMessageProcess<NearCircleLikeMessageBean> nearCircleLikeMessageProcess;
+    private static IMessageProcess<NearCircleCommentMessageBean> nearCircleCommentMessageProcess;
 
-    public static IMessageProcess<NearCircleMessageBean> getNearCircleMessageProcess() {
-        return nearCircleMessageProcess;
+    public static IMessageProcess<NearCircleCommentMessageBean> getNearCircleCommentMessageProcess() {
+        return nearCircleCommentMessageProcess;
     }
 
-    public static void registerNearCircleMessageProcess(IMessageProcess<NearCircleMessageBean> process) {
-        nearCircleMessageProcess = process;
+    public static void registerNearCircleCommentMessageProcess(IMessageProcess<NearCircleCommentMessageBean> process) {
+        nearCircleCommentMessageProcess = process;
+    }
+
+    public static IMessageProcess<NearCircleLikeMessageBean> getNearCircleLikeMessageProcess() {
+        return nearCircleLikeMessageProcess;
+    }
+
+    public static void registerNearCircleLikeMessageProcess(IMessageProcess<NearCircleLikeMessageBean> process) {
+        nearCircleLikeMessageProcess = process;
     }
 
     public static IMessageProcess<GroupUsersAddMessageBean> getGroupUsersAddMessageProcess() {
