@@ -52,6 +52,12 @@ public class MessageCountSP {
         editor.commit();
     }
 
+    public static void setNearCircleMessageCount(int count) {
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putInt(NEARCIRCLEMESSAGECOUNT, count);
+        editor.commit();
+    }
+
     public static void setNearCircleMessageCountIncrease() {
         int count = getNearCircleMessageCount();
         count++;
@@ -59,7 +65,6 @@ public class MessageCountSP {
         editor.putInt(NEARCIRCLEMESSAGECOUNT, count);
         editor.commit();
     }
-
 
     public static void setNearCircleMessageCountReduce() {
         int count = getNearCircleMessageCount();

@@ -12,5 +12,10 @@ public class AddNearCommentResponse {
         return NearCircleCommentInfo;
     }
 
+    public long getNearCirclePublishUserId() {
+        return NearCirclePublishUserId;
+    }
+
     private NetNearCircleCommentInfo NearCircleCommentInfo;
+    private long NearCirclePublishUserId;
 }

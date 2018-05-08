@@ -29,6 +29,16 @@ public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
         return false;
     }
 
+    public boolean deleteMessage(NearCircleMessage message){
+        if(message==null) return false;
+        daoSession.getNearCircleMessageDao().delete(message);
+        return true;
+    }
+
+    public void deleteAll(){
+        daoSession.getNearCircleMessageDao().deleteAll();
+    }
+
     public boolean updateDelete(long nearCircleId, int type, long fromUserId, String comment) {
         if (nearCircleId <= 0 || fromUserId <= 0) return false;
         QueryBuilder<NearCircleMessage> query = daoSession.getNearCircleMessageDao().queryBuilder()
