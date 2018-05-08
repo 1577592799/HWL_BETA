@@ -60,11 +60,12 @@ public class ActivityNearDetail extends FragmentActivity {
         activity = this;
         myUserId = UserSP.getUserId();
 
-        info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
-        if (info == null || info.getInfo() == null) {
-            Toast.makeText(activity, "动态不存在", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        initNearCircleInfo();
+        // info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
+        // if (info == null || info.getInfo() == null) {
+        //     Toast.makeText(activity, "动态不存在", Toast.LENGTH_SHORT).show();
+        //     finish();
+        // }
 
         itemListener = new NearCircleItemListener();
         if (info.getComments() == null) {
@@ -80,6 +81,16 @@ public class ActivityNearDetail extends FragmentActivity {
 //        if (!EventBus.getDefault().isRegistered(this)) {
 //            EventBus.getDefault().register(this);
 //        }
+    }
+
+    private void initNearCircleInfo(){
+       NearCircleExt info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
+       if(info==null){
+            long nearCircleId= getIntent().getLongExtra("nearcircleid");
+            info=DaoUtils.getNearCircleManagerInstance().get(nearCircleId);
+       }
+        
+       loadFromServer();
     }
 
 //    @Subscribe(threadMode = ThreadMode.MAIN)
@@ -166,26 +177,27 @@ public class ActivityNearDetail extends FragmentActivity {
         }
     }
 
-    //    private void loadFromServer() {
-//        if (!NetworkUtils.isConnected()) {
-//            return;
-//        }
-//        CircleService.getCircleDetail(info.getInfo().getCircleId())
-//                .subscribe(new NetDefaultObserver<GetCircleDetailResponse>() {
-//                    @Override
-//                    protected void onSuccess(GetCircleDetailResponse response) {
-//                        if (response.getCircleInfo() != null) {
-//                            CircleExt circleBean = new CircleExt(CircleExt.CircleIndexItem);
-//                            circleBean.setInfo(DBCircleAction.convertToCircleInfo(response.getCircleInfo()));
-//                            circleBean.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
-//                            circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(response.getCircleInfo().getCommentInfos()));
-//                            circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(response.getCircleInfo().getLikeInfos()));
-//                            info = circleBean;
-//                            initView();
-//                        }
-//                    }
-//                });
-//    }
+    private void loadFromServer() {
+    if (!NetworkUtils.isConnected()) {
+        return;
+    }
+    CircleService.getCircleDetail(info.getInfo().getCircleId())
+            .subscribe(new NetDefaultObserver<GetCircleDetailResponse>() {
+                @Override
+                protected void onSuccess(GetCircleDetailResponse response) {
+                    if (response.getCircleInfo() != null) {
+                        CircleExt circleBean = new CircleExt(CircleExt.CircleIndexItem);
+                        circleBean.setInfo(DBCircleAction.convertToCircleInfo(response.getCircleInfo()));
+                        circleBean.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
+                        circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(response.getCircleInfo().getCommentInfos()));
+                        circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(response.getCircleInfo().getLikeInfos()));
+                        info = circleBean;
+                        //initView();
+                    }
+                }
+            });
+    }
+
     private class NearCircleItemListener implements INearCircleItemListener {
 
         private CircleActionMorePop mMorePopupWindow;

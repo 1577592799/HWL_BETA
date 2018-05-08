@@ -97,6 +97,7 @@ public class FragmentNear extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void addComment(NearCircleComment comment) {
         nearCircleAdapter.addComment(comment);
+        //NearCircleMessageSend.sendAddCommentMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

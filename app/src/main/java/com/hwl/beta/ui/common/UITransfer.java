@@ -166,7 +166,15 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toNearDetailActivity(Activity context, long circleId, NearCircleExt info) {
+    public static void toNearDetailActivity(Activity context, long circleId){
+        toNearDetailActivity(context,circleId,null);
+    }
+
+    public static void toNearDetailActivity(Activity context, NearCircleExt info){
+        toNearDetailActivity(context,0,info);
+    }
+
+    private static void toNearDetailActivity(Activity context, long circleId, NearCircleExt info) {
         Intent intent = new Intent(context, ActivityNearDetail.class);
         if (info != null && info.getInfo() != null) {
             Bundle bundle = new Bundle();

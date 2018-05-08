@@ -19,11 +19,13 @@ import java.util.List;
 public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemViewHolder> {
     private Context context;
     private List<NearCircleMessage> messages;
+    private INearMessageItemListener itemListener;
     private LayoutInflater inflater;
 
-    public NearMessageAdapter(Context context, List<NearCircleMessage> messages) {
+    public NearMessageAdapter(Context context, List<NearCircleMessage> messages,INearMessageItemListener itemListener) {
         this.context = context;
         this.messages = messages;
+        this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
     }
 
@@ -35,10 +37,19 @@ public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemView
 
     @Override
     public void onBindViewHolder(@NonNull NearMessageItemViewHolder holder, final int position) {
-        holder.setItemBinding(messages.get(position));
+        final NearCircleMessage message= messages.get(position)
+        holder.setItemBinding(message);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                itemListener.onItemClick(v,position,message);
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onItemLongClick(v,position,message);
+                return true;
             }
         });
     }
@@ -46,5 +57,11 @@ public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemView
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    public interface INearMessageItemListener{
+        void onItemClick(View v,NearCircleMessage message,int position);
+
+        void onItemLongClick(View v,NearCircleMessage message,int position)
     }
 }

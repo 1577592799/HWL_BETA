@@ -75,11 +75,11 @@ public class ActivityCommentPublish extends FragmentActivity {
                     protected void onSuccess(AddNearCommentResponse res) {
                         isRuning = false;
                         if (res.getNearCircleCommentInfo() != null && res.getNearCircleCommentInfo().getCommentId() > 0) {
-                            Toast.makeText(activity, "发布成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "评论发送成功", Toast.LENGTH_SHORT).show();
                             EventBus.getDefault().post(DBNearCircleAction.convertToNearCircleCommentInfo(res.getNearCircleCommentInfo()));
                             finish();
                         } else {
-                            onError("发布失败");
+                            onError("评论发送失败");
                         }
                     }
 
