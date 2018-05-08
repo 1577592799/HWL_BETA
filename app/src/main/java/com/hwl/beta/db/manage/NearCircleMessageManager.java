@@ -35,7 +35,7 @@ public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
         return true;
     }
 
-    public void deleteAll()){
+    public void deleteAll(){
         daoSession.getNearCircleMessageDao().deleteAll();
     }
 

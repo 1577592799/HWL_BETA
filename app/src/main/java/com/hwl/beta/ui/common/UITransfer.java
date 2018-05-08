@@ -234,14 +234,6 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleDetailActivity(Activity context, long circleId) {
-        toCircleDetailActivity(context, circleId, null);
-    }
-
-    public static void toCircleDetailActivity(Activity context, CircleExt info) {
-        toCircleDetailActivity(context, 0, info);
-    }
-
     public static void toCircleDetailActivity(Activity context, long circleId, CircleExt info) {
         Intent intent = new Intent(context, ActivityCircleDetail.class);
         if (info != null && info.getInfo() != null) {

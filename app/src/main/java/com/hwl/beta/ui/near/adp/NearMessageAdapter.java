@@ -37,18 +37,18 @@ public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemView
 
     @Override
     public void onBindViewHolder(@NonNull NearMessageItemViewHolder holder, final int position) {
-        final NearCircleMessage message= messages.get(position)
+        final NearCircleMessage message= messages.get(position);
         holder.setItemBinding(message);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemListener.onItemClick(v,position,message);
+                itemListener.onItemClick(v,message,position);
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                itemListener.onItemLongClick(v,position,message);
+                itemListener.onItemLongClick(v,message,position);
                 return true;
             }
         });
@@ -62,6 +62,6 @@ public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemView
     public interface INearMessageItemListener{
         void onItemClick(View v,NearCircleMessage message,int position);
 
-        void onItemLongClick(View v,NearCircleMessage message,int position)
+        void onItemLongClick(View v,NearCircleMessage message,int position);
     }
 }

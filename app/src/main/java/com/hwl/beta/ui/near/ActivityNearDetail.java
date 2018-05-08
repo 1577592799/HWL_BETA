@@ -16,14 +16,15 @@ import android.widget.Toast;
 import com.google.android.flexbox.FlexboxLayout;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityNearDetailBinding;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
 import com.hwl.beta.mq.send.NearCircleMessageSend;
-import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
+import com.hwl.beta.net.near.body.GetNearCircleDetailResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.common.KeyBoardAction;
@@ -31,6 +32,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBNearCircleAction;
 import com.hwl.beta.ui.near.action.INearCircleCommentItemListener;
+import com.hwl.beta.ui.near.action.INearCircleDetailListener;
 import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleCommentAdapter;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
@@ -51,7 +53,7 @@ public class ActivityNearDetail extends FragmentActivity {
     ActivityNearDetailBinding binding;
     long myUserId;
     NearCircleExt info;
-    INearCircleItemListener itemListener;
+    INearCircleDetailListener itemListener;
     NearCircleCommentAdapter commentAdapter;
 
     @Override
@@ -59,60 +61,33 @@ public class ActivityNearDetail extends FragmentActivity {
         super.onCreate(savedInstanceState);
         activity = this;
         myUserId = UserSP.getUserId();
-
-        initNearCircleInfo();
-        // info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
-        // if (info == null || info.getInfo() == null) {
-        //     Toast.makeText(activity, "动态不存在", Toast.LENGTH_SHORT).show();
-        //     finish();
-        // }
-
-        itemListener = new NearCircleItemListener();
-        if (info.getComments() == null) {
-            info.setComments(new ArrayList<NearCircleComment>());
-        }
-        commentAdapter = new NearCircleCommentAdapter(activity, info.getComments(), new NearCircleCommentItemListener());
+        itemListener = new NearCircleDetailListener();
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_near_detail);
-        binding.setImage(new ImageViewBean(info.getInfo().getPublishUserImage()));
-        binding.setInfo(info.getInfo());
         binding.setAction(itemListener);
+
         initView();
 
-//        if (!EventBus.getDefault().isRegistered(this)) {
-//            EventBus.getDefault().register(this);
-//        }
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
-    private void initNearCircleInfo(){
-       NearCircleExt info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
-       if(info==null){
-            long nearCircleId= getIntent().getLongExtra("nearcircleid");
-            info=DaoUtils.getNearCircleManagerInstance().get(nearCircleId);
-       }
-        
-       loadFromServer();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addComment(NearCircleComment comment) {
+        if (comment == null && comment.getNearCircleId() != info.getInfo().getNearCircleId())
+            return;
+        info.getComments().add(comment);
+        commentAdapter.notifyItemInserted(info.getComments().size());
     }
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void addComment(EventActionNearCircleComment action) {
-//        if (action.getActionType() != EventBusConstant.EB_TYPE_ACTINO_ADD) return;
-//        NearCircleComment comment = action.getComment();
-//        if (comment == null || comment.getCircleId() <= 0 || comment.getCommentUserId() <= 0)
-//            return;
-//
-//        int position = info.getComments().size();
-//        info.getComments().add(position, comment);
-//        commentAdapter.notifyItemInserted(position);
-//    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
-        binding.tbTitle.setTitle("动态详细")
+        binding.tbTitle.setTitle("附近动态详细")
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -125,16 +100,105 @@ public class ActivityNearDetail extends FragmentActivity {
                     }
                 });
 
+        long nearCircleId = getIntent().getLongExtra("nearcircleid", 0);
+        info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
+        if (info == null) {
+            info = DaoUtils.getNearCircleManagerInstance().get(nearCircleId);
+        }
+
+        if (info == null) {
+            info = new NearCircleExt(nearCircleId);
+            binding.pbCircleLoading.setVisibility(View.VISIBLE);
+            binding.svCircleContainer.setVisibility(View.GONE);
+            this.loadFromServer(true);
+        } else {
+            binding.pbCircleLoading.setVisibility(View.GONE);
+            binding.svCircleContainer.setVisibility(View.VISIBLE);
+            bindData();
+            this.loadFromServer(false);
+        }
+
+        this.setLikeViews(info.getLikes());
+        commentAdapter = new NearCircleCommentAdapter(activity, info.getComments(), new NearCircleCommentItemListener());
+        binding.rvComments.setAdapter(commentAdapter);
+        binding.rvComments.setLayoutManager(new LinearLayoutManager(activity));
+    }
+
+    private void bindData() {
+        ImageViewBean.loadImage(binding.ivHeader, info.getInfo().getPublishUserImage());
+        binding.tvUsername.setText(info.getInfo().getPublishUserName());
+        binding.tvContent.setText(info.getInfo().getContent());
+        binding.tvPosDesc.setText(info.getInfo().getFromPosDesc());
+        binding.tvPublicTime.setText(info.getInfo().getShowTime());
+
+        if (info.getInfo().getPublishUserId() == myUserId) {
+            binding.ivDelete.setVisibility(View.VISIBLE);
+        } else {
+            binding.ivDelete.setVisibility(View.GONE);
+        }
+
         if (info.getImages() != null && info.getImages().size() > 0) {
             binding.mivImages.setImagesData(DBNearCircleAction.convertToMultiImages(info.getImages()));
             binding.mivImages.setVisibility(View.VISIBLE);
         } else {
             binding.mivImages.setVisibility(View.GONE);
         }
+    }
 
-        this.setLikeViews(info.getLikes());
-        binding.rvComments.setAdapter(commentAdapter);
-        binding.rvComments.setLayoutManager(new LinearLayoutManager(activity));
+    private void loadFromServer(final boolean isResetInfo) {
+        NearCircleService.getNearCircleDetail(info.getInfo().getNearCircleId())
+                .subscribe(new NetDefaultObserver<GetNearCircleDetailResponse>() {
+                    @Override
+                    protected void onSuccess(GetNearCircleDetailResponse response) {
+                        List<NearCircleComment> comments = DBNearCircleAction.convertToNearCircleCommentInfos(response.getNearCircleInfo().getCommentInfos());
+                        if (comments != null && comments.size() > 0) {
+                            comments.removeAll(info.getComments());
+                            info.getComments().addAll(comments);
+                        }
+                        info.setLikes(DBNearCircleAction.convertToNearCircleLikeInfos(response.getNearCircleInfo().getLikeInfos()));
+                        if (response.getNearCircleInfo() != null) {
+                            if (isResetInfo) {
+                                info.setInfo(DBNearCircleAction.convertToNearCircleInfo(response.getNearCircleInfo()));
+                                info.setImages(DBNearCircleAction.convertToNearCircleImageInfos(response.getNearCircleInfo().getNearCircleId(), response.getNearCircleInfo().getPublishUserId(), response.getNearCircleInfo().getImages()));
+                                bindData();
+                            } else {
+                                if (!response.getNearCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
+                                    info.getInfo().setUpdateTime(response.getNearCircleInfo().getUpdateTime());
+                                    setLikeViews(info.getLikes());
+                                    commentAdapter.notifyItemRangeChanged(0, info.getComments().size());
+                                }
+                            }
+                            saveInfo(response.getNearCircleInfo().getUpdateTime());
+                        } else {
+                            Toast.makeText(activity, "数据已经被用户删除!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        binding.pbCircleLoading.setVisibility(View.GONE);
+                        binding.svCircleContainer.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    protected void onError(String resultMessage) {
+                        super.onError(resultMessage);
+                        binding.pbCircleLoading.setVisibility(View.GONE);
+                        binding.svCircleContainer.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void saveInfo(Date lastUpdateTime) {
+        //如果没有新的更新就不保存
+        if (lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
+        //只存在我发布的信息
+        if (info != null && info.getInfo() != null && info.getInfo().getPublishUserId() == myUserId) {
+            DaoUtils.getNearCircleManagerInstance().save(info.getInfo());
+            DaoUtils.getNearCircleManagerInstance().deleteImages(info.getInfo().getNearCircleId());
+            DaoUtils.getNearCircleManagerInstance().deleteComments(info.getInfo().getNearCircleId());
+            DaoUtils.getNearCircleManagerInstance().deleteLikes(info.getInfo().getNearCircleId());
+            DaoUtils.getNearCircleManagerInstance().saveImages(info.getInfo().getNearCircleId(), info.getImages());
+            DaoUtils.getNearCircleManagerInstance().saveComments(info.getInfo().getNearCircleId(), info.getComments());
+            DaoUtils.getNearCircleManagerInstance().saveLikes(info.getInfo().getNearCircleId(), info.getLikes());
+        }
     }
 
     private void setLikeView(final NearCircleLike likeInfo) {
@@ -177,28 +241,7 @@ public class ActivityNearDetail extends FragmentActivity {
         }
     }
 
-    private void loadFromServer() {
-    if (!NetworkUtils.isConnected()) {
-        return;
-    }
-    CircleService.getCircleDetail(info.getInfo().getCircleId())
-            .subscribe(new NetDefaultObserver<GetCircleDetailResponse>() {
-                @Override
-                protected void onSuccess(GetCircleDetailResponse response) {
-                    if (response.getCircleInfo() != null) {
-                        CircleExt circleBean = new CircleExt(CircleExt.CircleIndexItem);
-                        circleBean.setInfo(DBCircleAction.convertToCircleInfo(response.getCircleInfo()));
-                        circleBean.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
-                        circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(response.getCircleInfo().getCommentInfos()));
-                        circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(response.getCircleInfo().getLikeInfos()));
-                        info = circleBean;
-                        //initView();
-                    }
-                }
-            });
-    }
-
-    private class NearCircleItemListener implements INearCircleItemListener {
+    private class NearCircleDetailListener implements INearCircleDetailListener {
 
         private CircleActionMorePop mMorePopupWindow;
         boolean isRuning = false;
@@ -209,8 +252,8 @@ public class ActivityNearDetail extends FragmentActivity {
         }
 
         @Override
-        public void onUserHeadClick(NearCircle info) {
-            UITransfer.toUserIndexActivity(activity, info.getPublishUserId(), info.getPublishUserName(), info.getPublishUserImage());
+        public void onUserHeadClick() {
+            UITransfer.toUserIndexActivity(activity, info.getInfo().getPublishUserId(), info.getInfo().getPublishUserName(), info.getInfo().getPublishUserImage());
         }
 
         @Override
@@ -238,13 +281,17 @@ public class ActivityNearDetail extends FragmentActivity {
         }
 
         @Override
-        public void onContentClick(NearCircle info) {
+        public void onContentClick() {
 
         }
 
         @Override
-        public void onMoreActionClick(final View view, int position) {
-            if (info == null) return;
+        public void onMoreCommentClick() {
+
+        }
+
+        @Override
+        public void onMoreActionClick(final View view) {
             if (mMorePopupWindow == null) {
                 mMorePopupWindow = new CircleActionMorePop(activity);
             }
@@ -262,13 +309,13 @@ public class ActivityNearDetail extends FragmentActivity {
 
                 @Override
                 public void onLikeClick(int position) {
-                    setLikeInfo(position, info);
+                    setLikeInfo(position);
                 }
             });
-            mMorePopupWindow.show(position, view, info.getInfo().getIsLiked());
+            mMorePopupWindow.show(0, view, info.getInfo().getIsLiked());
         }
 
-        private void setLikeInfo(final int position, final NearCircleExt info) {
+        private void setLikeInfo(final int position) {
             if (isRuning || info == null || info.getInfo() == null || info.getInfo().getNearCircleId() <= 0)
                 return;
             isRuning = true;
@@ -283,7 +330,7 @@ public class ActivityNearDetail extends FragmentActivity {
                                     //取消点赞
                                     info.getInfo().setIsLiked(false);
                                     removeLikeView();
-                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
+                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     //点赞
                                     info.getInfo().setIsLiked(true);
@@ -299,7 +346,7 @@ public class ActivityNearDetail extends FragmentActivity {
                                     info.getLikes().add(likeInfo);
                                     setLikeView(likeInfo);
 //                                    EventBus.getDefault().post(new EventActionCircleLike(EventBusConstant.EB_TYPE_ACTINO_ADD, likeInfo));
-                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
+                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");
@@ -315,12 +362,7 @@ public class ActivityNearDetail extends FragmentActivity {
         }
 
         @Override
-        public void onMoreCommentClick(NearCircle info) {
-
-        }
-
-        @Override
-        public void onDeleteClick(NearCircle info) {
+        public void onDeleteClick() {
             new AlertDialog.Builder(activity)
                     .setMessage("信息删除后,不能恢复,确认删除 ?")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {

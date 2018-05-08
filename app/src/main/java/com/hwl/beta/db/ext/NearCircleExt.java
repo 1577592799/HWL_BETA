@@ -7,6 +7,7 @@ import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.utils.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +21,11 @@ public class NearCircleExt implements Serializable {
     private List<NearCircleLike> likes;
 
     public NearCircleExt() {
+    }
+
+    public NearCircleExt(long nearCircleId) {
+        this.info = new NearCircle();
+        this.info.setNearCircleId(nearCircleId);
     }
 
     public NearCircleExt(int contentType) {
@@ -55,6 +61,9 @@ public class NearCircleExt implements Serializable {
     }
 
     public List<NearCircleComment> getComments() {
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
         return comments;
     }
 
@@ -63,6 +72,9 @@ public class NearCircleExt implements Serializable {
     }
 
     public List<NearCircleLike> getLikes() {
+        if (likes == null) {
+            likes = new ArrayList<>();
+        }
         return likes;
     }
 
