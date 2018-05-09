@@ -77,6 +77,7 @@
             android:windowSoftInputMode="stateVisible" />
         <activity android:name=".ui.circle.ActivityCircleUserIndex" />
         <activity android:name=".ui.circle.ActivityCircleDetail" />
+        <activity android:name=".ui.circle.ActivityCircleMessages" />
         <activity android:name=".ui.group.ActivityGroup" />
         <activity android:name=".ui.group.ActivityGroupAdd" />
 

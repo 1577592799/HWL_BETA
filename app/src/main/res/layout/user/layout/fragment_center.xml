@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="相册" />
+                android:text="我的动态" />
 
         </LinearLayout>
 

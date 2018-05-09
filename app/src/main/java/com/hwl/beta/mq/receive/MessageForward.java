@@ -6,6 +6,8 @@ import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.ChatUserMessageBean;
+import com.hwl.beta.mq.bean.CircleCommentMessageBean;
+import com.hwl.beta.mq.bean.CircleLikeMessageBean;
 import com.hwl.beta.mq.bean.FriendDeleteMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
@@ -112,18 +114,18 @@ public class MessageForward {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, GroupUsersAddMessageBean.class));
                 }
                 break;
-            case MQConstant.NEAR_CIRCLE_LIKE_MESSAGE:
+            case MQConstant.CIRCLE_LIKE_MESSAGE:
                 bodyJson = new String(bodyBytes);
-                messageProcess = MessageProcess.getNearCircleLikeMessageProcess();
+                messageProcess = MessageProcess.getCircleLikeMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
-                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleLikeMessageBean.class));
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, CircleLikeMessageBean.class));
                 }
                 break;
-            case MQConstant.NEAR_CIRCLE_COMMENT_MESSAGE:
+            case MQConstant.CIRCLE_COMMENT_MESSAGE:
                 bodyJson = new String(bodyBytes);
-                messageProcess = MessageProcess.getNearCircleCommentMessageProcess();
+                messageProcess = MessageProcess.getCircleCommentMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
-                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleCommentMessageBean.class));
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, CircleCommentMessageBean.class));
                 }
                 break;
         }

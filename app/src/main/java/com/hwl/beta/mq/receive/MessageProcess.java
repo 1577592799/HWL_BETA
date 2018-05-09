@@ -3,6 +3,8 @@ package com.hwl.beta.mq.receive;
 import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.ChatUserMessageBean;
+import com.hwl.beta.mq.bean.CircleCommentMessageBean;
+import com.hwl.beta.mq.bean.CircleLikeMessageBean;
 import com.hwl.beta.mq.bean.FriendDeleteMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.GroupCreateMessageBean;
@@ -28,6 +30,24 @@ public class MessageProcess {
     private static IMessageProcess<GroupUsersAddMessageBean> groupUsersAddMessageProcess;
     private static IMessageProcess<NearCircleLikeMessageBean> nearCircleLikeMessageProcess;
     private static IMessageProcess<NearCircleCommentMessageBean> nearCircleCommentMessageProcess;
+    private static IMessageProcess<CircleLikeMessageBean> circleLikeMessageProcess;
+    private static IMessageProcess<CircleCommentMessageBean> circleCommentMessageProcess;
+
+    public static IMessageProcess<CircleCommentMessageBean> getCircleCommentMessageProcess() {
+        return circleCommentMessageProcess;
+    }
+
+    public static void registerCircleCommentMessageProcess(IMessageProcess<CircleCommentMessageBean> process) {
+        circleCommentMessageProcess = process;
+    }
+
+    public static IMessageProcess<CircleLikeMessageBean> getCircleLikeMessageProcess() {
+        return circleLikeMessageProcess;
+    }
+
+    public static void registerCircleLikeMessageProcess(IMessageProcess<CircleLikeMessageBean> process) {
+        circleLikeMessageProcess = process;
+    }
 
     public static IMessageProcess<NearCircleCommentMessageBean> getNearCircleCommentMessageProcess() {
         return nearCircleCommentMessageProcess;

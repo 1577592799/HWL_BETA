@@ -21,12 +21,14 @@ import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.mq.send.CircleMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.NetCircleMatchInfo;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
+import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionCircleComment;
 import com.hwl.beta.ui.busbean.EventActionCircleLike;
@@ -101,9 +103,10 @@ public class ActivityCircleIndex extends FragmentActivity {
     public void refreshInfo(Integer ebType) {
         if (ebType == EventBusConstant.EB_TYPE_CIRCLE_INFO_UPDATE) {
             binding.refreshLayout.autoRefresh();
+        } else if (ebType == EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE) {
+            circleAdapter.notifyItemChanged(1);
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void addComment(EventActionCircleComment action) {
@@ -129,6 +132,9 @@ public class ActivityCircleIndex extends FragmentActivity {
                     @Override
                     public void onClick(View v) {
                         UITransfer.toCirclePublishActivity(activity);
+//                        MessageCountSP.setCircleMessageCountIncrease();
+                        //MessageCountSP.setCircleMessageCountReduce();
+//                        circleAdapter.notifyItemChanged(1);
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {
@@ -157,50 +163,21 @@ public class ActivityCircleIndex extends FragmentActivity {
         binding.refreshLayout.setEnableLoadMore(false);
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        saveInfo();
-//    }
-
-//    private void saveInfo() {
-//        if (!isDataChange || circles == null || circles.size() <= 0) return;
-////        Log.d("ActivityCircleIndex", "save circle info");
-//        isDataChange = false;
-//        Observable.fromIterable(circles.subList(0, (pageCount > circles.size() ? circles.size() : pageCount)))
-//                .subscribeOn(Schedulers.io())
-//                .doOnNext(new Consumer<CircleExt>() {
-//                    @Override
-//                    public void accept(CircleExt circleExt) throws Exception {
-//                        if (circleExt != null && circleExt.getInfo() != null) {
-//                            DaoUtils.getCircleManagerInstance().save(circleExt.getInfo());
-//                            DaoUtils.getCircleManagerInstance().deleteImages(circleExt.getInfo().getCircleId());
-//                            DaoUtils.getCircleManagerInstance().deleteComments(circleExt.getInfo().getCircleId());
-//                            DaoUtils.getCircleManagerInstance().deleteLikes(circleExt.getInfo().getCircleId());
-//                            DaoUtils.getCircleManagerInstance().saveImages(circleExt.getInfo().getCircleId(), circleExt.getImages());
-//                            DaoUtils.getCircleManagerInstance().saveComments(circleExt.getInfo().getCircleId(), circleExt.getComments());
-//                            DaoUtils.getCircleManagerInstance().saveLikes(circleExt.getInfo().getCircleId(), circleExt.getLikes());
-//                        }
-//                    }
-//                })
-//                .subscribe();
-//    }
-
     private List<CircleExt> getCircles() {
         List<CircleExt> infos = DaoUtils.getCircleManagerInstance().getCircles(pageCount);
         if (infos == null) {
             infos = new ArrayList<>();
         }
-        infos.add(0, new CircleExt(CircleExt.CircleHeadItem));
-        if (infos.size() == 1) {
+        if (infos.size() == 0) {
             infos.add(new CircleExt(CircleExt.CircleNullItem));
         }
+        infos.add(0, new CircleExt(CircleExt.CircleHeadItem));
+        infos.add(1, new CircleExt(CircleExt.CircleMsgcountItem));
         return infos;
     }
 
     private void showResult() {
-        if (circles.size() == 2 && circles.get(1).getCircleItemType() == CircleExt.CircleNullItem) {
-            circleAdapter.notifyDataSetChanged();
+        if (containerEmptyView()) {
             binding.refreshLayout.setEnableLoadMore(false);
         } else {
             binding.refreshLayout.setEnableLoadMore(true);
@@ -210,9 +187,21 @@ public class ActivityCircleIndex extends FragmentActivity {
 //        binding.pbLoading.setVisibility(View.GONE);
     }
 
+    private boolean containerEmptyView() {
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getCircleItemType() == CircleExt.CircleNullItem) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void removeEmptyView() {
-        if (circles.size() == 2 && circles.get(1).getCircleItemType() == CircleExt.CircleNullItem) {
-            circles.remove(1);
+        for (int i = 0; i < circles.size(); i++) {
+            if (circles.get(i).getCircleItemType() == CircleExt.CircleNullItem) {
+                circles.remove(i);
+                break;
+            }
         }
     }
 
@@ -315,7 +304,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        showResult();
+                        //showResult();
                     }
 
                     @Override
@@ -421,6 +410,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                             if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
                                 if (isLiked) {
                                     circleAdapter.addLike(position, null);
+                                    CircleMessageSend.sendDeleteLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     CircleLike likeInfo = new CircleLike();
                                     likeInfo.setCircleId(info.getInfo().getCircleId());
@@ -429,6 +419,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
                                     circleAdapter.addLike(position, likeInfo);
+                                    CircleMessageSend.sendAddLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId(), info.getCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");
@@ -469,6 +460,11 @@ public class ActivityCircleIndex extends FragmentActivity {
         @Override
         public void onPublishClick() {
             UITransfer.toCirclePublishActivity(activity);
+        }
+
+        @Override
+        public void onMsgcountClick() {
+            UITransfer.toCircleMessagesActivity(activity);
         }
     }
 }

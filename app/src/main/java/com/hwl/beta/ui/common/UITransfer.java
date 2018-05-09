@@ -18,6 +18,7 @@ import com.hwl.beta.ui.chat.ActivityChatUserSetting;
 import com.hwl.beta.ui.circle.ActivityCircleCommentPublish;
 import com.hwl.beta.ui.circle.ActivityCircleDetail;
 import com.hwl.beta.ui.circle.ActivityCircleIndex;
+import com.hwl.beta.ui.circle.ActivityCircleMessages;
 import com.hwl.beta.ui.circle.ActivityCirclePublish;
 import com.hwl.beta.ui.circle.ActivityCircleUserIndex;
 import com.hwl.beta.ui.dialog.ReloginDialogFragment;
@@ -242,6 +243,11 @@ public class UITransfer {
             intent.putExtras(bundle);
         }
         intent.putExtra("circleid", circleId);
+        context.startActivity(intent);
+    }
+
+    public static void toCircleMessagesActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityCircleMessages.class);
         context.startActivity(intent);
     }
 

@@ -22,6 +22,7 @@ import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.mq.send.CircleMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.body.GetCircleDetailResponse;
@@ -282,6 +283,7 @@ public class ActivityCircleDetail extends FragmentActivity {
                                     //取消点赞
                                     info.getInfo().setIsLiked(false);
                                     removeLikeView();
+                                    CircleMessageSend.sendDeleteLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     //点赞
                                     info.getInfo().setIsLiked(true);
@@ -297,6 +299,7 @@ public class ActivityCircleDetail extends FragmentActivity {
                                     info.getLikes().add(likeInfo);
                                     setLikeView(likeInfo);
                                     EventBus.getDefault().post(new EventActionCircleLike(EventBusConstant.EB_TYPE_ACTINO_ADD, likeInfo));
+                                    CircleMessageSend.sendAddLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId(), info.getCircleMessageContent()).subscribe();
                                 }
                                 saveCircleInfo();
                             } else {
@@ -350,6 +353,11 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onPublishClick() {
             UITransfer.toCirclePublishActivity(activity);
+        }
+
+        @Override
+        public void onMsgcountClick() {
+
         }
     }
 

@@ -36,4 +36,6 @@ public interface ICircleItemListener {
 
     void onPublishClick();
 
+    void onMsgcountClick();
+
 }

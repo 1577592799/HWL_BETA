@@ -11,28 +11,29 @@ import com.hwl.beta.R;
 import com.hwl.beta.databinding.CircleHeadItemBinding;
 import com.hwl.beta.databinding.CircleIndexItemBinding;
 import com.hwl.beta.databinding.CircleItemNullBinding;
+import com.hwl.beta.databinding.CircleMsgcountItemBinding;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
+import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.holder.CircleHeadItemViewHolder;
 import com.hwl.beta.ui.circle.holder.CircleIndexItemViewHolder;
 import com.hwl.beta.ui.circle.holder.CircleItemNullViewHolder;
+import com.hwl.beta.ui.circle.holder.CircleMsgcountItemViewHolder;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
     private List<CircleExt> circles;
     private ICircleItemListener itemListener;
     private LayoutInflater inflater;
     private long myUserId;
 
     public CircleIndexAdapter(Context context, List<CircleExt> circles, ICircleItemListener itemListener) {
-        this.context = context;
         this.circles = circles;
         this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
@@ -49,6 +50,8 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 return new CircleHeadItemViewHolder((CircleHeadItemBinding) DataBindingUtil.inflate(inflater, R.layout.circle_head_item, parent, false));
             case 2:
                 return new CircleIndexItemViewHolder((CircleIndexItemBinding) DataBindingUtil.inflate(inflater, R.layout.circle_index_item, parent, false));
+            case 3:
+                return new CircleMsgcountItemViewHolder((CircleMsgcountItemBinding) DataBindingUtil.inflate(inflater, R.layout.circle_msgcount_item, parent, false));
         }
     }
 
@@ -62,6 +65,8 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 return 1;
             case CircleExt.CircleIndexItem:
                 return 2;
+            case CircleExt.CircleMsgcountItem:
+                return 3;
         }
     }
 
@@ -74,6 +79,15 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else if (holder instanceof CircleHeadItemViewHolder) {
             CircleHeadItemViewHolder viewHolder = (CircleHeadItemViewHolder) holder;
             viewHolder.setItemBinding(itemListener, new ImageViewBean(UserSP.getUserHeadImage(), UserSP.getUserCirclebackimage()));
+        } else if (holder instanceof CircleMsgcountItemViewHolder) {
+            CircleMsgcountItemViewHolder viewHolder = (CircleMsgcountItemViewHolder) holder;
+            int messageCount= MessageCountSP.getCircleMessageCount();
+            viewHolder.setItemBinding(itemListener, messageCount);
+            if (messageCount > 0) {
+                viewHolder.itemView.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.itemView.setVisibility(View.GONE);
+            }
         } else if (holder instanceof CircleIndexItemViewHolder) {
             CircleIndexItemViewHolder viewHolder = (CircleIndexItemViewHolder) holder;
             viewHolder.setItemBinding(itemListener, position, new ImageViewBean(info.getInfo().getPublishUserImage()), info.getInfo(), info.getImages(), info.getLikes(), info.getComments());

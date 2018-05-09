@@ -20,6 +20,8 @@ public class MQProcess {
         MessageProcess.registerGroupEditMessageProces(new GroupEditMessageProcess());
         MessageProcess.registerNearCircleLikeMessageProcess(new NearCircleLikeMessageProcess());
         MessageProcess.registerNearCircleCommentMessageProcess(new NearCircleCommentMessageProcess());
+        MessageProcess.registerCircleLikeMessageProcess(new CircleLikeMessageProcess());
+        MessageProcess.registerCircleCommentMessageProcess(new CircleCommentMessageProcess());
         MQManager.registerConnectionStatusEvent(new DefaultConnectionStatus());
     }
 

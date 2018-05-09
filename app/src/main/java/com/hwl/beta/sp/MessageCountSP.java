@@ -14,6 +14,7 @@ public class MessageCountSP {
     private static final String FRIENDREQUESTCOUNT = "friendrequestcount";
     private static final String CHATMESSAGECOUNT = "chatmessagecount";
     private static final String NEARCIRCLEMESSAGECOUNT = "nearcirclemessagecount";
+    private static final String CIRCLEMESSAGECOUNT = "circlemessagecount";
 
 
     private static SharedPreferences getSP() {
@@ -77,5 +78,32 @@ public class MessageCountSP {
 
     public static int getNearCircleMessageCount() {
         return getSP().getInt(NEARCIRCLEMESSAGECOUNT, 0);
+    }
+
+    public static void setCircleMessageCount(int count) {
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putInt(CIRCLEMESSAGECOUNT, count);
+        editor.commit();
+    }
+
+    public static void setCircleMessageCountIncrease() {
+        int count = getCircleMessageCount();
+        count++;
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putInt(CIRCLEMESSAGECOUNT, count);
+        editor.commit();
+    }
+
+    public static void setCircleMessageCountReduce() {
+        int count = getCircleMessageCount();
+        count--;
+        if (count <= 0) count = 0;
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putInt(CIRCLEMESSAGECOUNT, count);
+        editor.commit();
+    }
+
+    public static int getCircleMessageCount() {
+        return getSP().getInt(CIRCLEMESSAGECOUNT, 0);
     }
 }

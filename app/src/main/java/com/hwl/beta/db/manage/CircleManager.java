@@ -21,6 +21,11 @@ public class CircleManager extends BaseDao<Circle> {
         super(context);
     }
 
+    public Circle getCircle(long circleId) {
+        if (circleId <= 0) return null;
+        return daoSession.getCircleDao().load(circleId);
+    }
+
     public boolean isExists(long circleId) {
         if (circleId <= 0) return false;
         if (daoSession.getCircleDao().load(circleId) != null)
@@ -72,6 +77,25 @@ public class CircleManager extends BaseDao<Circle> {
         }
     }
 
+    public void deleteComment(long circleId, long userId, int commentId) {
+        if (circleId > 0) {
+            String deleteSql = "delete from " + CircleCommentDao.TABLENAME + " where " +
+                    CircleCommentDao.Properties.CircleId.columnName + "=" + circleId + " and " +
+                    CircleCommentDao.Properties.CommentId.columnName + "=" + commentId + " and " +
+                    CircleCommentDao.Properties.CommentUserId.columnName + " = " + userId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
+    public CircleComment getComment(long circleId, long userId, int commentId) {
+        if (circleId <= 0) return null;
+        return daoSession.getCircleCommentDao().queryBuilder()
+                .where(CircleCommentDao.Properties.CircleId.eq(circleId))
+                .where(CircleCommentDao.Properties.CommentUserId.eq(userId))
+                .where(CircleCommentDao.Properties.CommentId.eq(commentId))
+                .unique();
+    }
+
     public List<CircleComment> getComments(long CircleId) {
         if (CircleId <= 0) return null;
         return daoSession.getCircleCommentDao().queryBuilder()
@@ -79,10 +103,24 @@ public class CircleManager extends BaseDao<Circle> {
                 .list();
     }
 
+    public void saveComment(long circleId, CircleComment comment) {
+        if (circleId > 0 && comment != null) {
+            daoSession.getCircleCommentDao().save(comment);
+        }
+    }
+
     public void saveComments(long CircleId, List<CircleComment> comments) {
         if (CircleId > 0 && comments != null && comments.size() > 0) {
             daoSession.getCircleCommentDao().saveInTx(comments);
         }
+    }
+
+    public CircleLike getLike(long circleId, long userId) {
+        if (circleId <= 0) return null;
+        return daoSession.getCircleLikeDao().queryBuilder()
+                .where(CircleLikeDao.Properties.CircleId.eq(circleId))
+                .where(CircleLikeDao.Properties.LikeUserId.eq(userId))
+                .unique();
     }
 
     public List<CircleLike> getLikes(long CircleId) {
@@ -99,9 +137,24 @@ public class CircleManager extends BaseDao<Circle> {
         }
     }
 
+    public void deleteLike(long circleId, long userId) {
+        if (circleId > 0) {
+            String deleteSql = "delete from " + CircleLikeDao.TABLENAME + " where " +
+                    CircleLikeDao.Properties.CircleId.columnName + " = " + circleId + " and " +
+                    CircleLikeDao.Properties.LikeUserId.columnName + " = " + userId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
     public void saveLikes(long CircleId, List<CircleLike> likes) {
         if (CircleId > 0 && likes != null && likes.size() > 0) {
             daoSession.getCircleLikeDao().saveInTx(likes);
+        }
+    }
+
+    public void saveLike(long circleId, CircleLike likeInfo) {
+        if (circleId > 0 && likeInfo != null) {
+            daoSession.getCircleLikeDao().save(likeInfo);
         }
     }
 

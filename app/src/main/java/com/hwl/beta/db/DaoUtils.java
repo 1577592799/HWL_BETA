@@ -6,6 +6,7 @@ import com.hwl.beta.db.manage.ChatGroupMessageManager;
 import com.hwl.beta.db.manage.ChatRecordMessageManager;
 import com.hwl.beta.db.manage.ChatUserMessageManager;
 import com.hwl.beta.db.manage.CircleManager;
+import com.hwl.beta.db.manage.CircleMessageManager;
 import com.hwl.beta.db.manage.FriendManager;
 import com.hwl.beta.db.manage.FriendRequestManager;
 import com.hwl.beta.db.manage.GroupInfoManager;
@@ -27,6 +28,14 @@ public class DaoUtils {
     private static NearCircleManager nearCircleManager;
     private static NearCircleMessageManager nearCircleMessageManager;
     private static CircleManager circleManager;
+    private static CircleMessageManager circleMessageManager;
+
+    public static synchronized CircleMessageManager getCircleMessageManagerInstance() {
+        if (circleMessageManager == null) {
+            circleMessageManager = new CircleMessageManager(HWLApp.getContext());
+        }
+        return circleMessageManager;
+    }
 
     public static synchronized CircleManager getCircleManagerInstance() {
         if (circleManager == null) {

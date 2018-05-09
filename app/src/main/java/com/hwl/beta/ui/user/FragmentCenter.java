@@ -97,7 +97,7 @@ public class FragmentCenter extends Fragment {
 
         @Override
         public void onCircleClick() {
-
+            UITransfer.toCircleUserIndexActivity(activity, UserSP.getUserId(), UserSP.getUserName(), UserSP.getUserHeadImage(), UserSP.getUserCirclebackimage(), UserSP.getLifeNotes());
         }
 
         @Override

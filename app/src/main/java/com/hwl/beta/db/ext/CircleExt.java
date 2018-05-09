@@ -4,6 +4,7 @@ import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.entity.CircleLike;
+import com.hwl.beta.utils.StringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +18,7 @@ public class CircleExt implements Serializable {
     public static final int CircleHeadItem = 0;
     public static final int CircleNullItem = 1;
     public static final int CircleIndexItem = 2;
+    public static final int CircleMsgcountItem = 3;
 
     private int circleItemType;
     private long viewUserId;
@@ -33,7 +35,7 @@ public class CircleExt implements Serializable {
         this.circleItemType = circleItemType;
     }
 
-    public CircleExt(int circleItemType, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage,String viewUserLifeNotes) {
+    public CircleExt(int circleItemType, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage, String viewUserLifeNotes) {
         this.circleItemType = circleItemType;
         this.viewUserId = viewUserId;
         this.viewUserName = viewUserName;
@@ -132,5 +134,17 @@ public class CircleExt implements Serializable {
 
     public void setLikes(List<CircleLike> likes) {
         this.likes = likes;
+    }
+
+    public String getCircleMessageContent() {
+        if (this.info != null && this.info.getCircleId() > 0) {
+            if (StringUtils.isNotBlank(this.info.getContent())) {
+                return this.info.getContent();
+            }
+            if (this.images != null && this.images.size() > 0) {
+                return this.images.get(0).getImageUrl();
+            }
+        }
+        return "";
     }
 }

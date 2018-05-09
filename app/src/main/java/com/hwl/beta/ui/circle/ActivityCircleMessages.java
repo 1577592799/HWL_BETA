@@ -1,4 +1,4 @@
-package com.hwl.beta.ui.near;
+package com.hwl.beta.ui.circle;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -9,44 +9,43 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.hwl.beta.R;
-import com.hwl.beta.databinding.ActivityNearMessagesBinding;
+import com.hwl.beta.databinding.ActivityCircleMessagesBinding;
 import com.hwl.beta.db.DaoUtils;
-import com.hwl.beta.db.entity.NearCircleMessage;
+import com.hwl.beta.db.entity.CircleMessage;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.circle.adp.CircleMessageAdapter;
 import com.hwl.beta.ui.common.UITransfer;
-import com.hwl.beta.ui.near.adp.NearMessageAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityNearMessages extends FragmentActivity {
+public class ActivityCircleMessages extends FragmentActivity {
 
     Activity activity;
-    ActivityNearMessagesBinding binding;
-    List<NearCircleMessage> messages;
-    NearMessageAdapter messageAdapter;
+    ActivityCircleMessagesBinding binding;
+    List<CircleMessage> messages;
+    CircleMessageAdapter messageAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
-        messages = DaoUtils.getNearCircleMessageManagerInstance().getAll();
+        messages = DaoUtils.getCircleMessageManagerInstance().getAll();
         if (messages == null) {
             messages = new ArrayList<>();
         }
-        binding = DataBindingUtil.setContentView(activity, R.layout.activity_near_messages);
+        binding = DataBindingUtil.setContentView(activity, R.layout.activity_circle_messages);
 
         initView();
     }
 
     private void initView() {
-        binding.tbTitle.setTitle("附近的消息")
+        binding.tbTitle.setTitle("我的朋友圈消息")
                 .setTitleRightText("清空")
                 .setTitleRightBackground(R.drawable.bg_top)
                 .setImageRightHide()
@@ -68,7 +67,7 @@ public class ActivityNearMessages extends FragmentActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        DaoUtils.getNearCircleMessageManagerInstance().deleteAll();
+                                        DaoUtils.getCircleMessageManagerInstance().deleteAll();
                                         messages.clear();
                                         messageAdapter.notifyDataSetChanged();
                                     }
@@ -77,7 +76,7 @@ public class ActivityNearMessages extends FragmentActivity {
                                 .show();
                     }
                 });
-        messageAdapter = new NearMessageAdapter(activity, messages, new NearMessageItemListener());
+        messageAdapter = new CircleMessageAdapter(activity, messages, new MessageItemListener());
         binding.rvMessageContainer.setAdapter(messageAdapter);
         binding.rvMessageContainer.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -85,26 +84,26 @@ public class ActivityNearMessages extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MessageCountSP.setNearCircleMessageCount(0);
-        EventBus.getDefault().post(EventBusConstant.EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE);
+        MessageCountSP.setCircleMessageCount(0);
+        EventBus.getDefault().post(EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE);
     }
 
-    private class NearMessageItemListener implements NearMessageAdapter.INearMessageItemListener {
+    private class MessageItemListener implements CircleMessageAdapter.IMessageItemListener {
 
         @Override
-        public void onItemClick(View v, NearCircleMessage message, int position) {
-            UITransfer.toNearDetailActivity(activity, message.getNearCircleId());
+        public void onItemClick(View v, CircleMessage message, int position) {
+            UITransfer.toCircleDetailActivity(activity, message.getCircleId(), null);
         }
 
         @Override
-        public void onItemLongClick(View v, final NearCircleMessage message, final int position) {
+        public void onItemLongClick(View v, final CircleMessage message, final int position) {
             new AlertDialog.Builder(activity)
                     .setMessage("确认要删除这条消息?")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            if (DaoUtils.getNearCircleMessageManagerInstance().deleteMessage(message)) {
+                            if (DaoUtils.getCircleMessageManagerInstance().deleteMessage(message)) {
                                 messages.remove(position);
                                 messageAdapter.notifyItemRemoved(position);
                                 messageAdapter.notifyItemRangeChanged(position, messages.size() - position);
