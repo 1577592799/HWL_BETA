@@ -7,6 +7,7 @@ import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.utils.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -121,6 +122,9 @@ public class CircleExt implements Serializable {
     }
 
     public List<CircleComment> getComments() {
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
         return comments;
     }
 
@@ -129,6 +133,9 @@ public class CircleExt implements Serializable {
     }
 
     public List<CircleLike> getLikes() {
+        if (likes == null) {
+            likes = new ArrayList<>();
+        }
         return likes;
     }
 
@@ -140,9 +147,6 @@ public class CircleExt implements Serializable {
         if (this.info != null && this.info.getCircleId() > 0) {
             if (StringUtils.isNotBlank(this.info.getContent())) {
                 return this.info.getContent();
-            }
-            if (this.images != null && this.images.size() > 0) {
-                return this.images.get(0).getImageUrl();
             }
         }
         return "";

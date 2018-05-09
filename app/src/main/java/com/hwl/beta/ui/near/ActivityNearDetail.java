@@ -274,9 +274,9 @@ public class ActivityNearDetail extends FragmentActivity {
         @Override
         public void onCommentContentClick(NearCircleComment comment) {
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
             } else {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),info.getNearCircleMessageContent());
             }
         }
 
@@ -304,7 +304,7 @@ public class ActivityNearDetail extends FragmentActivity {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId());
+                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
                 }
 
                 @Override

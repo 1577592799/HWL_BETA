@@ -114,6 +114,20 @@ public class MessageForward {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, GroupUsersAddMessageBean.class));
                 }
                 break;
+            case MQConstant.NEAR_CIRCLE_LIKE_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getNearCircleLikeMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleLikeMessageBean.class));
+                }
+                break;
+            case MQConstant.NEAR_CIRCLE_COMMENT_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getNearCircleCommentMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, NearCircleCommentMessageBean.class));
+                }
+                break;
             case MQConstant.CIRCLE_LIKE_MESSAGE:
                 bodyJson = new String(bodyBytes);
                 messageProcess = MessageProcess.getCircleLikeMessageProcess();

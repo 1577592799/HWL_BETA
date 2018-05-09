@@ -231,9 +231,9 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onCommentContentClick(CircleComment comment) {
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),info.getInfo().getPublishUserId(),info.getCircleMessageContent());
             } else {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),info.getCircleMessageContent());
             }
         }
 
@@ -257,7 +257,7 @@ public class ActivityCircleDetail extends FragmentActivity {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId());
+                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId(),info.getInfo().getPublishUserId(),info.getCircleMessageContent());
                 }
 
                 @Override

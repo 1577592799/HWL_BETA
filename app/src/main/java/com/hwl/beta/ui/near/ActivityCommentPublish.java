@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
+import com.hwl.beta.mq.send.NearCircleMessageSend;
 import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.body.AddNearCommentResponse;
 import com.hwl.beta.ui.busbean.EventBusConstant;
@@ -25,6 +26,8 @@ public class ActivityCommentPublish extends FragmentActivity {
     Activity activity;
     EmotionDefaultPannel edpEmotion;
     long nearCircleId = 0;
+    long publishUserId=0;
+    String circleContent="";
     long replyUserId = 0;
     String replyUserName = "";
     boolean isRuning = false;
@@ -42,6 +45,8 @@ public class ActivityCommentPublish extends FragmentActivity {
         }
         replyUserId = getIntent().getLongExtra("replyuserid", 0);
         replyUserName = getIntent().getStringExtra("replyusername");
+        publishUserId = getIntent().getLongExtra("publishuserid", 0);
+        circleContent = getIntent().getStringExtra("content");
 
         edpEmotion = findViewById(R.id.edp_emotion);
         edpEmotion.setEditTextFocus(false);
@@ -77,6 +82,7 @@ public class ActivityCommentPublish extends FragmentActivity {
                         if (res.getNearCircleCommentInfo() != null && res.getNearCircleCommentInfo().getCommentId() > 0) {
                             Toast.makeText(activity, "评论发送成功", Toast.LENGTH_SHORT).show();
                             EventBus.getDefault().post(DBNearCircleAction.convertToNearCircleCommentInfo(res.getNearCircleCommentInfo()));
+                            NearCircleMessageSend.sendAddCommentMessage(nearCircleId,publishUserId,res.getNearCircleCommentInfo().getCommentId(),res.getNearCircleCommentInfo().getContent(),circleContent).subscribe();
                             finish();
                         } else {
                             onError("评论发送失败");

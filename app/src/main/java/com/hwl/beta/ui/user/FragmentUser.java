@@ -116,6 +116,10 @@ public class FragmentUser extends BaseFragment {
             Friend user = users.get(2);
             if (user == null) return;
             user.setMessageCount(MessageCountSP.getFriendRequestCountDesc());
+        }else if(ebType==EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE){
+            Friend user = users.get(0);
+            if (user == null) return;
+            user.setMessageCount(MessageCountSP.getCircleMessageCountDesc());
         }
     }
 

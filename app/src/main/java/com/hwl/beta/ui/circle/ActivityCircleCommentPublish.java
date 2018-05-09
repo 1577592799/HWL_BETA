@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
+import com.hwl.beta.mq.send.CircleMessageSend;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.body.AddCircleCommentInfoResponse;
 import com.hwl.beta.ui.busbean.EventActionCircleComment;
@@ -26,6 +27,8 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
     Activity activity;
     EmotionDefaultPannel edpEmotion;
     long circleId = 0;
+    long publishUserId=0;
+    String circleContent="";
     long replyUserId = 0;
     String replyUserName = "";
     boolean isRuning = false;
@@ -43,6 +46,8 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
         }
         replyUserId = getIntent().getLongExtra("replyuserid", 0);
         replyUserName = getIntent().getStringExtra("replyusername");
+        publishUserId = getIntent().getLongExtra("publishuserid", 0);
+        circleContent = getIntent().getStringExtra("content");
 
         edpEmotion = findViewById(R.id.edp_emotion);
         edpEmotion.setEditTextFocus(false);
@@ -78,6 +83,7 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
                         if (res.getCommentInfo() != null && res.getCommentInfo().getCommentId() > 0) {
                             Toast.makeText(activity, "发布成功", Toast.LENGTH_SHORT).show();
                             EventBus.getDefault().post(new EventActionCircleComment(EventBusConstant.EB_TYPE_ACTINO_ADD, DBCircleAction.convertToCircleCommentInfo(res.getCommentInfo())));
+                            CircleMessageSend.sendAddCommentMessage(circleId,publishUserId,res.getCommentInfo().getCommentId(),res.getCommentInfo().getContent(),circleContent).subscribe();
                             finish();
                         } else {
                             onError("发布失败");

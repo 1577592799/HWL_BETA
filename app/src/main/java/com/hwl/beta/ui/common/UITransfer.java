@@ -167,12 +167,12 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toNearDetailActivity(Activity context, long circleId){
-        toNearDetailActivity(context,circleId,null);
+    public static void toNearDetailActivity(Activity context, long circleId) {
+        toNearDetailActivity(context, circleId, null);
     }
 
-    public static void toNearDetailActivity(Activity context, NearCircleExt info){
-        toNearDetailActivity(context,0,info);
+    public static void toNearDetailActivity(Activity context, NearCircleExt info) {
+        toNearDetailActivity(context, 0, info);
     }
 
     private static void toNearDetailActivity(Activity context, long circleId, NearCircleExt info) {
@@ -191,15 +191,17 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId) {
-        toNearCommentPublishActivity(context, nearCircleId, 0, null);
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId,String content) {
+        toNearCommentPublishActivity(context, nearCircleId, publishUserId, 0, null,content);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long replyUserId, String replyUserName) {
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, long replyUserId, String replyUserName,String content) {
         Intent intent = new Intent(context, ActivityCommentPublish.class);
         intent.putExtra("nearcircleid", nearCircleId);
+        intent.putExtra("publishuserid", publishUserId);
         intent.putExtra("replyuserid", replyUserId);
         intent.putExtra("replyusername", replyUserName);
+        intent.putExtra("content", content);
         context.startActivity(intent);
     }
 
@@ -213,15 +215,17 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId) {
-        toCircleCommentPublishActivity(context, circleId, 0, null);
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId,String content) {
+        toCircleCommentPublishActivity(context, circleId, publishUserId, 0, null,content);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId, long replyUserId, String replyUserName) {
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, long replyUserId, String replyUserName,String content) {
         Intent intent = new Intent(context, ActivityCircleCommentPublish.class);
         intent.putExtra("circleid", circleId);
+        intent.putExtra("publishuserid", publishUserId);
         intent.putExtra("replyuserid", replyUserId);
         intent.putExtra("replyusername", replyUserName);
+        intent.putExtra("content", content);
         context.startActivity(intent);
     }
 

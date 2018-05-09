@@ -339,6 +339,16 @@ public class FragmentNear extends BaseFragment {
         private CircleActionMorePop mMorePopupWindow;
         boolean isRuning = false;
 
+        private NearCircleExt getNearCircleInfo(long nearCircleId){
+            if(nearCircleId<=0) return null;
+            for (int i = 0; i < nearCircles.size(); i++) {
+                if(nearCircles.get(i).getInfo()!=null&&nearCircles.get(i).getInfo().getNearCircleId()>0&&nearCircles.get(i).getInfo().getNearCircleId()==nearCircleId){
+                    return nearCircles.get(i);
+                }
+            }
+            return null;
+        }
+
         @Override
         public void onItemViewClick(View view) {
             KeyBoardAction.hideSoftInput(view);
@@ -366,10 +376,12 @@ public class FragmentNear extends BaseFragment {
 
         @Override
         public void onCommentContentClick(NearCircleComment comment) {
+            NearCircleExt currnetInfo=this.getNearCircleInfo(comment.getNearCircleId());
+            if(currnetInfo==null) return;
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),currnetInfo.getInfo().getPublishUserId(),currnetInfo.getNearCircleMessageContent());
             } else {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),currnetInfo.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),currnetInfo.getNearCircleMessageContent());
             }
         }
 
@@ -394,7 +406,7 @@ public class FragmentNear extends BaseFragment {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId());
+                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
                 }
 
                 @Override

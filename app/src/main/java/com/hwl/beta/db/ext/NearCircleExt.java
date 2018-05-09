@@ -87,9 +87,9 @@ public class NearCircleExt implements Serializable {
             if (StringUtils.isNotBlank(this.info.getContent())) {
                 return this.info.getContent();
             }
-            if (this.images != null && this.images.size() > 0) {
-                return this.images.get(0).getImageUrl();
-            }
+//            if (this.images != null && this.images.size() > 0) {
+//                return this.images.get(0).getImageUrl();
+//            }
         }
         return "";
     }

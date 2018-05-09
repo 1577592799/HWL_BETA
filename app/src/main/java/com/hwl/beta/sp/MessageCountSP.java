@@ -106,4 +106,10 @@ public class MessageCountSP {
     public static int getCircleMessageCount() {
         return getSP().getInt(CIRCLEMESSAGECOUNT, 0);
     }
+
+    public static String getCircleMessageCountDesc() {
+        int count = getCircleMessageCount();
+        if (count <= 0) return "0";
+        return count > 99 ? "99+" : count + "";
+    }
 }

@@ -326,6 +326,16 @@ public class ActivityCircleIndex extends FragmentActivity {
         private CircleActionMorePop mMorePopupWindow;
         boolean isRuning = false;
 
+        private CircleExt getCircleInfo(long circleId){
+            if(circleId<=0) return null;
+            for (int i = 0; i < circles.size(); i++) {
+                if(circles.get(i).getInfo()!=null&&circles.get(i).getInfo().getCircleId()>0&&circles.get(i).getInfo().getCircleId()==circleId){
+                    return circles.get(i);
+                }
+            }
+            return null;
+        }
+
         @Override
         public void onItemViewClick(View view) {
             KeyBoardAction.hideSoftInput(view);
@@ -358,10 +368,12 @@ public class ActivityCircleIndex extends FragmentActivity {
 
         @Override
         public void onCommentContentClick(CircleComment comment) {
+            CircleExt currnetInfo=this.getCircleInfo(comment.getCircleId());
+            if(currnetInfo==null) return;
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),currnetInfo.getInfo().getPublishUserId(),currnetInfo.getCircleMessageContent());
             } else {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(), comment.getCommentUserId(), comment.getCommentUserName());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),currnetInfo.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),currnetInfo.getCircleMessageContent());
             }
         }
 
@@ -386,7 +398,7 @@ public class ActivityCircleIndex extends FragmentActivity {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId());
+                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId(),info.getInfo().getPublishUserId(),info.getCircleMessageContent());
                 }
 
                 @Override
@@ -419,7 +431,7 @@ public class ActivityCircleIndex extends FragmentActivity {
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
                                     circleAdapter.addLike(position, likeInfo);
-                                    CircleMessageSend.sendAddLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId(), info.getCircleMessageContent()).subscribe();
+                                    CircleMessageSend.sendAddLikeMessage(info.getInfo().getCircleId(), info.getInfo().getPublishUserId(),info.getCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");
