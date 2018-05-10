@@ -6,6 +6,8 @@ import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleLike;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2018/4/14.
  */
@@ -35,4 +37,6 @@ public interface ICircleDetailListener {
     void onDeleteClick(Circle info);
 
     void onPublishClick();
+
+    void onImageClick(int position);
 }

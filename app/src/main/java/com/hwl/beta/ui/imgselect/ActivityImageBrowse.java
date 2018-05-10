@@ -22,7 +22,7 @@ public class ActivityImageBrowse extends FragmentActivity {
     ActivityImageBrowseBinding binding;
     Activity activity;
     int mode;
-    int position;
+    int imagePosotion;
     List<String> imageUrls;
 
     @Override
@@ -31,7 +31,7 @@ public class ActivityImageBrowse extends FragmentActivity {
         activity = this;
 
         mode = getIntent().getIntExtra("mode", 0);
-        position = getIntent().getIntExtra("position", 0);
+        imagePosotion = getIntent().getIntExtra("position", 0);
         imageUrls = getIntent().getStringArrayListExtra("imageurls");
         if (imageUrls == null || imageUrls.size() <= 0) {
             Toast.makeText(activity, "图片加载失败", Toast.LENGTH_SHORT).show();
@@ -57,10 +57,8 @@ public class ActivityImageBrowse extends FragmentActivity {
                 onBackPressed();
             }
         });
-
-        binding.tvCount.setText((position + 1) + "/" + imageUrls.size());
         binding.pvpImages.setAdapter(new ImagePagerAdapter(activity, imageUrls));
-        binding.pvpImages.setCurrentItem(position);
+        binding.pvpImages.setCurrentItem(imagePosotion);
         binding.pvpImages.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -70,7 +68,8 @@ public class ActivityImageBrowse extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 //页面跳转完后调用
-                binding.tvCount.setText((position + 1) + "/" + imageUrls.size());
+                imagePosotion = position;
+                setCount();
             }
 
             @Override
@@ -80,5 +79,16 @@ public class ActivityImageBrowse extends FragmentActivity {
                 }
             }
         });
+
+        setCount();
+    }
+
+    private void setCount() {
+        if (imageUrls.size() <= 1) {
+            binding.tvCount.setVisibility(View.GONE);
+        } else {
+            binding.tvCount.setVisibility(View.VISIBLE);
+            binding.tvCount.setText((imagePosotion + 1) + "/" + imageUrls.size());
+        }
     }
 }

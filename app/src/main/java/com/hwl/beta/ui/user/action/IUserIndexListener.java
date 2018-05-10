@@ -7,6 +7,9 @@ import android.view.View;
  */
 
 public interface IUserIndexListener {
+
+    void onUserHeadClick();
+
     void onRemarkClick();
 
     void onCircleClick();

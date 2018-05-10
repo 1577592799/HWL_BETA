@@ -38,9 +38,12 @@ import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
+import com.hwl.beta.ui.widget.MultiImageView;
 import com.hwl.beta.utils.DisplayUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,7 +68,6 @@ public class ActivityCircleDetail extends FragmentActivity {
         activity = this;
         myUserId = UserSP.getUserId();
         itemListener = new CircleDetailListener();
-        commentAdapter = new CircleCommentAdapter(activity, info.getComments(), new CircleCommentItemListener());
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_circle_detail);
         binding.setAction(itemListener);
 
@@ -128,6 +130,7 @@ public class ActivityCircleDetail extends FragmentActivity {
         }
 
         this.setLikeViews(info.getLikes());
+        commentAdapter = new CircleCommentAdapter(activity, info.getComments(), new CircleCommentItemListener());
         binding.rvComments.setAdapter(commentAdapter);
         binding.rvComments.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -146,6 +149,12 @@ public class ActivityCircleDetail extends FragmentActivity {
         }
 
         if (info.getImages() != null && info.getImages().size() > 0) {
+            binding.mivImages.setImageListener(new MultiImageView.IMultiImageListener() {
+                @Override
+                public void onImageClick(int position, String imageUrl) {
+                    itemListener.onImageClick(position);
+                }
+            });
             binding.mivImages.setImagesData(DBCircleAction.convertToMultiImages(info.getImages()));
             binding.mivImages.setVisibility(View.VISIBLE);
         } else {
@@ -170,7 +179,7 @@ public class ActivityCircleDetail extends FragmentActivity {
                                 info.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
                                 bindData();
                             } else {
-                                if (!response.getCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
+                                if (response.getCircleInfo().getUpdateTime() != null && !response.getCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
                                     info.getInfo().setUpdateTime(response.getCircleInfo().getUpdateTime());
                                     setLikeViews(info.getLikes());
                                     commentAdapter.notifyItemRangeChanged(0, info.getComments().size());
@@ -196,7 +205,8 @@ public class ActivityCircleDetail extends FragmentActivity {
 
     private void saveInfo(String lastUpdateTime) {
         //如果没有新的更新就不保存
-        if (lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
+        if (StringUtils.isBlank(lastUpdateTime) || lastUpdateTime.equals(info.getInfo().getUpdateTime()))
+            return;
         //只存在我发布的信息
         if (info != null && info.getInfo() != null && info.getInfo().getPublishUserId() == myUserId) {
             DaoUtils.getCircleManagerInstance().save(info.getInfo());
@@ -406,6 +416,17 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onPublishClick() {
             UITransfer.toCirclePublishActivity(activity);
+        }
+
+        @Override
+        public void onImageClick(int position) {
+            if (info.getImages() != null && info.getImages().size() > 0) {
+                List<String> imageUrls = new ArrayList<>(info.getImages().size());
+                for (int i = 0; i < info.getImages().size(); i++) {
+                    imageUrls.add(info.getImages().get(i).getImageUrl());
+                }
+                UITransfer.toImageBrowseActivity(activity, ActivityImageBrowse.MODE_VIEW, position, imageUrls);
+            }
         }
     }
 

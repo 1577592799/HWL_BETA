@@ -17,6 +17,7 @@ import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.adp.CircleCommentAdapter;
 import com.hwl.beta.ui.convert.DBCircleAction;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
+import com.hwl.beta.ui.widget.MultiImageView;
 import com.hwl.beta.utils.DisplayUtils;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class CircleIndexItemViewHolder extends RecyclerView.ViewHolder {
                                int position,
                                ImageViewBean imageBean,
                                Circle info,
-                               List<CircleImage> images,
+                               final List<CircleImage> images,
                                List<CircleLike> likes,
                                List<CircleComment> comments) {
         this.itemBinding.setAction(itemListener);
@@ -43,6 +44,12 @@ public class CircleIndexItemViewHolder extends RecyclerView.ViewHolder {
         this.itemBinding.setInfo(info);
 
         if (images != null && images.size() > 0) {
+            this.itemBinding.mivImages.setImageListener(new MultiImageView.IMultiImageListener() {
+                @Override
+                public void onImageClick(int position, String imageUrl) {
+                    itemListener.onImageClick(position, images);
+                }
+            });
             this.itemBinding.mivImages.setImagesData(DBCircleAction.convertToMultiImages(images));
             this.itemBinding.mivImages.setVisibility(View.VISIBLE);
         } else {

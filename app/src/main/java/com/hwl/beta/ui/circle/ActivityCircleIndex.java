@@ -19,6 +19,7 @@ import com.hwl.beta.databinding.ActivityCircleIndexBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
+import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.mq.send.CircleMessageSend;
@@ -40,6 +41,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.NetworkUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -478,6 +480,17 @@ public class ActivityCircleIndex extends FragmentActivity {
         @Override
         public void onMsgcountClick() {
             UITransfer.toCircleMessagesActivity(activity);
+        }
+
+        @Override
+        public void onImageClick(int position, List<CircleImage> images) {
+            if (images != null && images.size() > 0) {
+                List<String> imageUrls = new ArrayList<>(images.size());
+                for (int i = 0; i < images.size(); i++) {
+                    imageUrls.add(images.get(i).getImageUrl());
+                }
+                UITransfer.toImageBrowseActivity(activity, ActivityImageBrowse.MODE_VIEW, position, imageUrls);
+            }
         }
     }
 }

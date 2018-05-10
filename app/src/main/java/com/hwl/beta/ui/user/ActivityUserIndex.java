@@ -315,6 +315,11 @@ public class ActivityUserIndex extends FragmentActivity {
         private AddFriendDialogFragment addFriendDialogFragment;
 
         @Override
+        public void onUserHeadClick() {
+            UITransfer.toImageBrowseActivity(activity, userBean.getUserImage());
+        }
+
+        @Override
         public void onRemarkClick() {
 
         }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.hwl.beta.R;
 import com.hwl.beta.photoview.PhotoView;
 
 import java.util.List;
@@ -31,12 +32,13 @@ public class ImagePagerAdapter extends PagerAdapter {
 //        photoView.setImageResource(imageUrls[position]);
         Glide.with(context).
                 load(imageUrls.get(position)).
+                error(R.drawable.empty_photo).
                 crossFade(1000).//淡入淡出,注意:如果设置了这个,则必须要去掉asBitmap
                 centerCrop().//中心裁剪,缩放填充至整个ImageView
                 diskCacheStrategy(DiskCacheStrategy.RESULT).//保存最终图片
                 into(photoView);
         // Now just add PhotoView to ViewPager and return it
-        container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        container.addView(photoView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         return photoView;
     }
 

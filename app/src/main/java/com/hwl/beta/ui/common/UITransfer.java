@@ -43,6 +43,7 @@ import com.hwl.beta.ui.user.ActivityUserIndex;
 import com.hwl.beta.ui.user.ActivityUserSearch;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.video.ActivityVideoSelect;
+import com.hwl.beta.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,14 @@ public class UITransfer {
         context.startActivityForResult(intent, requestCode);
     }
 
-    public static void toImageBrowseActivity(Activity context, int mode,int position, List<String> imageUrls) {
+    public static void toImageBrowseActivity(Activity context, String imageUrl) {
+        if (StringUtils.isBlank(imageUrl)) return;
+        List<String> imgs = new ArrayList<>(1);
+        imgs.add(imageUrl);
+        toImageBrowseActivity(context, ActivityImageBrowse.MODE_VIEW, 0, imgs);
+    }
+
+    public static void toImageBrowseActivity(Activity context, int mode, int position, List<String> imageUrls) {
         Intent intent = new Intent(context, ActivityImageBrowse.class);
         intent.putExtra("mode", mode);
         intent.putExtra("position", position);

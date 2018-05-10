@@ -19,6 +19,7 @@ import com.hwl.beta.databinding.ActivityNearDetailBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
+import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
 import com.hwl.beta.mq.send.NearCircleMessageSend;
@@ -31,13 +32,16 @@ import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBNearCircleAction;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.near.action.INearCircleCommentItemListener;
 import com.hwl.beta.ui.near.action.INearCircleDetailListener;
 import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleCommentAdapter;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
+import com.hwl.beta.ui.widget.MultiImageView;
 import com.hwl.beta.utils.DisplayUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -139,6 +143,12 @@ public class ActivityNearDetail extends FragmentActivity {
         }
 
         if (info.getImages() != null && info.getImages().size() > 0) {
+            binding.mivImages.setImageListener(new MultiImageView.IMultiImageListener() {
+                @Override
+                public void onImageClick(int position, String imageUrl) {
+                    itemListener.onImageClick(position);
+                }
+            });
             binding.mivImages.setImagesData(DBNearCircleAction.convertToMultiImages(info.getImages()));
             binding.mivImages.setVisibility(View.VISIBLE);
         } else {
@@ -163,7 +173,7 @@ public class ActivityNearDetail extends FragmentActivity {
                                 info.setImages(DBNearCircleAction.convertToNearCircleImageInfos(response.getNearCircleInfo().getNearCircleId(), response.getNearCircleInfo().getPublishUserId(), response.getNearCircleInfo().getImages()));
                                 bindData();
                             } else {
-                                if (!response.getNearCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
+                                if (response.getNearCircleInfo().getUpdateTime() != null &&!response.getNearCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
                                     info.getInfo().setUpdateTime(response.getNearCircleInfo().getUpdateTime());
                                     setLikeViews(info.getLikes());
                                     commentAdapter.notifyItemRangeChanged(0, info.getComments().size());
@@ -189,7 +199,7 @@ public class ActivityNearDetail extends FragmentActivity {
 
     private void saveInfo(String lastUpdateTime) {
         //如果没有新的更新就不保存
-        if (lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
+        if (StringUtils.isBlank(lastUpdateTime) ||lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
         //只存在我发布的信息
         if (info != null && info.getInfo() != null && info.getInfo().getPublishUserId() == myUserId) {
             DaoUtils.getNearCircleManagerInstance().save(info.getInfo());
@@ -383,6 +393,17 @@ public class ActivityNearDetail extends FragmentActivity {
         @Override
         public void onPublishClick() {
             UITransfer.toNearPublishActivity(activity);
+        }
+
+        @Override
+        public void onImageClick(int position) {
+            if (info.getImages() != null && info.getImages().size() > 0) {
+                List<String> imageUrls = new ArrayList<>(info.getImages().size());
+                for (int i = 0; i < info.getImages().size(); i++) {
+                    imageUrls.add(info.getImages().get(i).getImageUrl());
+                }
+                UITransfer.toImageBrowseActivity(activity, ActivityImageBrowse.MODE_VIEW, position, imageUrls);
+            }
         }
     }
 
