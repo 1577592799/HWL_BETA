@@ -36,11 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.TestActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ActivityBottomDialog"
-            android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".ui.TestActivity"></activity>
         <activity android:name=".ui.entry.ActivityLogin" />
         <activity android:name=".ui.entry.ActivityMain" />
         <activity android:name=".ui.entry.ActivityRegister" />
@@ -51,6 +47,7 @@
         <activity android:name=".ui.user.ActivityUserEdit" />
         <activity android:name=".ui.user.ActivityUserEditItem" />
         <activity android:name=".ui.imgselect.ActivityImageSelect" />
+        <activity android:name=".ui.imgselect.ActivityImageBrowse" />
         <activity android:name=".ui.video.ActivityVideoPlay" />
         <activity android:name=".ui.video.ActivityVideoSelect" />
         <activity android:name=".ui.chat.ActivityChatGroup" />

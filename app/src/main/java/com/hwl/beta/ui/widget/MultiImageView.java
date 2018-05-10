@@ -3,6 +3,7 @@ package com.hwl.beta.ui.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -24,6 +25,11 @@ public class MultiImageView extends ViewGroup {
     private int screenWidth;
     private int screenHeight;
     private Context context;
+    private IMultiImageListener imageListener;
+
+    public void setImageListener(IMultiImageListener imageListener) {
+        this.imageListener = imageListener;
+    }
 
     public MultiImageView(Context context) {
         super(context);
@@ -108,11 +114,11 @@ public class MultiImageView extends ViewGroup {
         //初始化布局
         generateChildrenLayout(count);
         if (count == 1) {
-            ImageView iv = generateImageView(this.images.get(0), true);
+            ImageView iv = generateImageView(0, this.images.get(0), true);
             addView(iv);
         } else {
             for (int i = 0; i < count; i++) {
-                ImageView iv = generateImageView(this.images.get(i), false);
+                ImageView iv = generateImageView(i, this.images.get(i), false);
                 addView(iv);
             }
         }
@@ -149,10 +155,18 @@ public class MultiImageView extends ViewGroup {
         }
     }
 
-    private ImageView generateImageView(ImageBean image, boolean isCalc) {
+    private ImageView generateImageView(final int position, final ImageBean image, boolean isCalc) {
         ImageView iv = new ImageView(context);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         iv.setBackgroundColor(Color.parseColor("#f5f5f5"));
+        if (imageListener != null) {
+            iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imageListener.onImageClick(position, image.path);
+                }
+            });
+        }
 
         if (isCalc && image.width > 0 && image.height > 0) {
             double fixWidth = screenWidth;
@@ -203,5 +217,9 @@ public class MultiImageView extends ViewGroup {
         public int width;
         public int height;
         public String path;
+    }
+
+    public interface IMultiImageListener {
+        void onImageClick(int position, String imageUrl);
     }
 }

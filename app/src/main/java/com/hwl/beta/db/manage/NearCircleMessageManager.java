@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.DBConstant;
+import com.hwl.beta.db.dao.NearCircleDao;
 import com.hwl.beta.db.dao.NearCircleMessageDao;
 import com.hwl.beta.db.entity.NearCircleMessage;
 import com.hwl.beta.utils.StringUtils;
@@ -18,7 +19,10 @@ public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
     }
 
     public List<NearCircleMessage> getAll() {
-        return daoSession.getNearCircleMessageDao().loadAll();
+        return daoSession.getNearCircleMessageDao()
+                .queryBuilder()
+                .orderDesc(NearCircleMessageDao.Properties.Id)
+                .list();
     }
 
     public boolean save(NearCircleMessage message) {

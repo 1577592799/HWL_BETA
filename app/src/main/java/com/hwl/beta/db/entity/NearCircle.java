@@ -31,23 +31,18 @@ public class NearCircle implements Serializable {
     private String linkImage;
     @OrderBy("publishTime desc")
     private Date publishTime;
-    private Date updateTime;
+    private String updateTime;
     private String fromPosDesc;
     private int commentCount;
     private int likeCount;
     private boolean isLiked;
 
-    public String getShowTime() {
-        if (this.publishTime != null)
-            return DateUtils.dateToStrLong2(this.publishTime);
-        return null;
-    }
-
-    @Generated(hash = 1954381694)
+    @Generated(hash = 347641313)
     public NearCircle(long nearCircleId, long publishUserId, String publishUserName,
-            String publishUserImage, int contentType, String content, String linkTitle,
-            String linkUrl, String linkImage, Date publishTime, Date updateTime,
-            String fromPosDesc, int commentCount, int likeCount, boolean isLiked) {
+            String publishUserImage, int contentType, String content,
+            String linkTitle, String linkUrl, String linkImage, Date publishTime,
+            String updateTime, String fromPosDesc, int commentCount, int likeCount,
+            boolean isLiked) {
         this.nearCircleId = nearCircleId;
         this.publishUserId = publishUserId;
         this.publishUserName = publishUserName;
@@ -67,6 +62,12 @@ public class NearCircle implements Serializable {
 
     @Generated(hash = 597910649)
     public NearCircle() {
+    }
+
+    public String getShowTime() {
+        if (this.publishTime != null)
+            return DateUtils.dateToStrLong2(this.publishTime);
+        return null;
     }
 
     public long getNearCircleId() {
@@ -149,6 +150,14 @@ public class NearCircle implements Serializable {
         this.publishTime = publishTime;
     }
 
+    public String getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public String getFromPosDesc() {
         return this.fromPosDesc;
     }
@@ -181,11 +190,4 @@ public class NearCircle implements Serializable {
         this.isLiked = isLiked;
     }
 
-    public Date getUpdateTime() {
-        return this.updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }

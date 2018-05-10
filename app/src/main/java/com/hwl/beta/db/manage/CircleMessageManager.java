@@ -18,7 +18,10 @@ public class CircleMessageManager extends BaseDao<CircleMessage> {
     }
 
     public List<CircleMessage> getAll() {
-        return daoSession.getCircleMessageDao().loadAll();
+        return daoSession.getCircleMessageDao()
+                .queryBuilder()
+                .orderDesc(CircleMessageDao.Properties.Id)
+                .list();
     }
 
     public boolean save(CircleMessage message) {

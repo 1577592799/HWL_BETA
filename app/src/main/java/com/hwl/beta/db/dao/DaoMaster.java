@@ -29,6 +29,7 @@ public class DaoMaster extends AbstractDaoMaster {
         CircleCommentDao.createTable(db, ifNotExists);
         CircleImageDao.createTable(db, ifNotExists);
         CircleLikeDao.createTable(db, ifNotExists);
+        CircleMessageDao.createTable(db, ifNotExists);
         FriendDao.createTable(db, ifNotExists);
         FriendRequestDao.createTable(db, ifNotExists);
         GroupInfoDao.createTable(db, ifNotExists);
@@ -38,7 +39,6 @@ public class DaoMaster extends AbstractDaoMaster {
         NearCircleImageDao.createTable(db, ifNotExists);
         NearCircleLikeDao.createTable(db, ifNotExists);
         NearCircleMessageDao.createTable(db, ifNotExists);
-        CircleMessageDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -51,6 +51,7 @@ public class DaoMaster extends AbstractDaoMaster {
         CircleCommentDao.dropTable(db, ifExists);
         CircleImageDao.dropTable(db, ifExists);
         CircleLikeDao.dropTable(db, ifExists);
+        CircleMessageDao.dropTable(db, ifExists);
         FriendDao.dropTable(db, ifExists);
         FriendRequestDao.dropTable(db, ifExists);
         GroupInfoDao.dropTable(db, ifExists);
@@ -60,7 +61,6 @@ public class DaoMaster extends AbstractDaoMaster {
         NearCircleImageDao.dropTable(db, ifExists);
         NearCircleLikeDao.dropTable(db, ifExists);
         NearCircleMessageDao.dropTable(db, ifExists);
-        CircleMessageDao.dropTable(db, ifExists);
     }
 
     /**
@@ -87,6 +87,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(CircleCommentDao.class);
         registerDaoClass(CircleImageDao.class);
         registerDaoClass(CircleLikeDao.class);
+        registerDaoClass(CircleMessageDao.class);
         registerDaoClass(FriendDao.class);
         registerDaoClass(FriendRequestDao.class);
         registerDaoClass(GroupInfoDao.class);
@@ -96,7 +97,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(NearCircleImageDao.class);
         registerDaoClass(NearCircleLikeDao.class);
         registerDaoClass(NearCircleMessageDao.class);
-        registerDaoClass(CircleMessageDao.class);
     }
 
     public DaoSession newSession() {

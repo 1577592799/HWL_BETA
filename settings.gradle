@@ -1,1 +1,1 @@
-include ':app', ':emotion', ':autolayout'
+include ':app', ':emotion', ':autolayout', ':photoview', ':photoview'

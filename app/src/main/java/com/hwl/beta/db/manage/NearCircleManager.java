@@ -156,9 +156,10 @@ public class NearCircleManager extends BaseDao<NearCircle> {
         }
     }
 
-    public List<NearCircleExt> getAll() {
+    public List<NearCircleExt> getNearCircles(int pageCount) {
         List<NearCircle> infos = daoSession.getNearCircleDao().queryBuilder()
                 .orderDesc(NearCircleDao.Properties.NearCircleId)
+                .limit(pageCount)
                 .list();
         if (infos == null || infos.size() <= 0) return null;
         List<NearCircleExt> exts = new ArrayList<>(infos.size());

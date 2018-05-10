@@ -1,0 +1,84 @@
+package com.hwl.beta.ui.imgselect;
+
+import android.app.Activity;
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.Toast;
+
+import com.hwl.beta.R;
+import com.hwl.beta.databinding.ActivityImageBrowseBinding;
+import com.hwl.beta.ui.imgselect.adp.ImagePagerAdapter;
+
+import java.util.List;
+
+public class ActivityImageBrowse extends FragmentActivity {
+    public final static int MODE_VIEW = 0;
+    public final static int MODE_ACTION = 1;
+
+    ActivityImageBrowseBinding binding;
+    Activity activity;
+    int mode;
+    int position;
+    List<String> imageUrls;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = this;
+
+        mode = getIntent().getIntExtra("mode", 0);
+        position = getIntent().getIntExtra("position", 0);
+        imageUrls = getIntent().getStringArrayListExtra("imageurls");
+        if (imageUrls == null || imageUrls.size() <= 0) {
+            Toast.makeText(activity, "图片加载失败", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        binding = DataBindingUtil.setContentView(activity, R.layout.activity_image_browse);
+
+        initView();
+    }
+
+    private void initView() {
+        if (mode == MODE_VIEW) {
+            binding.tvSend.setVisibility(View.GONE);
+        } else {
+            binding.tvSend.setVisibility(View.VISIBLE);
+        }
+
+        binding.ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        binding.tvCount.setText((position + 1) + "/" + imageUrls.size());
+        binding.pvpImages.setAdapter(new ImagePagerAdapter(activity, imageUrls));
+        binding.pvpImages.setCurrentItem(position);
+        binding.pvpImages.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //页面在滑动后调用
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //页面跳转完后调用
+                binding.tvCount.setText((position + 1) + "/" + imageUrls.size());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //页面状态改变时调用 1:表示正在滑动 ，2：表示滑动完毕，0：表示什么都没做
+                if (state == 2) {
+                }
+            }
+        });
+    }
+}

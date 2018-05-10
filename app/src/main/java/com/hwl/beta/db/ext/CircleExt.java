@@ -36,6 +36,11 @@ public class CircleExt implements Serializable {
         this.circleItemType = circleItemType;
     }
 
+    public CircleExt(long circleId) {
+        this.info = new Circle();
+        this.info.setCircleId(circleId);
+    }
+
     public CircleExt(int circleItemType, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage, String viewUserLifeNotes) {
         this.circleItemType = circleItemType;
         this.viewUserId = viewUserId;

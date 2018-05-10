@@ -34,7 +34,7 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
         public final static Property LinkUrl = new Property(7, String.class, "linkUrl", false, "LINK_URL");
         public final static Property LinkImage = new Property(8, String.class, "linkImage", false, "LINK_IMAGE");
         public final static Property PublishTime = new Property(9, java.util.Date.class, "publishTime", false, "PUBLISH_TIME");
-        public final static Property UpdateTime = new Property(10, java.util.Date.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property UpdateTime = new Property(10, String.class, "updateTime", false, "UPDATE_TIME");
         public final static Property FromPosDesc = new Property(11, String.class, "fromPosDesc", false, "FROM_POS_DESC");
         public final static Property CommentCount = new Property(12, int.class, "commentCount", false, "COMMENT_COUNT");
         public final static Property LikeCount = new Property(13, int.class, "likeCount", false, "LIKE_COUNT");
@@ -64,7 +64,7 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
                 "\"LINK_URL\" TEXT," + // 7: linkUrl
                 "\"LINK_IMAGE\" TEXT," + // 8: linkImage
                 "\"PUBLISH_TIME\" INTEGER," + // 9: publishTime
-                "\"UPDATE_TIME\" INTEGER," + // 10: updateTime
+                "\"UPDATE_TIME\" TEXT," + // 10: updateTime
                 "\"FROM_POS_DESC\" TEXT," + // 11: fromPosDesc
                 "\"COMMENT_COUNT\" INTEGER NOT NULL ," + // 12: commentCount
                 "\"LIKE_COUNT\" INTEGER NOT NULL ," + // 13: likeCount
@@ -119,9 +119,9 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
             stmt.bindLong(10, publishTime.getTime());
         }
  
-        java.util.Date updateTime = entity.getUpdateTime();
+        String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindLong(11, updateTime.getTime());
+            stmt.bindString(11, updateTime);
         }
  
         String fromPosDesc = entity.getFromPosDesc();
@@ -175,9 +175,9 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
             stmt.bindLong(10, publishTime.getTime());
         }
  
-        java.util.Date updateTime = entity.getUpdateTime();
+        String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindLong(11, updateTime.getTime());
+            stmt.bindString(11, updateTime);
         }
  
         String fromPosDesc = entity.getFromPosDesc();
@@ -207,7 +207,7 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // linkUrl
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // linkImage
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // publishTime
-            cursor.isNull(offset + 10) ? null : new java.util.Date(cursor.getLong(offset + 10)), // updateTime
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // updateTime
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // fromPosDesc
             cursor.getInt(offset + 12), // commentCount
             cursor.getInt(offset + 13), // likeCount
@@ -228,7 +228,7 @@ public class NearCircleDao extends AbstractDao<NearCircle, Long> {
         entity.setLinkUrl(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setLinkImage(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setPublishTime(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
-        entity.setUpdateTime(cursor.isNull(offset + 10) ? null : new java.util.Date(cursor.getLong(offset + 10)));
+        entity.setUpdateTime(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setFromPosDesc(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setCommentCount(cursor.getInt(offset + 12));
         entity.setLikeCount(cursor.getInt(offset + 13));

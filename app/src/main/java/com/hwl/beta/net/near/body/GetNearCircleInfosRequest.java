@@ -1,5 +1,9 @@
 package com.hwl.beta.net.near.body;
 
+import com.hwl.beta.net.near.NetNearCircleMatchInfo;
+
+import java.util.List;
+
 /**
  * Created by Administrator on 2018/3/8.
  */
@@ -12,6 +16,15 @@ public class GetNearCircleInfosRequest {
     private double Lon;
     private double Lat;
     private int Count;
+    private List<NetNearCircleMatchInfo> NearCircleMatchInfos;
+
+    public List<NetNearCircleMatchInfo> getNearCircleMatchInfos() {
+        return NearCircleMatchInfos;
+    }
+
+    public void setNearCircleMatchInfos(List<NetNearCircleMatchInfo> nearCircleMatchInfos) {
+        NearCircleMatchInfos = nearCircleMatchInfos;
+    }
 
     public long getMinNearCircleId() {
         return MinNearCircleId;
@@ -20,6 +33,8 @@ public class GetNearCircleInfosRequest {
     public void setMinNearCircleId(long minNearCircleId) {
         MinNearCircleId = minNearCircleId;
     }
+
+
 
 //    public int getPageIndex() {
 //        return PageIndex;

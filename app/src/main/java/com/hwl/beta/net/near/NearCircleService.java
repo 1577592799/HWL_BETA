@@ -34,12 +34,16 @@ import retrofit2.http.POST;
 public class NearCircleService {
 
     public static Observable<ResponseBase<GetNearCircleInfosResponse>> getNearCircleInfos(long minNearCircleId, int pageCount) {
+        return getNearCircleInfos(minNearCircleId, pageCount);
+    }
+
+    public static Observable<ResponseBase<GetNearCircleInfosResponse>> getNearCircleInfos(long minNearCircleId, int pageCount, List<NetNearCircleMatchInfo> nearCircleMatchInfos) {
         GetNearCircleInfosRequest requestBody = new GetNearCircleInfosRequest();
         requestBody.setUserId(UserSP.getUserId());
         requestBody.setLat(UserPosSP.getLatitude());
         requestBody.setLon(UserPosSP.getLontitude());
         requestBody.setMinNearCircleId(minNearCircleId);
-//        requestBody.setPageIndex(pageIndex);
+        requestBody.setNearCircleMatchInfos(nearCircleMatchInfos);
         requestBody.setCount(pageCount <= 0 ? 15 : pageCount);
         Observable<ResponseBase<GetNearCircleInfosResponse>> response = RetrofitUtils.createApi(INearCircleService.class)
                 .getNearCircleInfos(new RequestBase(UserSP.getUserToken(), requestBody))

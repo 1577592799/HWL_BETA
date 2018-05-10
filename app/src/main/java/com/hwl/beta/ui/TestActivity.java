@@ -3,13 +3,17 @@ package com.hwl.beta.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
+import com.hwl.beta.photoview.PhotoView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,26 +28,38 @@ public class TestActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        EmotionDefaultPannel edpEmotion = findViewById(R.id.ecp_emotion);
-        edpEmotion.setEditTextFocus(false);
+        ViewPager viewPager = findViewById(R.id.pvp_images);
+        viewPager.setAdapter(new SamplePagerAdapter());
     }
+    static class SamplePagerAdapter extends PagerAdapter {
 
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
+        private static final int[] sDrawables = { R.drawable.circle, R.drawable.welcome, R.drawable.empty_photo };
 
-        View view = getWindow().getDecorView();
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) view.getLayoutParams();
-        lp.gravity = Gravity.BOTTOM;
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        getWindowManager().updateViewLayout(view, lp);
+        @Override
+        public int getCount() {
+            return sDrawables.length;
+        }
+
+        @Override
+        public View instantiateItem(ViewGroup container, int position) {
+            PhotoView photoView = new PhotoView(container.getContext());
+            photoView.setImageResource(sDrawables[position]);
+
+            // Now just add PhotoView to ViewPager and return it
+            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+            return photoView;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
     }
-//    private List<MultiImageView.ImageBean> getImageUrls() {
-//        List<MultiImageView.ImageBean> urls = new ArrayList<>();
-////        urls.add(new MultiImageView.ImageBean(439,300,"http://img2.imgtn.bdimg.com/it/u=114139281,1353799337&fm=27&gp=0.jpg"));
-//        urls.add(new MultiImageView.ImageBean(590,300,"http://image.uisdc.com/wp-content/uploads/2014/12/20141212164404274-590x300.jpg"));
-//        urls.add(new MultiImageView.ImageBean(1160,653,"http://pic.pptbz.com/201506/2015070581208537.JPG"));
-//        return urls;
-//    }
 }

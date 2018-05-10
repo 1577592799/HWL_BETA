@@ -43,7 +43,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/iv_header"
             android:onClick="@{(view)->action.onUserHeadClick(info)}"
-            android:text='@{info.publishUserName+" - "+info.nearCircleId}'
+            android:text='@{info.publishUserName}'
             android:textColor="@color/color_424242"
             android:textSize="15dp" />
 

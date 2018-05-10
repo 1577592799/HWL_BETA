@@ -32,7 +32,7 @@ import com.hwl.beta.ui.busbean.EventActionCircleComment;
 import com.hwl.beta.ui.busbean.EventActionCircleLike;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleCommentItemListener;
-import com.hwl.beta.ui.circle.action.ICircleItemListener;
+import com.hwl.beta.ui.circle.action.ICircleDetailListener;
 import com.hwl.beta.ui.circle.adp.CircleCommentAdapter;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
@@ -41,7 +41,6 @@ import com.hwl.beta.ui.convert.DBCircleAction;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.DisplayUtils;
-import com.hwl.beta.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,31 +54,21 @@ public class ActivityCircleDetail extends FragmentActivity {
 
     Activity activity;
     ActivityCircleDetailBinding binding;
-    long myUserId;
-    CircleExt info;
-    ICircleItemListener itemListener;
+    ICircleDetailListener itemListener;
     CircleCommentAdapter commentAdapter;
+    CircleExt info;
+    long myUserId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
         myUserId = UserSP.getUserId();
-        info = (CircleExt) getIntent().getSerializableExtra("circleext");
-        if (info == null || info.getInfo() == null) {
-            Toast.makeText(activity, "数据不存在", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-
-        itemListener = new CircleItemListener();
-        if (info.getComments() == null) {
-            info.setComments(new ArrayList<CircleComment>());
-        }
+        itemListener = new CircleDetailListener();
         commentAdapter = new CircleCommentAdapter(activity, info.getComments(), new CircleCommentItemListener());
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_circle_detail);
-        binding.setImage(new ImageViewBean(info.getInfo().getPublishUserImage()));
-        binding.setInfo(info.getInfo());
         binding.setAction(itemListener);
+
         initView();
 
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -119,16 +108,105 @@ public class ActivityCircleDetail extends FragmentActivity {
                     }
                 });
 
+        //数据源可能会从三个位置来，从本地数据库，根据id,序列化传进来
+        long circleid = getIntent().getLongExtra("circleid", 0);
+        info = (CircleExt) getIntent().getSerializableExtra("circleext");
+        if (info == null) {
+            info = DaoUtils.getCircleManagerInstance().get(circleid);
+        }
+
+        if (info == null) {
+            info = new CircleExt(circleid);
+            binding.pbCircleLoading.setVisibility(View.VISIBLE);
+            binding.svCircleContainer.setVisibility(View.GONE);
+            this.loadFromServer(true);
+        } else {
+            binding.pbCircleLoading.setVisibility(View.GONE);
+            binding.svCircleContainer.setVisibility(View.VISIBLE);
+            bindData();
+            this.loadFromServer(false);
+        }
+
+        this.setLikeViews(info.getLikes());
+        binding.rvComments.setAdapter(commentAdapter);
+        binding.rvComments.setLayoutManager(new LinearLayoutManager(activity));
+    }
+
+    private void bindData() {
+        ImageViewBean.loadImage(binding.ivHeader, info.getInfo().getPublishUserImage());
+        binding.tvUsername.setText(info.getInfo().getPublishUserName());
+        binding.tvContent.setText(info.getInfo().getContent());
+        binding.tvPosDesc.setText(info.getInfo().getFromPosDesc());
+        binding.tvPublicTime.setText(info.getInfo().getShowTime());
+
+        if (info.getInfo().getPublishUserId() == myUserId) {
+            binding.ivDelete.setVisibility(View.VISIBLE);
+        } else {
+            binding.ivDelete.setVisibility(View.GONE);
+        }
+
         if (info.getImages() != null && info.getImages().size() > 0) {
             binding.mivImages.setImagesData(DBCircleAction.convertToMultiImages(info.getImages()));
             binding.mivImages.setVisibility(View.VISIBLE);
         } else {
             binding.mivImages.setVisibility(View.GONE);
         }
+    }
 
-        this.setLikeViews(info.getLikes());
-        binding.rvComments.setAdapter(commentAdapter);
-        binding.rvComments.setLayoutManager(new LinearLayoutManager(activity));
+    private void loadFromServer(final boolean isResetInfo) {
+        CircleService.getCircleDetail(info.getInfo().getCircleId())
+                .subscribe(new NetDefaultObserver<GetCircleDetailResponse>() {
+                    @Override
+                    protected void onSuccess(GetCircleDetailResponse response) {
+                        List<CircleComment> comments = DBCircleAction.convertToCircleCommentInfos(response.getCircleInfo().getCommentInfos());
+                        if (comments != null && comments.size() > 0) {
+                            comments.removeAll(info.getComments());
+                            info.getComments().addAll(comments);
+                        }
+                        info.setLikes(DBCircleAction.convertToCircleLikeInfos(response.getCircleInfo().getLikeInfos()));
+                        if (response.getCircleInfo() != null) {
+                            if (isResetInfo) {
+                                info.setInfo(DBCircleAction.convertToCircleInfo(response.getCircleInfo()));
+                                info.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
+                                bindData();
+                            } else {
+                                if (!response.getCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
+                                    info.getInfo().setUpdateTime(response.getCircleInfo().getUpdateTime());
+                                    setLikeViews(info.getLikes());
+                                    commentAdapter.notifyItemRangeChanged(0, info.getComments().size());
+                                }
+                            }
+                            saveInfo(response.getCircleInfo().getUpdateTime());
+                        } else {
+                            Toast.makeText(activity, "数据已经被用户删除!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        binding.pbCircleLoading.setVisibility(View.GONE);
+                        binding.svCircleContainer.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    protected void onError(String resultMessage) {
+                        super.onError(resultMessage);
+                        binding.pbCircleLoading.setVisibility(View.GONE);
+                        binding.svCircleContainer.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void saveInfo(String lastUpdateTime) {
+        //如果没有新的更新就不保存
+        if (lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
+        //只存在我发布的信息
+        if (info != null && info.getInfo() != null && info.getInfo().getPublishUserId() == myUserId) {
+            DaoUtils.getCircleManagerInstance().save(info.getInfo());
+            DaoUtils.getCircleManagerInstance().deleteImages(info.getInfo().getCircleId());
+            DaoUtils.getCircleManagerInstance().deleteComments(info.getInfo().getCircleId());
+            DaoUtils.getCircleManagerInstance().deleteLikes(info.getInfo().getCircleId());
+            DaoUtils.getCircleManagerInstance().saveImages(info.getInfo().getCircleId(), info.getImages());
+            DaoUtils.getCircleManagerInstance().saveComments(info.getInfo().getCircleId(), info.getComments());
+            DaoUtils.getCircleManagerInstance().saveLikes(info.getInfo().getCircleId(), info.getLikes());
+        }
     }
 
     private void setLikeView(final CircleLike likeInfo) {
@@ -171,29 +249,7 @@ public class ActivityCircleDetail extends FragmentActivity {
         }
     }
 
-//    private void loadFromServer() {
-//        if (!NetworkUtils.isConnected()) {
-//            return;
-//        }
-//        CircleService.getCircleDetail(info.getInfo().getCircleId())
-//                .subscribe(new NetDefaultObserver<GetCircleDetailResponse>() {
-//                    @Override
-//                    protected void onSuccess(GetCircleDetailResponse response) {
-//                        if (response.getCircleInfo() != null) {
-//                            CircleExt circleBean = new CircleExt(CircleExt.CircleIndexItem);
-//                            circleBean.setInfo(DBCircleAction.convertToCircleInfo(response.getCircleInfo()));
-//                            circleBean.setImages(DBCircleAction.convertToCircleImageInfos(response.getCircleInfo().getCircleId(), response.getCircleInfo().getPublishUserId(), response.getCircleInfo().getImages()));
-//                            circleBean.setComments(DBCircleAction.convertToCircleCommentInfos(response.getCircleInfo().getCommentInfos()));
-//                            circleBean.setLikes(DBCircleAction.convertToCircleLikeInfos(response.getCircleInfo().getLikeInfos()));
-//                            info = circleBean;
-//                            initView();
-//                        }
-//                    }
-//                });
-//    }
-
-
-    private class CircleItemListener implements ICircleItemListener {
+    private class CircleDetailListener implements ICircleDetailListener {
 
         private CircleActionMorePop mMorePopupWindow;
         boolean isRuning = false;
@@ -209,8 +265,8 @@ public class ActivityCircleDetail extends FragmentActivity {
         }
 
         @Override
-        public void onUserHeadClick(Circle info) {
-            UITransfer.toUserIndexActivity(activity, info.getPublishUserId(), info.getPublishUserName(), info.getPublishUserImage());
+        public void onUserHeadClick() {
+            UITransfer.toUserIndexActivity(activity, info.getInfo().getPublishUserId(), info.getInfo().getPublishUserName(), info.getInfo().getPublishUserImage());
         }
 
         @Override
@@ -231,9 +287,9 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onCommentContentClick(CircleComment comment) {
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),info.getInfo().getPublishUserId(),info.getCircleMessageContent());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(), info.getInfo().getPublishUserId(), info.getCircleMessageContent());
             } else {
-                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(),info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),info.getCircleMessageContent());
+                UITransfer.toCircleCommentPublishActivity(activity, comment.getCircleId(), info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(), info.getCircleMessageContent());
             }
         }
 
@@ -243,7 +299,7 @@ public class ActivityCircleDetail extends FragmentActivity {
         }
 
         @Override
-        public void onMoreActionClick(final View view, int position) {
+        public void onMoreActionClick(final View view) {
             if (info == null) return;
             if (mMorePopupWindow == null) {
                 mMorePopupWindow = new CircleActionMorePop(activity);
@@ -257,7 +313,7 @@ public class ActivityCircleDetail extends FragmentActivity {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId(),info.getInfo().getPublishUserId(),info.getCircleMessageContent());
+                    UITransfer.toCircleCommentPublishActivity(activity, info.getInfo().getCircleId(), info.getInfo().getPublishUserId(), info.getCircleMessageContent());
                 }
 
                 @Override
@@ -265,7 +321,7 @@ public class ActivityCircleDetail extends FragmentActivity {
                     setLikeInfo(position, info);
                 }
             });
-            mMorePopupWindow.show(position, view, info.getInfo().getIsLiked());
+            mMorePopupWindow.show(0, view, info.getInfo().getIsLiked());
         }
 
         private void setLikeInfo(final int position, final CircleExt info) {
@@ -293,9 +349,6 @@ public class ActivityCircleDetail extends FragmentActivity {
                                     likeInfo.setLikeUserName(UserSP.getUserName());
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
-                                    if (info.getLikes() == null) {
-                                        info.setLikes(new ArrayList<CircleLike>());
-                                    }
                                     info.getLikes().add(likeInfo);
                                     setLikeView(likeInfo);
                                     EventBus.getDefault().post(new EventActionCircleLike(EventBusConstant.EB_TYPE_ACTINO_ADD, likeInfo));
@@ -353,11 +406,6 @@ public class ActivityCircleDetail extends FragmentActivity {
         @Override
         public void onPublishClick() {
             UITransfer.toCirclePublishActivity(activity);
-        }
-
-        @Override
-        public void onMsgcountClick() {
-
         }
     }
 

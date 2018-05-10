@@ -30,6 +30,7 @@ import com.hwl.beta.ui.entry.ActivityWelcome;
 import com.hwl.beta.ui.group.ActivityGroup;
 import com.hwl.beta.ui.group.ActivityGroupAdd;
 import com.hwl.beta.ui.chat.ActivityChatGroupSetting;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.near.ActivityCommentPublish;
 import com.hwl.beta.ui.near.ActivityNearDetail;
@@ -42,6 +43,9 @@ import com.hwl.beta.ui.user.ActivityUserIndex;
 import com.hwl.beta.ui.user.ActivityUserSearch;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.video.ActivityVideoSelect;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/27.
@@ -123,6 +127,14 @@ public class UITransfer {
         context.startActivityForResult(intent, requestCode);
     }
 
+    public static void toImageBrowseActivity(Activity context, int mode,int position, List<String> imageUrls) {
+        Intent intent = new Intent(context, ActivityImageBrowse.class);
+        intent.putExtra("mode", mode);
+        intent.putExtra("position", position);
+        intent.putStringArrayListExtra("imageurls", (ArrayList<String>) imageUrls);
+        context.startActivity(intent);
+    }
+
     public static void toChatUserActivity(Activity context, long userId, String userName, String userImage) {
         toChatUserActivity(context, userId, userName, userImage, 0);
     }
@@ -191,11 +203,11 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId,String content) {
-        toNearCommentPublishActivity(context, nearCircleId, publishUserId, 0, null,content);
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, String content) {
+        toNearCommentPublishActivity(context, nearCircleId, publishUserId, 0, null, content);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, long replyUserId, String replyUserName,String content) {
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, long replyUserId, String replyUserName, String content) {
         Intent intent = new Intent(context, ActivityCommentPublish.class);
         intent.putExtra("nearcircleid", nearCircleId);
         intent.putExtra("publishuserid", publishUserId);
@@ -215,11 +227,11 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId,String content) {
-        toCircleCommentPublishActivity(context, circleId, publishUserId, 0, null,content);
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, String content) {
+        toCircleCommentPublishActivity(context, circleId, publishUserId, 0, null, content);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, long replyUserId, String replyUserName,String content) {
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, long replyUserId, String replyUserName, String content) {
         Intent intent = new Intent(context, ActivityCircleCommentPublish.class);
         intent.putExtra("circleid", circleId);
         intent.putExtra("publishuserid", publishUserId);

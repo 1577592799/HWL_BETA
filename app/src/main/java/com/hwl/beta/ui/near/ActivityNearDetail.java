@@ -100,6 +100,7 @@ public class ActivityNearDetail extends FragmentActivity {
                     }
                 });
 
+        //数据源可能会从三个位置来，从本地数据库，根据id,序列化传进来
         long nearCircleId = getIntent().getLongExtra("nearcircleid", 0);
         info = (NearCircleExt) getIntent().getSerializableExtra("nearcircleext");
         if (info == null) {
@@ -186,7 +187,7 @@ public class ActivityNearDetail extends FragmentActivity {
                 });
     }
 
-    private void saveInfo(Date lastUpdateTime) {
+    private void saveInfo(String lastUpdateTime) {
         //如果没有新的更新就不保存
         if (lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
         //只存在我发布的信息

@@ -19,6 +19,7 @@ import com.hwl.beta.databinding.FragmentNearBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.NearCircle;
 import com.hwl.beta.db.entity.NearCircleComment;
+import com.hwl.beta.db.entity.NearCircleImage;
 import com.hwl.beta.db.entity.NearCircleLike;
 import com.hwl.beta.db.ext.NearCircleExt;
 import com.hwl.beta.mq.send.NearCircleMessageSend;
@@ -26,6 +27,7 @@ import com.hwl.beta.mq.send.UserMessageSend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.NetNearCircleInfo;
+import com.hwl.beta.net.near.NetNearCircleMatchInfo;
 import com.hwl.beta.net.near.body.GetNearCircleInfosResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.MessageCountSP;
@@ -37,6 +39,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBNearCircleAction;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleAdapter;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
@@ -72,7 +75,7 @@ public class FragmentNear extends BaseFragment {
     Activity activity;
     List<NearCircleExt> nearCircles;
     NearCircleAdapter nearCircleAdapter;
-    boolean isDataChange = false;
+    //    boolean isDataChange = false;
     int pageCount = 15;
     long myUserId;
 
@@ -119,12 +122,12 @@ public class FragmentNear extends BaseFragment {
         loadNearCircleInfoFromLocal();
     }
 
-    @Override
-    protected void onFragmentVisibleChange(boolean isVisible) {
-        if (!isVisible) {
-            saveInfo();
-        }
-    }
+//    @Override
+//    protected void onFragmentVisibleChange(boolean isVisible) {
+//        if (!isVisible) {
+//            saveInfo();
+//        }
+//    }
 
     @Override
     public void onDestroy() {
@@ -190,35 +193,35 @@ public class FragmentNear extends BaseFragment {
         }
     }
 
-    private void saveInfo() {
-        if (!isDataChange || nearCircles == null || nearCircles.size() <= 0) return;
-//        Log.d("FragmentNear", "save near info");
-        isDataChange = false;
-        Observable.fromIterable(nearCircles.subList(0, (pageCount > nearCircles.size() ? nearCircles.size() : pageCount)))
-                .subscribeOn(Schedulers.io())
-                .doOnNext(new Consumer<NearCircleExt>() {
-                    @Override
-                    public void accept(NearCircleExt nearCircleExt) throws Exception {
-                        if (nearCircleExt != null && nearCircleExt.getInfo() != null) {
-                            DaoUtils.getNearCircleManagerInstance().save(nearCircleExt.getInfo());
-                            DaoUtils.getNearCircleManagerInstance().deleteImages(nearCircleExt.getInfo().getNearCircleId());
-                            DaoUtils.getNearCircleManagerInstance().deleteComments(nearCircleExt.getInfo().getNearCircleId());
-                            DaoUtils.getNearCircleManagerInstance().deleteLikes(nearCircleExt.getInfo().getNearCircleId());
-                            DaoUtils.getNearCircleManagerInstance().saveImages(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getImages());
-                            DaoUtils.getNearCircleManagerInstance().saveComments(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getComments());
-                            DaoUtils.getNearCircleManagerInstance().saveLikes(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getLikes());
-                        }
-                    }
-                })
-                .subscribe();
-    }
+//    private void saveInfo() {
+//        if (!isDataChange || nearCircles == null || nearCircles.size() <= 0) return;
+////        Log.d("FragmentNear", "save near info");
+//        isDataChange = false;
+//        Observable.fromIterable(nearCircles.subList(0, (pageCount > nearCircles.size() ? nearCircles.size() : pageCount)))
+//                .subscribeOn(Schedulers.io())
+//                .doOnNext(new Consumer<NearCircleExt>() {
+//                    @Override
+//                    public void accept(NearCircleExt nearCircleExt) throws Exception {
+//                        if (nearCircleExt != null && nearCircleExt.getInfo() != null) {
+//                            DaoUtils.getNearCircleManagerInstance().save(nearCircleExt.getInfo());
+//                            DaoUtils.getNearCircleManagerInstance().deleteImages(nearCircleExt.getInfo().getNearCircleId());
+//                            DaoUtils.getNearCircleManagerInstance().deleteComments(nearCircleExt.getInfo().getNearCircleId());
+//                            DaoUtils.getNearCircleManagerInstance().deleteLikes(nearCircleExt.getInfo().getNearCircleId());
+//                            DaoUtils.getNearCircleManagerInstance().saveImages(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getImages());
+//                            DaoUtils.getNearCircleManagerInstance().saveComments(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getComments());
+//                            DaoUtils.getNearCircleManagerInstance().saveLikes(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getLikes());
+//                        }
+//                    }
+//                })
+//                .subscribe();
+//    }
 
     private void loadNearCircleInfoFromLocal() {
         Observable.just(1)
                 .map(new Function<Integer, List<NearCircleExt>>() {
                     @Override
                     public List<NearCircleExt> apply(Integer page) throws Exception {
-                        List<NearCircleExt> infos = DaoUtils.getNearCircleManagerInstance().getAll();
+                        List<NearCircleExt> infos = DaoUtils.getNearCircleManagerInstance().getNearCircles(pageCount);
                         if (infos == null || infos.size() <= 0) return new ArrayList<>();
                         return infos;
                     }
@@ -243,8 +246,19 @@ public class FragmentNear extends BaseFragment {
             showResult();
             return;
         }
+
+        List<NetNearCircleMatchInfo> circleMatchInfos = new ArrayList<>();
+        if (minNearCircleId <= 0) {
+            int length = nearCircles.size() > pageCount ? pageCount : nearCircles.size();
+            for (int i = 0; i < length; i++) {
+                if (nearCircles.get(i).getInfo() != null && nearCircles.get(i).getInfo().getNearCircleId() > 0) {
+                    circleMatchInfos.add(new NetNearCircleMatchInfo(nearCircles.get(i).getInfo().getNearCircleId(), nearCircles.get(i).getInfo().getUpdateTime()));
+                }
+            }
+        }
+
 //        final Date startDate = new Date(System.currentTimeMillis());
-        NearCircleService.getNearCircleInfos(minNearCircleId, pageCount)
+        NearCircleService.getNearCircleInfos(minNearCircleId, pageCount, circleMatchInfos)
                 .flatMap(new NetDefaultFunction<GetNearCircleInfosResponse, NetNearCircleInfo>() {
                     @Override
                     protected ObservableSource<NetNearCircleInfo> onSuccess(GetNearCircleInfosResponse response) {
@@ -274,6 +288,20 @@ public class FragmentNear extends BaseFragment {
                             return circleBean;
                         }
                         return circleBean;
+                    }
+                })
+                .doOnNext(new Consumer<NearCircleExt>() {
+                    @Override
+                    public void accept(NearCircleExt nearCircleExt) throws Exception {
+                        if (nearCircleExt != null && nearCircleExt.getInfo() != null) {
+                            DaoUtils.getNearCircleManagerInstance().save(nearCircleExt.getInfo());
+                            DaoUtils.getNearCircleManagerInstance().deleteImages(nearCircleExt.getInfo().getNearCircleId());
+                            DaoUtils.getNearCircleManagerInstance().deleteComments(nearCircleExt.getInfo().getNearCircleId());
+                            DaoUtils.getNearCircleManagerInstance().deleteLikes(nearCircleExt.getInfo().getNearCircleId());
+                            DaoUtils.getNearCircleManagerInstance().saveImages(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getImages());
+                            DaoUtils.getNearCircleManagerInstance().saveComments(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getComments());
+                            DaoUtils.getNearCircleManagerInstance().saveLikes(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getLikes());
+                        }
                     }
                 })
                 .subscribe(new Observer<NearCircleExt>() {
@@ -327,9 +355,9 @@ public class FragmentNear extends BaseFragment {
                             nearCircleAdapter.notifyItemRangeChanged(0, nearCircles.size());
                         }
 
-                        if (updateCount > 0 || insertCount > 0) {
-                            isDataChange = true;
-                        }
+//                        if (updateCount > 0 || insertCount > 0) {
+//                            isDataChange = true;
+//                        }
                     }
                 });
     }
@@ -339,10 +367,10 @@ public class FragmentNear extends BaseFragment {
         private CircleActionMorePop mMorePopupWindow;
         boolean isRuning = false;
 
-        private NearCircleExt getNearCircleInfo(long nearCircleId){
-            if(nearCircleId<=0) return null;
+        private NearCircleExt getNearCircleInfo(long nearCircleId) {
+            if (nearCircleId <= 0) return null;
             for (int i = 0; i < nearCircles.size(); i++) {
-                if(nearCircles.get(i).getInfo()!=null&&nearCircles.get(i).getInfo().getNearCircleId()>0&&nearCircles.get(i).getInfo().getNearCircleId()==nearCircleId){
+                if (nearCircles.get(i).getInfo() != null && nearCircles.get(i).getInfo().getNearCircleId() > 0 && nearCircles.get(i).getInfo().getNearCircleId() == nearCircleId) {
                     return nearCircles.get(i);
                 }
             }
@@ -376,12 +404,12 @@ public class FragmentNear extends BaseFragment {
 
         @Override
         public void onCommentContentClick(NearCircleComment comment) {
-            NearCircleExt currnetInfo=this.getNearCircleInfo(comment.getNearCircleId());
-            if(currnetInfo==null) return;
+            NearCircleExt currnetInfo = this.getNearCircleInfo(comment.getNearCircleId());
+            if (currnetInfo == null) return;
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),currnetInfo.getInfo().getPublishUserId(),currnetInfo.getNearCircleMessageContent());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), currnetInfo.getInfo().getPublishUserId(), currnetInfo.getNearCircleMessageContent());
             } else {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),currnetInfo.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),currnetInfo.getNearCircleMessageContent());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), currnetInfo.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(), currnetInfo.getNearCircleMessageContent());
             }
         }
 
@@ -406,7 +434,7 @@ public class FragmentNear extends BaseFragment {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
+                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId(), info.getNearCircleMessageContent());
                 }
 
                 @Override
@@ -430,7 +458,7 @@ public class FragmentNear extends BaseFragment {
                             if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
                                 if (isLiked) {
                                     nearCircleAdapter.addLike(position, null);
-                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
+                                    NearCircleMessageSend.sendDeleteLikeMessage(info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId()).subscribe();
                                 } else {
                                     NearCircleLike likeInfo = new NearCircleLike();
                                     likeInfo.setNearCircleId(info.getInfo().getNearCircleId());
@@ -439,7 +467,7 @@ public class FragmentNear extends BaseFragment {
                                     likeInfo.setLikeUserImage(UserSP.getUserHeadImage());
                                     likeInfo.setLikeTime(new Date());
                                     nearCircleAdapter.addLike(position, likeInfo);
-                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
+                                    NearCircleMessageSend.sendAddLikeMessage(info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId(), info.getNearCircleMessageContent()).subscribe();
                                 }
                             } else {
                                 onError("操作失败");
@@ -480,6 +508,17 @@ public class FragmentNear extends BaseFragment {
         @Override
         public void onPublishClick() {
             UITransfer.toNearPublishActivity(activity);
+        }
+
+        @Override
+        public void onImageClick(int position, List<NearCircleImage> images) {
+            if (images != null && images.size() > 0) {
+                List<String> imageUrls = new ArrayList<>(images.size());
+                for (int i = 0; i < images.size(); i++) {
+                    imageUrls.add(images.get(i).getImageUrl());
+                }
+                UITransfer.toImageBrowseActivity(activity, ActivityImageBrowse.MODE_VIEW, position, imageUrls);
+            }
         }
     }
 }
