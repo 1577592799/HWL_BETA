@@ -13,6 +13,7 @@ import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.receive.IMessageProcess;
+import com.hwl.beta.ui.common.MessageNotifyManager;
 import com.hwl.beta.utils.DateUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -27,20 +28,6 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
 
     @Override
     public void execute(byte messageType, ChatGroupMessageBean model) {
-//        GroupInfo groupInfo=DaoUtils.getGroupInfoManagerInstance().get(model.getGroupGuid());
-//        if(groupInfo==null) return;
-
-//        //将用户添加到组中
-//        if(model.getFromUserId()>0){
-//            GroupUserInfo user = new GroupUserInfo();
-//            user.setUserId(model.getFromUserId());
-//            user.setUserName(model.getFromUserName());
-//            user.setUserHeadImage(model.getFromUserHeadImage());
-//            user.setGroupGuid(model.getGroupGuid());
-//            user.setAddTime(DateUtils.getNow());
-//            DaoUtils.getGroupUserInfoManagerInstance().add(user);
-//        }
-
         ChatRecordMessage record = new ChatRecordMessage();
         //record.setRecordId(1);
         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
@@ -54,14 +41,13 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
         record.setTitle(model.getGroupName());
         record.setContentType(model.getContentType());
         if (StringUtils.isBlank(model.getFromUserName())) {
-            record.setContent(StringUtils.cutString(model.getContent(),25));
+            record.setContent(StringUtils.cutString(model.getContent(), 25));
         } else {
-            record.setContent(model.getFromUserName() + " : " + StringUtils.cutString(model.getContent(),25));
+            record.setContent(model.getFromUserName() + " : " + StringUtils.cutString(model.getContent(), 25));
         }
         //record.setUnreadCount(1);
         record.setSendTime(model.getSendTime());
         record = DaoUtils.getChatRecordMessageManagerInstance().addOrUpdate(record);
-        EventBus.getDefault().post(record);
 
         ChatGroupMessage message = new ChatGroupMessage();
 //        message.setMsgId(1);
@@ -81,6 +67,9 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
         message.setPlayTime(model.getPlayTime());
         message.setSendTime(model.getSendTime());
         DaoUtils.getChatGroupMessageManagerInstance().save(message);
+
+        EventBus.getDefault().post(record);
         EventBus.getDefault().post(message);
+        MessageNotifyManager.play();
     }
 }

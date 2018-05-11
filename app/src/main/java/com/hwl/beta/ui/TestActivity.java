@@ -1,6 +1,19 @@
 package com.hwl.beta.ui;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
@@ -10,10 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
 import com.hwl.beta.photoview.PhotoView;
+import com.hwl.beta.ui.common.MessageNotifyManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +38,20 @@ import java.util.List;
  */
 
 public class TestActivity extends FragmentActivity {
+
+    Activity mActivity;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-
-        ViewPager viewPager = findViewById(R.id.pvp_images);
-        viewPager.setAdapter(new SamplePagerAdapter());
-    }
-    static class SamplePagerAdapter extends PagerAdapter {
-
-        private static final int[] sDrawables = { R.drawable.circle, R.drawable.welcome, R.drawable.empty_photo };
-
-        @Override
-        public int getCount() {
-            return sDrawables.length;
-        }
-
-        @Override
-        public View instantiateItem(ViewGroup container, int position) {
-            PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageResource(sDrawables[position]);
-
-            // Now just add PhotoView to ViewPager and return it
-            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-            return photoView;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
+        mActivity = this;
+        Button button = findViewById(R.id.btn_test);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MessageNotifyManager.play();
+            }
+        });
     }
 }

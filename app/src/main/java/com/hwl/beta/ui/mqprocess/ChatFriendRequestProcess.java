@@ -9,6 +9,7 @@ import com.hwl.beta.mq.bean.ChatFriendRequestBean;
 import com.hwl.beta.mq.receive.IMessageProcess;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.MessageNotifyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -65,5 +66,6 @@ public class ChatFriendRequestProcess implements IMessageProcess<ChatFriendReque
         EventBus.getDefault().post(friend);
         EventBus.getDefault().post(message);
         EventBus.getDefault().post(record);
+        MessageNotifyManager.play();
     }
 }

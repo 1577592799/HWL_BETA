@@ -11,6 +11,7 @@ import com.hwl.beta.mq.receive.IMessageProcess;
 import com.hwl.beta.net.group.GroupService;
 import com.hwl.beta.net.group.body.GroupUsersResponse;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.MessageNotifyManager;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBGroupAction;
 import com.hwl.beta.utils.StringUtils;
@@ -60,7 +61,6 @@ public class GroupUsersAddMessageProcess implements IMessageProcess<GroupUsersAd
         //record.setUnreadCount(1);
         record.setSendTime(new Date());
         record = DaoUtils.getChatRecordMessageManagerInstance().addOrUpdate(record);
-        EventBus.getDefault().post(record);
 
         ChatGroupMessage chatGroupMessage = new ChatGroupMessage();
         chatGroupMessage.setGroupGuid(groupInfo.getGroupGuid());
@@ -69,6 +69,9 @@ public class GroupUsersAddMessageProcess implements IMessageProcess<GroupUsersAd
         chatGroupMessage.setContent(message.getContent());
         chatGroupMessage.setLocalUrl("");
         DaoUtils.getChatGroupMessageManagerInstance().save(chatGroupMessage);
+
+        EventBus.getDefault().post(record);
         EventBus.getDefault().post(chatGroupMessage);
+        MessageNotifyManager.play();
     }
 }

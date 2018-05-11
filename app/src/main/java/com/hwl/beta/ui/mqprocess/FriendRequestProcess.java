@@ -6,6 +6,7 @@ import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.receive.IMessageProcess;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.MessageNotifyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -30,6 +31,7 @@ public class FriendRequestProcess implements IMessageProcess<FriendRequestBean> 
             MessageCountSP.setFriendRequestCount(MessageCountSP.getFriendRequestCount() + 1);
 
             EventBus.getDefault().post(EventBusConstant.EB_TYPE_FRIEND_REQUEST_UPDATE);
+            MessageNotifyManager.play();
         }
     }
 
