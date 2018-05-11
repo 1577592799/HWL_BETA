@@ -3,10 +3,13 @@ package com.hwl.beta.net.general;
 import com.hwl.beta.net.RequestBase;
 import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.RetrofitUtils;
+import com.hwl.beta.net.general.body.CheckVersionRequest;
+import com.hwl.beta.net.general.body.CheckVersionResponse;
 import com.hwl.beta.net.general.body.SendEmailRequest;
 import com.hwl.beta.net.general.body.SendEmailResponse;
 import com.hwl.beta.net.general.body.SendSMSRequest;
 import com.hwl.beta.net.general.body.SendSMSResponse;
+import com.hwl.beta.sp.UserSP;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,11 +43,25 @@ public class GeneralService {
         return response;
     }
 
+    public static Observable<ResponseBase<CheckVersionResponse>> checkVersion() {
+        CheckVersionRequest requestBody = new CheckVersionRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setOldVersion("1.0.0");
+        Observable<ResponseBase<CheckVersionResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
+                .checkVersion(new RequestBase(requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public interface IGenericService {
         @POST("api/SendEmail")
         Observable<ResponseBase<SendEmailResponse>> sendEmail(@Body RequestBase<SendEmailRequest> request);
 
         @POST("api/SendSMS")
         Observable<ResponseBase<SendSMSResponse>> sendSMS(@Body RequestBase<SendSMSRequest> request);
+
+        @POST("api/CheckVersion")
+        Observable<ResponseBase<CheckVersionResponse>> checkVersion(@Body RequestBase<CheckVersionRequest> request);
     }
 }

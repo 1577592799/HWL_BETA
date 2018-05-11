@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.FragmentCenterBinding;
@@ -20,6 +21,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.user.action.ICenterListener;
 import com.hwl.beta.ui.user.bean.CenterBean;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
+import com.hwl.beta.utils.AppUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,6 +105,11 @@ public class FragmentCenter extends Fragment {
         @Override
         public void onSettingClick() {
 
+        }
+
+        @Override
+        public void onMessageClick() {
+            Toast.makeText(activity,AppUtils.getAppVersionName(),Toast.LENGTH_LONG).show();
         }
 
         @Override
