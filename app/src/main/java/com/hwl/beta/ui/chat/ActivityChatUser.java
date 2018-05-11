@@ -25,6 +25,7 @@ import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.emotion.EmotionControlPannel;
 import com.hwl.beta.emotion.audio.AudioPlay;
 import com.hwl.beta.emotion.audio.MediaManager;
+import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventClearUserMessages;
@@ -34,6 +35,7 @@ import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
 import com.hwl.beta.ui.chat.imp.ChatUserEmotionPannelListener;
 import com.hwl.beta.ui.common.ClipboardAction;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.widget.TitleBar;
@@ -274,7 +276,26 @@ public class ActivityChatUser extends FragmentActivity {
 
         @Override
         public void onImageItemClick(int position) {
-
+            int imageIndex = 0;
+            int imagePosition=0;
+            List<String> images = new ArrayList<>();
+            for (int i = 0; i < messages.size(); i++) {
+                if (messages.get(i).getContentType() == NetConstant.CIRCLE_CONTENT_IMAGE) {
+                    if (StringUtils.isNotBlank(messages.get(i).getLocalUrl())) {
+                        images.add(messages.get(i).getLocalUrl());
+                    } else if (StringUtils.isNotBlank(messages.get(i).getOriginalUrl())) {
+                        images.add(messages.get(i).getOriginalUrl());
+                    } else {
+                        images.add(messages.get(i).getPreviewUrl());
+                    }
+                    if (i == position) {
+                        imagePosition=imageIndex;
+                    }
+                    imageIndex++;
+                }
+            }
+            //Toast.makeText(activity, "查看图片功能稍后开放", Toast.LENGTH_SHORT).show();
+            UITransfer.toImageBrowseActivity(activity, ActivityImageBrowse.MODE_VIEW, imagePosition, images);
         }
 
         @Override

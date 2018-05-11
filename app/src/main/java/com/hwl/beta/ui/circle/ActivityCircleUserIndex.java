@@ -144,6 +144,7 @@ public class ActivityCircleUserIndex extends FragmentActivity {
     private void initView() {
         binding.tbTitle
                 .setTitle(viewUserId == myUserId ? "我的动态" : "TA的动态")
+                .setImageRightResource(R.drawable.ic_sms)
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

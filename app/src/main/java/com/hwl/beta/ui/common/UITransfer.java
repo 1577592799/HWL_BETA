@@ -136,6 +136,7 @@ public class UITransfer {
     }
 
     public static void toImageBrowseActivity(Activity context, int mode, int position, List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.size() <= 0) return;
         Intent intent = new Intent(context, ActivityImageBrowse.class);
         intent.putExtra("mode", mode);
         intent.putExtra("position", position);
