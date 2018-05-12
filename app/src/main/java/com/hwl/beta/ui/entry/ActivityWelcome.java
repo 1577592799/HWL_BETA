@@ -1,5 +1,6 @@
 package com.hwl.beta.ui.entry;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import com.hwl.beta.R;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.OpenInstallManage;
 import com.hwl.beta.ui.common.UITransfer;
 
 public class ActivityWelcome extends FragmentActivity {
@@ -23,6 +25,17 @@ public class ActivityWelcome extends FragmentActivity {
         tvCountdown = (TextView) findViewById(R.id.tv_countdown);
         tvCountdown.setText(tmrCount + " s");
         handler.postDelayed(runnable, 1000);
+
+        OpenInstallManage.getWakeUp(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        /**
+         * 此处要调用，否则App在后台运行时，会无法截获
+         */
+        OpenInstallManage.getWakeUp(this);
     }
 
     @Override
@@ -37,6 +50,12 @@ public class ActivityWelcome extends FragmentActivity {
         } else {
             UITransfer.toLoginActivity(this);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OpenInstallManage.clearWakeUp();
     }
 
     @Override

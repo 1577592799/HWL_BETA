@@ -17,6 +17,7 @@ import com.hwl.beta.net.general.body.SendSMSResponse;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.UserRegisterResponse;
 import com.hwl.beta.ui.common.BaseActivity;
+import com.hwl.beta.ui.common.OpenInstallManage;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.entry.action.IRegisterListener;
@@ -142,6 +143,7 @@ public class ActivityRegister extends BaseActivity {
                         @Override
                         protected void onSuccess(UserRegisterResponse response) {
                             Toast.makeText(activity, "注册成功 ！", Toast.LENGTH_LONG).show();
+                            OpenInstallManage.reportRegister();
                             UITransfer.toLoginActivity(activity);
                             finish();
                         }

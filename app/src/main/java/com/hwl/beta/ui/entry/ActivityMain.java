@@ -1,8 +1,10 @@
 package com.hwl.beta.ui.entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
@@ -34,6 +36,7 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.TabFragmentPagerAdapter;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.FragmentRecord;
+import com.hwl.beta.ui.common.ShareTransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.convert.DBGroupAction;
@@ -136,6 +139,25 @@ public class ActivityMain extends FragmentActivity {
                         break;
                     case R.id.pop_near_publish:
                         UITransfer.toNearPublishActivity(activity);
+                        break;
+                    case R.id.pop_share_app:
+                        new AlertDialog.Builder(activity)
+                                .setMessage("如果别人就在你的旁边，你可以通过二维码来分享给TA...")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UITransfer.toQRCodeActivity(activity);
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("用其它方式", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ShareTransfer.shareApp();
+                                    }
+                                })
+                                .show();
+
                         break;
                     case R.id.pop_open_test:
                         UITransfer.toTestActivity(activity);
