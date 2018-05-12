@@ -44,6 +44,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2018/2/16.
@@ -56,6 +57,7 @@ public class ActivityNearPublish extends BaseActivity {
     List<String> imagePaths = null;
     List<NearCircleImage> nearCircleImages;
     int screenWidth;
+    boolean isRuning = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +85,8 @@ public class ActivityNearPublish extends BaseActivity {
                 .setTitleRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (isRuning) return;
+                        isRuning = true;
                         nearCircleImages = new ArrayList<>();
                         publishImages();
                     }
@@ -182,12 +186,14 @@ public class ActivityNearPublish extends BaseActivity {
     private void publishImages() {
         final String content = binding.etEmotionText.getText() + "";
         if (StringUtils.isBlank(content) && imagePaths.size() <= 0) {
+            isRuning = false;
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
 
         LoadingDialog.show(activity, "正在发布,请稍后...");
         Observable.fromIterable(imagePaths)
+                .subscribeOn(Schedulers.io())
                 .map(new Function<String, File>() {
                     @Override
                     public File apply(String imagePath) throws Exception {
@@ -240,6 +246,7 @@ public class ActivityNearPublish extends BaseActivity {
                     @Override
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
+                        isRuning = false;
                         LoadingDialog.hide();
                     }
                 });
@@ -249,6 +256,7 @@ public class ActivityNearPublish extends BaseActivity {
         if (StringUtils.isBlank(content) && images.size() <= 0) {
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
             LoadingDialog.hide();
+            isRuning = false;
             return;
         }
 
@@ -257,6 +265,7 @@ public class ActivityNearPublish extends BaseActivity {
                     @Override
                     protected void onSuccess(AddNearCircleInfoResponse res) {
                         LoadingDialog.hide();
+                        isRuning = false;
                         if (res != null && res.getNearCircleId() > 0) {
                             Toast.makeText(getApplicationContext(), "发布成功", Toast.LENGTH_SHORT).show();
                             finish();
@@ -269,6 +278,7 @@ public class ActivityNearPublish extends BaseActivity {
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
                         LoadingDialog.hide();
+                        isRuning = false;
                     }
                 });
     }
