@@ -19,12 +19,13 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventClearUserMessages;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class ActivityChatUserSetting extends FragmentActivity {
+public class ActivityChatUserSetting extends BaseActivity {
 
     ActivityChatUserSettingBinding binding;
     Activity activity;

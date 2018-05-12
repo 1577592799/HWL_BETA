@@ -36,6 +36,7 @@ import com.hwl.beta.ui.busbean.EventActionCircleLike;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.adp.CircleIndexAdapter;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
@@ -65,7 +66,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class ActivityCircleIndex extends FragmentActivity {
+public class ActivityCircleIndex extends BaseActivity {
 
     Activity activity;
     ActivityCircleIndexBinding binding;
@@ -88,11 +89,6 @@ public class ActivityCircleIndex extends FragmentActivity {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

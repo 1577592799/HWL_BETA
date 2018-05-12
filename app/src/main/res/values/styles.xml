@@ -4,6 +4,9 @@
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>
     </style>
 
     <style name="ThemeActivity" parent="AppTheme">
@@ -81,5 +84,9 @@
         <item name="horizontal_Space">20dp</item>
         <item name="vertical_Space">20dp</item>
         <item name="isFull">false</item>
+    </style>
+
+    <style name="SwipeTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 </resources>

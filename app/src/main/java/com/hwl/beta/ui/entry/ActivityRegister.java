@@ -16,6 +16,7 @@ import com.hwl.beta.net.general.body.SendEmailResponse;
 import com.hwl.beta.net.general.body.SendSMSResponse;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.UserRegisterResponse;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.entry.action.IRegisterListener;
@@ -26,7 +27,7 @@ import com.hwl.beta.ui.widget.TimeCount;
  * Created by Administrator on 2018/1/13.
  */
 
-public class ActivityRegister extends FragmentActivity {
+public class ActivityRegister extends BaseActivity {
     Activity activity;
     ActivityRegisterBinding binding;
     RegisterBean registerBean;

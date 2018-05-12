@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageSelectBinding;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.imgselect.action.IImageSelectItemListener;
 import com.hwl.beta.ui.imgselect.action.IImageSelectListener;
 import com.hwl.beta.ui.imgselect.adp.ImageAdapter;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2018/1/20.
  */
-public class ActivityImageSelect extends FragmentActivity {
+public class ActivityImageSelect extends BaseActivity {
     private static final int PHOTO_REQUEST_CAMERA = 1;// 拍照
     private static final int PHOTO_REQUEST_CUT = 2;// 结果
     private static final String TEMP_FILE_NAME = "temp.jpg";

@@ -1,30 +1,44 @@
 package com.hwl.beta.ui.common;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+
+import com.hwl.beta.swipeback.SwipeBackHelper;
 
 /**
  * Created by Administrator on 2018/2/4.
  */
 
 public abstract class BaseActivity extends FragmentActivity {
-    protected Activity activity;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SwipeBackHelper.onCreate(this);
+        SwipeBackHelper.getCurrentPage(this)
+                .setSwipeBackEnable(true)
+                .setSwipeSensitivity(0.5f)
+                .setSwipeRelateEnable(true)
+                .setSwipeRelateOffset(300);
+        //ViewServer.get(this).addWindow(this);
+
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(getLayoutId());
-        activity = this;
-
-        initView();
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        SwipeBackHelper.onPostCreate(this);
     }
 
-    public void initView() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SwipeBackHelper.onDestroy(this);
+        //ViewServer.get(this).removeWindow(this);
     }
 
-    public abstract String getName();
-
-    public abstract int getLayoutId();
+    public void onResume() {
+        super.onResume();
+        //ViewServer.get(this).setFocusedWindow(this);
+    }
 }

@@ -1,8 +1,10 @@
 package com.hwl.beta.ui.common;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.db.ext.NearCircleExt;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.TestActivity;
 import com.hwl.beta.ui.chat.ActivityChatGroup;
 import com.hwl.beta.ui.chat.ActivityChatGroupSettingEdit;
 import com.hwl.beta.ui.chat.ActivityChatUser;
@@ -53,6 +56,11 @@ import java.util.List;
  */
 
 public class UITransfer {
+
+    public static void toTestActivity(Activity context) {
+        Intent intent = new Intent(context, TestActivity.class);
+        context.startActivity(intent);
+    }
 
     public static void toLoginActivity(Activity context) {
         Intent intent = new Intent(context, ActivityLogin.class);
@@ -331,5 +339,25 @@ public class UITransfer {
         intent.putExtra("username", userName);
         intent.putExtra("userimage", userImage);
         context.startActivity(intent);
+    }
+
+    /**
+     * 调用第三方浏览器打开
+     *
+     * @param context
+     * @param url     要浏览的资源地址
+     */
+    public static void toBrowser(Activity context, String url) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        // 注意此处的判断intent.resolveActivity()可以返回显示该Intent的Activity对应的组件名
+        // 官方解释 : Name of the component implementing an activity that can display the intent
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            final ComponentName componentName = intent.resolveActivity(context.getPackageManager());
+            // 打印Log   ComponentName到底是什么
+//            L.d("componentName = " + componentName.getClassName());
+            context.startActivity(Intent.createChooser(intent, "请选择浏览器"));
+        }
     }
 }

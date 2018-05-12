@@ -27,6 +27,7 @@ import com.hwl.beta.net.user.body.AddFriendResponse;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBFriendAction;
@@ -44,7 +45,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/8.
  */
 
-public class ActivityNewFriend extends FragmentActivity {
+public class ActivityNewFriend extends BaseActivity {
 
     Activity activity;
     List<FriendRequest> friendRequests;

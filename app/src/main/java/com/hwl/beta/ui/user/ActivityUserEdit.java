@@ -21,6 +21,7 @@ import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.SetUserInfoResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.convert.SexAction;
@@ -42,7 +43,7 @@ import io.reactivex.functions.Function;
  * Created by Administrator on 2018/1/9.
  */
 
-public class ActivityUserEdit extends FragmentActivity {
+public class ActivityUserEdit extends BaseActivity {
 
     ActivityUserEditBinding binding;
     UserEditBean user;

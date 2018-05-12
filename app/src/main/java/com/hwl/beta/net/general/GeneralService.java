@@ -10,6 +10,7 @@ import com.hwl.beta.net.general.body.SendEmailResponse;
 import com.hwl.beta.net.general.body.SendSMSRequest;
 import com.hwl.beta.net.general.body.SendSMSResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.utils.AppUtils;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -26,27 +27,25 @@ public class GeneralService {
     public static Observable<ResponseBase<SendEmailResponse>> sendEmail(String email) {
         SendEmailRequest requestBody = new SendEmailRequest();
         requestBody.setEmail(email);
-        Observable<ResponseBase<SendEmailResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
+        return RetrofitUtils.createApi(GeneralService.IGenericService.class)
                 .sendEmail(new RequestBase(requestBody))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        return response;
     }
 
     public static Observable<ResponseBase<SendSMSResponse>> sendSMS(String mobile) {
         SendSMSRequest requestBody = new SendSMSRequest();
         requestBody.setMobile(mobile);
-        Observable<ResponseBase<SendSMSResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
+        return RetrofitUtils.createApi(GeneralService.IGenericService.class)
                 .sendSMS(new RequestBase(requestBody))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        return response;
     }
 
     public static Observable<ResponseBase<CheckVersionResponse>> checkVersion() {
         CheckVersionRequest requestBody = new CheckVersionRequest();
         requestBody.setUserId(UserSP.getUserId());
-        requestBody.setOldVersion("1.0.0");
+        requestBody.setOldVersion(AppUtils.getAppVersionName());
         Observable<ResponseBase<CheckVersionResponse>> response = RetrofitUtils.createApi(GeneralService.IGenericService.class)
                 .checkVersion(new RequestBase(requestBody))
                 .subscribeOn(Schedulers.io())

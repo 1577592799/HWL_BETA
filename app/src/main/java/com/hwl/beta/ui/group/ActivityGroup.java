@@ -19,6 +19,7 @@ import com.hwl.beta.net.group.body.GetGroupsResponse;
 import com.hwl.beta.net.user.NetGroupUserInfo;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBGroupAction;
@@ -31,7 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityGroup extends FragmentActivity {
+public class ActivityGroup extends BaseActivity {
 
     ActivityGroupBinding binding;
     Activity activity;

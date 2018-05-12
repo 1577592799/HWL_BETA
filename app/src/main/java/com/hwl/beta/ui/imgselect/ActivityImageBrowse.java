@@ -11,11 +11,13 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageBrowseBinding;
+import com.hwl.beta.swipeback.SwipeBackHelper;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.imgselect.adp.ImagePagerAdapter;
 
 import java.util.List;
 
-public class ActivityImageBrowse extends FragmentActivity {
+public class ActivityImageBrowse extends BaseActivity {
     public final static int MODE_VIEW = 0;
     public final static int MODE_ACTION = 1;
 
@@ -89,6 +91,11 @@ public class ActivityImageBrowse extends FragmentActivity {
         } else {
             binding.tvCount.setVisibility(View.VISIBLE);
             binding.tvCount.setText((imagePosotion + 1) + "/" + imageUrls.size());
+        }
+        if(imagePosotion<=0){
+            SwipeBackHelper.getCurrentPage(activity).setDisallowInterceptTouchEvent(false);
+        }else{
+            SwipeBackHelper.getCurrentPage(activity).setDisallowInterceptTouchEvent(true);
         }
     }
 }

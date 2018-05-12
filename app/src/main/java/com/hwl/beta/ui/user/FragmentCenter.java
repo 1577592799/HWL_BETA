@@ -1,11 +1,14 @@
 package com.hwl.beta.ui.user;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +16,29 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.FragmentCenterBinding;
+import com.hwl.beta.net.general.GeneralService;
+import com.hwl.beta.net.general.body.CheckVersionResponse;
+import com.hwl.beta.net.resx.DownloadService;
+import com.hwl.beta.net.resx.IDownloadProgressListener;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.common.UITransfer;
+import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
+import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.user.action.ICenterListener;
 import com.hwl.beta.ui.user.bean.CenterBean;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.utils.AppUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2017/12/27.
@@ -109,12 +122,40 @@ public class FragmentCenter extends Fragment {
 
         @Override
         public void onMessageClick() {
-            Toast.makeText(activity,AppUtils.getAppVersionName(),Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, AppUtils.getAppVersionName(), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onCheckUpdateClick() {
+            LoadingDialog.show(activity, "版本检测中,请稍后...");
+            GeneralService.checkVersion()
+                    .subscribe(new NetDefaultObserver<CheckVersionResponse>() {
+                        @Override
+                        protected void onSuccess(final CheckVersionResponse response) {
+                            LoadingDialog.hide();
+                            if (response.isNewVersion()) {
+                                new AlertDialog.Builder(activity)
+                                        .setMessage("检测到最新版本 " + response.getNewVersion() + "，是否更新?")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                UITransfer.toBrowser(activity, response.getDownLoadUrl());
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .setNegativeButton("取消", null)
+                                        .show();
+                            } else {
+                                Toast.makeText(activity, "当前已经是最新的版本,不需要更新", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            LoadingDialog.hide();
+                        }
+                    });
         }
 
         @Override

@@ -26,6 +26,7 @@ import com.hwl.beta.net.resx.ResxType;
 import com.hwl.beta.net.resx.UploadService;
 import com.hwl.beta.net.resx.body.UpResxResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.dialog.LoadingDialog;
@@ -48,7 +49,7 @@ import io.reactivex.functions.Function;
  * Created by Administrator on 2018/2/16.
  */
 
-public class ActivityNearPublish extends FragmentActivity {
+public class ActivityNearPublish extends BaseActivity {
     ActivityNearPulishBinding binding;
     Activity activity;
     static final int MAX_IMAGE_COUNT = 9;

@@ -27,6 +27,7 @@ import com.hwl.beta.net.resx.UploadService;
 import com.hwl.beta.net.resx.body.UpResxResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.dialog.LoadingDialog;
@@ -47,7 +48,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 
-public class ActivityCirclePublish extends FragmentActivity {
+public class ActivityCirclePublish extends BaseActivity {
     ActivityCirclePulishBinding binding;
     Activity activity;
     static final int MAX_IMAGE_COUNT = 9;

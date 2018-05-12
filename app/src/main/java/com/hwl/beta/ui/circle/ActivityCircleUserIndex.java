@@ -27,6 +27,7 @@ import com.hwl.beta.ui.busbean.EventActionCircleLike;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleUserItemListener;
 import com.hwl.beta.ui.circle.adp.CircleUserIndexAdapter;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.convert.DBCircleAction;
@@ -50,7 +51,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
-public class ActivityCircleUserIndex extends FragmentActivity {
+public class ActivityCircleUserIndex extends BaseActivity {
 
     Activity activity;
     ActivityCircleUserIndexBinding binding;
@@ -181,7 +182,7 @@ public class ActivityCircleUserIndex extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         loadCircleFromServer(0);
     }

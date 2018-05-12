@@ -17,6 +17,7 @@ import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.NearCircleMessage;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.near.adp.NearMessageAdapter;
 
@@ -25,7 +26,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityNearMessages extends FragmentActivity {
+public class ActivityNearMessages extends BaseActivity {
 
     Activity activity;
     ActivityNearMessagesBinding binding;
@@ -83,7 +84,7 @@ public class ActivityNearMessages extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         MessageCountSP.setNearCircleMessageCount(0);
         EventBus.getDefault().post(EventBusConstant.EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE);

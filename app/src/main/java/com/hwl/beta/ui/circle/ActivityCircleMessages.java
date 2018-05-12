@@ -17,6 +17,7 @@ import com.hwl.beta.db.entity.CircleMessage;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.adp.CircleMessageAdapter;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityCircleMessages extends FragmentActivity {
+public class ActivityCircleMessages extends BaseActivity {
 
     Activity activity;
     ActivityCircleMessagesBinding binding;
@@ -82,7 +83,7 @@ public class ActivityCircleMessages extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         MessageCountSP.setCircleMessageCount(0);
         EventBus.getDefault().post(EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE);

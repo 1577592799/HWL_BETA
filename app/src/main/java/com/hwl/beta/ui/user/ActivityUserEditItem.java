@@ -19,6 +19,7 @@ import com.hwl.beta.net.user.body.SetFriendRemarkResponse;
 import com.hwl.beta.net.user.body.SetUserInfoResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.SexAction;
@@ -33,7 +34,7 @@ import org.greenrobot.eventbus.EventBus;
  * Created by Administrator on 2018/1/26.
  */
 
-public class ActivityUserEditItem extends FragmentActivity {
+public class ActivityUserEditItem extends BaseActivity {
 
     ActivityUserEditItemBinding binding;
     Activity activity;

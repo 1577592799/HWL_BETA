@@ -137,6 +137,9 @@ public class ActivityMain extends FragmentActivity {
                     case R.id.pop_near_publish:
                         UITransfer.toNearPublishActivity(activity);
                         break;
+                    case R.id.pop_open_test:
+                        UITransfer.toTestActivity(activity);
+                        break;
                 }
                 return true;
             }

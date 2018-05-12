@@ -31,6 +31,7 @@ import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.action.IChatGroupSettingListener;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -49,7 +50,7 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class ActivityChatGroupSetting extends FragmentActivity {
+public class ActivityChatGroupSetting extends BaseActivity {
 
     Activity activity;
     ActivityChatGroupSettingBinding binding;

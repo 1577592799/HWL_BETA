@@ -15,6 +15,7 @@ import com.hwl.beta.net.user.UserSearchInfo;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.SearchUserResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.common.KeyBoardAction;
@@ -33,7 +34,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/27.
  */
 
-public class ActivityUserSearch extends FragmentActivity {
+public class ActivityUserSearch extends BaseActivity {
     Activity activity;
     ActivityUserSearchBinding binding;
     UserSearchBean userSearchBean;

@@ -26,6 +26,7 @@ import com.hwl.beta.net.group.body.AddGroupUsersResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.FriendComparator;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ActivityGroupAdd extends FragmentActivity {
+public class ActivityGroupAdd extends BaseActivity {
 
     public static final int TYPE_CREATE = 1;
     public static final int TYPE_ADD = 2;

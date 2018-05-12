@@ -28,6 +28,7 @@ import android.widget.Button;
 import com.hwl.beta.R;
 import com.hwl.beta.emotion.EmotionDefaultPannel;
 import com.hwl.beta.photoview.PhotoView;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.MessageNotifyManager;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/4.
  */
 
-public class TestActivity extends FragmentActivity {
+public class TestActivity extends BaseActivity {
 
     Activity mActivity;
 

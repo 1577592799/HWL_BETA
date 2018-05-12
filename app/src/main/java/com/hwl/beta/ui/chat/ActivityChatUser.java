@@ -33,6 +33,7 @@ import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatUserMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
 import com.hwl.beta.ui.chat.imp.ChatUserEmotionPannelListener;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.ClipboardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
@@ -52,7 +53,7 @@ import java.util.List;
  * Created by Administrator on 2017/12/31.
  */
 
-public class ActivityChatUser extends FragmentActivity {
+public class ActivityChatUser extends BaseActivity {
 
     Activity activity;
     List<ChatUserMessage> messages;

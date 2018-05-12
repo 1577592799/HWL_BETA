@@ -35,6 +35,7 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventDeleteFriend;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.MQDefaultObserver;
@@ -55,7 +56,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2018/1/9.
  */
-public class ActivityUserIndex extends FragmentActivity {
+public class ActivityUserIndex extends BaseActivity {
 
     ActivityUserIndexBinding binding;
     Activity activity;
@@ -145,7 +146,7 @@ public class ActivityUserIndex extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         initData();

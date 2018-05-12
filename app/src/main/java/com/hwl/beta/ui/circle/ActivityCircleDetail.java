@@ -34,6 +34,7 @@ import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.circle.action.ICircleCommentItemListener;
 import com.hwl.beta.ui.circle.action.ICircleDetailListener;
 import com.hwl.beta.ui.circle.adp.CircleCommentAdapter;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -53,7 +54,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ActivityCircleDetail extends FragmentActivity {
+public class ActivityCircleDetail extends BaseActivity {
 
     Activity activity;
     ActivityCircleDetailBinding binding;

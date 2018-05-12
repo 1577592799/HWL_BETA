@@ -19,11 +19,12 @@ import com.hwl.beta.net.group.body.SetGroupNameResponse;
 import com.hwl.beta.net.group.body.SetGroupNoteResponse;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.utils.StringUtils;
 
-public class ActivityChatGroupSettingEdit extends FragmentActivity {
+public class ActivityChatGroupSettingEdit extends BaseActivity {
     Activity activity;
     ActivityChatGroupSettingEditBinding binding;
     String groupGuid;

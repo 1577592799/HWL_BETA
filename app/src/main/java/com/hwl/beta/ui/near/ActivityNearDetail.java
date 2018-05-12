@@ -28,6 +28,7 @@ import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.body.GetNearCircleDetailResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -51,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ActivityNearDetail extends FragmentActivity {
+public class ActivityNearDetail extends BaseActivity {
 
     Activity activity;
     ActivityNearDetailBinding binding;

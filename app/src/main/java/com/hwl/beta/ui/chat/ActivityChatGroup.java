@@ -31,6 +31,7 @@ import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatGroupMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
 import com.hwl.beta.ui.chat.imp.ChatGroupEmotionPannelListener;
+import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.ClipboardAction;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
@@ -51,7 +52,7 @@ import java.util.List;
  * Created by Administrator on 2018/2/10.
  */
 
-public class ActivityChatGroup extends FragmentActivity {
+public class ActivityChatGroup extends BaseActivity {
 
     Activity activity;
     GroupInfo groupInfo;
