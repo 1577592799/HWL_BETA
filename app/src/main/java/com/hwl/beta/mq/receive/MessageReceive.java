@@ -26,6 +26,7 @@ public class MessageReceive {
     public final static String GROUP_QUEUE_NAME = "group-queue";
     public final static int MAX_MESSAGE_COUNT = 2;//指定当消息达到多少时，需要提示用户处理
     private static int position = 0;
+    private static Thread receiveThread;
 //    private static IMessageReadSpeed messageReadSpeed;
 //
 //    public static void setMessageReadSpeed(IMessageReadSpeed messageReadSpeedListener) {
@@ -57,7 +58,7 @@ public class MessageReceive {
 //    }
 
     public static void start() {
-        new Thread() {
+        receiveThread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -67,12 +68,9 @@ public class MessageReceive {
                         @Override
                         public void onSuccess(byte[] messageContent) {
                             if (messageContent != null && messageContent.length > 0) {
-                                byte messageType = messageContent[0];
-                                byte[] bodyBytes = ByteUtils.splitBodyBytes(messageContent);
-
                                 MessageForward mf = new MessageForward();
-                                mf.setMessageType(messageType);
-                                mf.setBody(bodyBytes);
+                                mf.setMessageType(messageContent[0]);
+                                mf.setBody(ByteUtils.splitBodyBytes(messageContent));
                                 mf.process();
 
                                 //String bodyJson = new String(bodyBytes);
@@ -94,7 +92,8 @@ public class MessageReceive {
                     Log.d(TAG, "获取用户消息错误：" + e.getMessage());
                 }
             }
-        }.start();
+        };
+        receiveThread.start();
 
     }
 }

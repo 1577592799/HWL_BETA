@@ -10,6 +10,7 @@ import com.hwl.beta.mq.receive.MessageProcess;
 public class MQProcess {
 
     public static void register() {
+        MessageProcess.registerUserLogoutMessageProcess(new UserLogoutMessageProcess());
         MessageProcess.registerFriendRequestProcess(new FriendRequestProcess());
         MessageProcess.registerFriendDeleteMessageProces(new FriendDeleteMessageProcess());
         MessageProcess.registerChatFriendRequestProcess(new ChatFriendRequestProcess());

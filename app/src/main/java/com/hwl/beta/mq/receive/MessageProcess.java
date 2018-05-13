@@ -12,6 +12,7 @@ import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
 import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
+import com.hwl.beta.mq.bean.UserLogoutMessageBean;
 import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 /**
@@ -20,6 +21,7 @@ import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 public class MessageProcess {
     //在这里注册消息处理
+    private static IMessageProcess<UserLogoutMessageBean> userLogoutMessageProcess;
     private static IMessageProcess<FriendRequestBean> friendRequestProcess;
     private static IMessageProcess<ChatFriendRequestBean> chatFriendRequestProcess;
     private static IMessageProcess<ChatUserMessageBean> chatUserMessageProcess;
@@ -32,6 +34,14 @@ public class MessageProcess {
     private static IMessageProcess<NearCircleCommentMessageBean> nearCircleCommentMessageProcess;
     private static IMessageProcess<CircleLikeMessageBean> circleLikeMessageProcess;
     private static IMessageProcess<CircleCommentMessageBean> circleCommentMessageProcess;
+
+    public static IMessageProcess<UserLogoutMessageBean> getUserLogoutMessageProcess() {
+        return userLogoutMessageProcess;
+    }
+
+    public static void registerUserLogoutMessageProcess(IMessageProcess<UserLogoutMessageBean> process) {
+        userLogoutMessageProcess = process;
+    }
 
     public static IMessageProcess<CircleCommentMessageBean> getCircleCommentMessageProcess() {
         return circleCommentMessageProcess;

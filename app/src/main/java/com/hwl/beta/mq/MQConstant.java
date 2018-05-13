@@ -22,6 +22,7 @@ public class MQConstant {
     public final static byte NEAR_CIRCLE_COMMENT_MESSAGE = 14;
     public final static byte CIRCLE_LIKE_MESSAGE = 15;
     public final static byte CIRCLE_COMMENT_MESSAGE = 16;
+    public final static byte USER_LOGOUT_MESSAGE = 17;
 
     public final static int CHAT_RECORD_TYPE_USER = 1;
     public final static int CHAT_RECORD_TYPE_GROUP = 2;

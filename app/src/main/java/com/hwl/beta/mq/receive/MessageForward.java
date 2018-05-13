@@ -15,6 +15,7 @@ import com.hwl.beta.mq.bean.GroupEditMessageBean;
 import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
 import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
+import com.hwl.beta.mq.bean.UserLogoutMessageBean;
 import com.hwl.beta.utils.ByteUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -42,6 +43,13 @@ public class MessageForward {
         IMessageProcess messageProcess = null;
         String bodyJson = null;
         switch (messageType) {
+            case MQConstant.USER_LOGOUT_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getUserLogoutMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, UserLogoutMessageBean.class));
+                }
+                break;
             case MQConstant.FRIEND_REQUEST:
                 bodyJson = new String(bodyBytes);
                 messageProcess = MessageProcess.getFriendRequestProcess();

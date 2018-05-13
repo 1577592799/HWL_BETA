@@ -23,6 +23,8 @@ public abstract class NetDefaultFunction<T, T2> implements Function<ResponseBase
                 if (head.getResultCode().equals(NetConstant.RESPONSE_SUCCESS)) {
                     T t = response.getResponseBody();
                     return onSuccess(t);
+                } else if (head.getResultCode().equals(NetConstant.RESPONSE_RELOGIN)) {
+                    onError(NetConstant.RESPONSE_RELOGIN);
                 } else {
                     onError(head.getResultMessage());
                 }

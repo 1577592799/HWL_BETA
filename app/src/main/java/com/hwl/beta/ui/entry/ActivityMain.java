@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityMainBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.mq.bean.UserLogoutMessageBean;
 import com.hwl.beta.mq.receive.MessageReceive;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.UserService;
@@ -112,6 +113,12 @@ public class ActivityMain extends FragmentActivity {
         } else if (ebType == EventBusConstant.EB_TYPE_CHAT_MESSAGE_UPDATE) {
             mainBean.setChatMessageCountDesc(MessageCountSP.getChatMessageCountDesc());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void userLogoutHint(UserLogoutMessageBean messageBean) {
+        if (messageBean == null) return;
+        UITransfer.toReloginDialog(this, messageBean.getHintContent());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.hwl.beta.ui.entry;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.hwl.beta.R;
@@ -19,7 +20,13 @@ public class ActivityQRCode extends BaseActivity {
 
         TitleBar tbTitle = findViewById(R.id.tb_title);
         tbTitle.setTitle("应用分享")
-                .setImageRightHide();
+                .setImageRightHide()
+                .setImageLeftClick(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
 
         ImageView ivQRCode = findViewById(R.id.iv_qrcode);
         ivQRCode.setImageBitmap(QRCodeUtils.createQRImage(ShareTransfer.APP_DOWNLOAD_URL, DisplayUtils.dp2px(this, 250), DisplayUtils.dp2px(this, 250)));

@@ -306,8 +306,15 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toReloginDialog(final FragmentActivity fragmentActivity) {
+    public static void toReloginDialog(FragmentActivity fragmentActivity) {
+        toReloginDialog(fragmentActivity, null);
+    }
+
+    public static void toReloginDialog(final FragmentActivity fragmentActivity, String hintContent) {
         final ReloginDialogFragment reloginFragment = new ReloginDialogFragment();
+        if (StringUtils.isNotBlank(hintContent)) {
+            reloginFragment.setHintText(hintContent);
+        }
         reloginFragment.setReloginClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
