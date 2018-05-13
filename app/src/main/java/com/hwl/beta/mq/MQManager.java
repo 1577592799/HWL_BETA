@@ -10,6 +10,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Administrator on 2018/2/3.
@@ -24,7 +25,7 @@ public class MQManager {
     private static Channel channel;
     private static IConnectionStatus connStatus;
 
-    private MQManager() {
+    static {
         initConnection();
     }
 
@@ -39,49 +40,43 @@ public class MQManager {
 
     /**
      * 一个客户端只能维护一个长连接
+     * 初始化连接，并绑定默认通道
      */
     private static synchronized void initConnection() {
-        if (mqconn == null) {
+        if (mqconn == null || !mqconn.isConnectionOpen()) {
             mqconn = new MQConnection(defaultConnectionFactory(), connStatus);
-            if (mqconn == null) return;
-            if (getChannel() == null) return;
-            try {
-                getChannel().exchangeDeclare(HWL_DEFAULT_EXCHANGE, HWL_EXCHANGE_MODEL);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-//    public static Connection buildConnection() {
-//        if (mqconn == null) {
-//            initConnection();
-//        }
-//        return mqconn.getConnection();
-//    }
+    private static synchronized void createChannel() throws IOException {
+        if (channel == null || !channel.isOpen()) {
+            initConnection();
+            channel = mqconn.getChannel();
+            channel.exchangeDeclare(HWL_DEFAULT_EXCHANGE, HWL_EXCHANGE_MODEL);
+        }
+    }
 
     /*
-    * 绑定到队列后，获取队列的消息数量
-    * */
-    public static int bindQueue(String queueName) throws IOException {
-        if (getChannel() == null) return 0;
-        AMQP.Queue.DeclareOk declareOk = getChannel().queueDeclare(queueName, true, false, false, null);
-        getChannel().queueBind(queueName, HWL_DEFAULT_EXCHANGE, queueName);
+     * 绑定到队列后，获取队列的消息数量
+     * */
+    public static int bindQueue(String queueName) throws Exception {
+        createChannel();
+        AMQP.Queue.DeclareOk declareOk = channel.queueDeclare(queueName, true, false, false, null);
+        channel.queueBind(queueName, HWL_DEFAULT_EXCHANGE, queueName);
         return declareOk.getMessageCount();
     }
 
-    public static void sendMessage(String queueName, byte[] messageBodyBytes) throws IOException {
-        if (getChannel() == null) return;
-        getChannel().queueDeclare(queueName, true, false, false, null);
+    public static void sendMessage(String queueName, byte[] messageBodyBytes) throws Exception {
+        createChannel();
+        channel.queueDeclare(queueName, true, false, false, null);
         channel.basicPublish(HWL_DEFAULT_EXCHANGE, queueName, null, messageBodyBytes);
         Log.d("MQManager-sendMessage", "当前发送的消息为: " + queueName + ",消息长度为 " + messageBodyBytes.length);
     }
 
-    public static void receiveMessage(String queueName, final IReceiveMessageCallBack callBack) throws IOException {
-        if (getChannel() == null) return;
-
+    public static void receiveMessage(String queueName, final IReceiveMessageCallBack callBack) throws Exception {
+        createChannel();
         boolean autoAck = false;
-        getChannel().queueDeclare(queueName, true, false, false, null);
+        channel.queueDeclare(queueName, true, false, false, null);
         channel.basicConsume(queueName, autoAck, new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -95,18 +90,18 @@ public class MQManager {
         });
     }
 
-    /*
-    * 一个客户端可以有多个数据通道，这里先只实例化一个
-    * */
-    public static synchronized Channel getChannel() {
-        if (mqconn == null) {
-            initConnection();
-        }
-        if (channel == null) {
-            channel = mqconn.getChannel();
-        }
-        return channel;
-    }
+//    /*
+//     * 一个客户端可以有多个数据通道，这里先只实例化一个
+//     * */
+//    public static synchronized Channel channel {
+//        if (mqconn == null || !mqconn.isConnectionOpen()) {
+//            initConnection();
+//        }
+//        if (channel == null || !channel.isOpen()) {
+//            channel = mqconn.channel;
+//        }
+//        return channel;
+//    }
 
     public static void closeMQConnection() {
         if (mqconn != null) {

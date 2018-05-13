@@ -216,7 +216,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MQDefaultObserver() {
+                .subscribe(new MQDefaultObserver(false) {
                     @Override
                     protected void onSuccess() {
                     }

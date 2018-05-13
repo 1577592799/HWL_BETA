@@ -7,8 +7,10 @@ import com.google.gson.GsonBuilder;
 import com.hwl.beta.mq.MQManager;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.utils.ByteUtils;
+import com.hwl.beta.utils.NetworkUtils;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -24,9 +26,11 @@ import io.reactivex.schedulers.Schedulers;
 public class MessageReceive {
     public final static String TAG = "MQMessageReceive";
     public final static String GROUP_QUEUE_NAME = "group-queue";
+    public final static int INTERVAL_TIME_SECONDS = 10;
     public final static int MAX_MESSAGE_COUNT = 2;//指定当消息达到多少时，需要提示用户处理
     private static int position = 0;
-    private static Thread receiveThread;
+    private static Thread receiveThread = null;
+    private static Observable intervalObservable = null;
 //    private static IMessageReadSpeed messageReadSpeed;
 //
 //    public static void setMessageReadSpeed(IMessageReadSpeed messageReadSpeedListener) {
@@ -85,15 +89,72 @@ public class MessageReceive {
 
                         @Override
                         public void onFaild(String exceptionInfo) {
-
+                            Log.d(TAG, "消息接收错误-1：" + exceptionInfo);
+                            MQManager.closeMQConnection();
+                            checkConnection();
                         }
                     });
-                } catch (IOException e) {
-                    Log.d(TAG, "获取用户消息错误：" + e.getMessage());
+                } catch (Exception e) {
+                    Log.d(TAG, "消息接收错误-2：" + e.getMessage());
+                    MQManager.closeMQConnection();
+                    checkConnection();
                 }
             }
         };
         receiveThread.start();
+    }
+
+    private static void restartReceive() {
+        if (receiveThread != null) {
+            receiveThread = null;
+        }
+        start();
+    }
+
+    public static void stopCheck() {
+        intervalObservable = null;
+    }
+
+    public static void checkConnection() {
+        if (intervalObservable != null) return;
+        intervalObservable = Observable.interval(INTERVAL_TIME_SECONDS, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io());
+
+        intervalObservable.subscribe(new Observer() {
+            Disposable disposable;
+
+            @Override
+            public void onSubscribe(Disposable d) {
+                disposable = d;
+            }
+
+            @Override
+            public void onNext(Object o) {
+                Log.d(TAG, "onNext MQ连接循环检测中...");
+                if (NetworkUtils.isConnected()) {
+                    restartReceive();
+                    disposable.dispose();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        });
+
+//                .doOnNext(new Consumer<Long>() {
+//                    @Override
+//                    public void accept(Long aLong) throws Exception {
+//                        if(NetworkUtils.isConnected()){
+//                            receiveThread.start();
+//                        }
+//                    }
+//                })
 
     }
 }

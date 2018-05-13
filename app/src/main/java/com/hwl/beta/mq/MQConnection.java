@@ -24,6 +24,11 @@ public class MQConnection {
         this.factory = factory;
     }
 
+    public boolean isConnectionOpen() {
+        if (currConnection == null) return false;
+        return currConnection.isOpen();
+    }
+
     public Connection getConnection() {
         if (currConnection == null) {
             try {
