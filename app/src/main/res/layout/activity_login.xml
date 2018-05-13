@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="loginBean"
             type="com.hwl.beta.ui.entry.bean.LoginBean" />
@@ -119,6 +120,37 @@
                 android:textColor="@color/color_727270"
                 android:textSize="14dp" />
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_wx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{(view)->action.onWechatClick()}"
+                android:src="@drawable/ssdk_oks_classic_wechat" />
+
+            <ImageView
+                android:id="@+id/iv_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:onClick="@{(view)->action.onQQClick()}"
+                android:src="@drawable/ssdk_oks_classic_qq" />
+
+            <ImageView
+                android:id="@+id/iv_sina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{(view)->action.onSinaClick()}"
+                android:src="@drawable/ssdk_oks_classic_sinaweibo" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

@@ -10,4 +10,10 @@ public interface ILoginListener {
     void onRegisterClick();
 
     void onGetpwdClick();
+
+    void onWechatClick();
+
+    void onQQClick();
+
+    void onSinaClick();
 }

@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityLoginBinding;
+import com.hwl.beta.mobshare.SinaAction;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.UserLoginResponse;
 import com.hwl.beta.sp.UserSP;
@@ -102,6 +103,22 @@ public class ActivityLogin extends FragmentActivity {
         @Override
         public void onGetpwdClick() {
             UITransfer.toGetpwdActivity(activity);
+        }
+
+        @Override
+        public void onWechatClick() {
+
+        }
+
+        @Override
+        public void onQQClick() {
+
+        }
+
+        @Override
+        public void onSinaClick() {
+            Toast.makeText(activity, "跳转中...", Toast.LENGTH_SHORT).show();
+            SinaAction.login();
         }
     }
 }

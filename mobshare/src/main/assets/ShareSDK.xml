@@ -65,8 +65,8 @@
 	<QQ
 		Id="7"
 		SortId="2"
-		AppId="1106901970"
-		AppKey="RnYg5InntyUpHH56"
+		AppId="1106902946"
+		AppKey="37rKmiDC3NEga23Y"
 		BypassApproval="false"
 		ShareByAppClient="true"
 		Enable="true" />
@@ -76,8 +76,8 @@
         SortId="3"
         AppKey="2726039871"
         AppSecret="95d63555432077dc762533c1b5b86940"
-        RedirectUrl="http://www.sharesdk.cn"
-        ShareByAppClient="true"
+        RedirectUrl="http://sns.whalecloud.com/sina2/callback"
+        ShareByAppClient="false"
         Enable="true" />
 
     <!-- 
