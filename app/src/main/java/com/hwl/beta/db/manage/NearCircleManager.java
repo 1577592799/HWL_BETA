@@ -48,6 +48,13 @@ public class NearCircleManager extends BaseDao<NearCircle> {
         return id;
     }
 
+    public void delete(long nearCircleId) {
+        if (nearCircleId > 0) {
+            String deleteSql = "delete from " + NearCircleDao.TABLENAME + " where " + NearCircleDao.Properties.NearCircleId.columnName + "=" + nearCircleId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
     public List<NearCircleImage> getImages(long nearCircleId) {
         if (nearCircleId <= 0) return null;
         return daoSession.getNearCircleImageDao().queryBuilder()

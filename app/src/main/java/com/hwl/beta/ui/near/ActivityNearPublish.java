@@ -255,8 +255,8 @@ public class ActivityNearPublish extends BaseActivity {
     private void publishContent(String content, List<NetImageInfo> images) {
         if (StringUtils.isBlank(content) && images.size() <= 0) {
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
-            LoadingDialog.hide();
             isRuning = false;
+            LoadingDialog.hide();
             return;
         }
 
@@ -277,8 +277,8 @@ public class ActivityNearPublish extends BaseActivity {
                     @Override
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
-                        LoadingDialog.hide();
                         isRuning = false;
+                        LoadingDialog.hide();
                     }
                 });
     }

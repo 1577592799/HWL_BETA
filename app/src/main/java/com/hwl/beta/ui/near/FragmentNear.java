@@ -29,6 +29,7 @@ import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.near.NearCircleService;
 import com.hwl.beta.net.near.NetNearCircleInfo;
 import com.hwl.beta.net.near.NetNearCircleMatchInfo;
+import com.hwl.beta.net.near.body.DeleteNearCircleInfoResponse;
 import com.hwl.beta.net.near.body.GetNearCircleInfosResponse;
 import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.MessageCountSP;
@@ -40,6 +41,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBNearCircleAction;
+import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.near.action.INearCircleItemListener;
 import com.hwl.beta.ui.near.adp.NearCircleAdapter;
@@ -419,7 +421,7 @@ public class FragmentNear extends BaseFragment {
 
         @Override
         public void onContentClick(NearCircle info) {
-
+//            UITransfer.toNearDetailActivity(activity, info.getNearCircleId());
         }
 
         @Override
@@ -492,13 +494,13 @@ public class FragmentNear extends BaseFragment {
         }
 
         @Override
-        public void onDeleteClick(NearCircle info) {
+        public void onDeleteClick(final int position, final NearCircle info) {
             new AlertDialog.Builder(activity)
                     .setMessage("信息删除后,不能恢复,确认删除 ?")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            deleteCircle();
+                            deleteCircle(position, info.getNearCircleId());
                             dialog.dismiss();
                         }
                     })
@@ -506,7 +508,34 @@ public class FragmentNear extends BaseFragment {
                     .show();
         }
 
-        private void deleteCircle() {
+        private void deleteCircle(final int position, final long nearCircleId) {
+            if (isRuning) return;
+            isRuning = true;
+            LoadingDialog.show(activity);
+            NearCircleService.deleteNearCircleInfo(nearCircleId)
+                    .subscribe(new NetDefaultObserver<DeleteNearCircleInfoResponse>() {
+                        @Override
+                        protected void onSuccess(DeleteNearCircleInfoResponse response) {
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                DaoUtils.getNearCircleManagerInstance().delete(nearCircleId);
+                                DaoUtils.getNearCircleManagerInstance().deleteImages(nearCircleId);
+                                DaoUtils.getNearCircleManagerInstance().deleteComments(nearCircleId);
+                                DaoUtils.getNearCircleManagerInstance().deleteLikes(nearCircleId);
+                                nearCircleAdapter.remove(position);
+                                LoadingDialog.hide();
+                                isRuning = false;
+                            } else {
+                                onError("删除失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            isRuning = false;
+                            LoadingDialog.hide();
+                        }
+                    });
         }
 
         @Override

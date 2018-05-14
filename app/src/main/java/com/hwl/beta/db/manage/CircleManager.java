@@ -33,6 +33,13 @@ public class CircleManager extends BaseDao<Circle> {
         return false;
     }
 
+    public void delete(long nearCircleId) {
+        if (nearCircleId > 0) {
+            String deleteSql = "delete from " + CircleDao.TABLENAME + " where " + CircleDao.Properties.CircleId.columnName + "=" + nearCircleId;
+            daoSession.getDatabase().execSQL(deleteSql);
+        }
+    }
+
     public long save(Circle model) {
         if (model == null) return 0;
         return daoSession.getCircleDao().insertOrReplace(model);

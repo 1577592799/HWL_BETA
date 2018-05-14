@@ -33,7 +33,7 @@ public interface INearCircleItemListener {
 
     void onMoreCommentClick(NearCircle info);
 
-    void onDeleteClick(NearCircle info);
+    void onDeleteClick(int position,NearCircle info);
 
     void onPublishClick();
 

@@ -146,6 +146,12 @@ public class CircleIndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    public void remove(int position) {
+        circles.remove(position);
+        notifyItemRangeRemoved(position, 1);
+        notifyItemRangeChanged(position, circles.size() - 1);
+    }
+
     public void addLike(int position, CircleLike likeInfo) {
         CircleExt info = circles.get(position);
         if (info.getLikes() == null) {

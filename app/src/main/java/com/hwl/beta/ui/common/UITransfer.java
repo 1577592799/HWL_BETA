@@ -45,6 +45,7 @@ import com.hwl.beta.ui.user.ActivityUserEdit;
 import com.hwl.beta.ui.user.ActivityUserEditItem;
 import com.hwl.beta.ui.user.ActivityUserIndex;
 import com.hwl.beta.ui.user.ActivityUserSearch;
+import com.hwl.beta.ui.user.ActivityUserSetting;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.video.ActivityVideoSelect;
 import com.hwl.beta.utils.StringUtils;
@@ -90,6 +91,11 @@ public class UITransfer {
 
     public static void toMainActivity(Activity context) {
         Intent intent = new Intent(context, ActivityMain.class);
+        context.startActivity(intent);
+    }
+
+    public static void toUserSettingActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityUserSetting.class);
         context.startActivity(intent);
     }
 

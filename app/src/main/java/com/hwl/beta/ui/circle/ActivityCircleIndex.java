@@ -27,6 +27,7 @@ import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.NetCircleMatchInfo;
+import com.hwl.beta.net.circle.body.DeleteCircleInfoResponse;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
 import com.hwl.beta.sp.MessageCountSP;
@@ -42,6 +43,7 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.common.rxext.NetDefaultFunction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
+import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.NetworkUtils;
@@ -451,13 +453,13 @@ public class ActivityCircleIndex extends BaseActivity {
         }
 
         @Override
-        public void onDeleteClick(Circle info) {
+        public void onDeleteClick(final int position, final Circle info) {
             new AlertDialog.Builder(activity)
                     .setMessage("信息删除后,不能恢复,确认删除 ?")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            deleteCircle();
+                            deleteCircle(position,info.getCircleId());
                             dialog.dismiss();
                         }
                     })
@@ -465,7 +467,34 @@ public class ActivityCircleIndex extends BaseActivity {
                     .show();
         }
 
-        private void deleteCircle() {
+        private void deleteCircle(final int position, final long circleId) {
+            if (isRuning) return;
+            isRuning = true;
+            LoadingDialog.show(activity);
+            CircleService.deleteCircleInfo(circleId)
+                    .subscribe(new NetDefaultObserver<DeleteCircleInfoResponse>() {
+                        @Override
+                        protected void onSuccess(DeleteCircleInfoResponse response) {
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                DaoUtils.getCircleManagerInstance().delete(circleId);
+                                DaoUtils.getCircleManagerInstance().deleteImages(circleId);
+                                DaoUtils.getCircleManagerInstance().deleteComments(circleId);
+                                DaoUtils.getCircleManagerInstance().deleteLikes(circleId);
+                                circleAdapter.remove(position);
+                                LoadingDialog.hide();
+                                isRuning = false;
+                            } else {
+                                onError("删除失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            isRuning = false;
+                            LoadingDialog.hide();
+                        }
+                    });
         }
 
         @Override

@@ -117,7 +117,7 @@ public class FragmentCenter extends Fragment {
 
         @Override
         public void onSettingClick() {
-
+            UITransfer.toUserSettingActivity(activity);
         }
 
         @Override

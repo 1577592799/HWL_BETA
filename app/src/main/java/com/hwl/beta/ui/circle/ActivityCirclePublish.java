@@ -47,6 +47,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class ActivityCirclePublish extends BaseActivity {
     ActivityCirclePulishBinding binding;
@@ -83,6 +84,8 @@ public class ActivityCirclePublish extends BaseActivity {
                 .setTitleRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (isRuning) return;
+                        isRuning = true;
                         circleImages = new ArrayList<>();
                         publishImages();
                     }
@@ -180,9 +183,6 @@ public class ActivityCirclePublish extends BaseActivity {
     }
 
     private void publishImages() {
-        if (isRuning) return;
-        isRuning = true;
-
         final String content = binding.etEmotionText.getText() + "";
         if (StringUtils.isBlank(content) && imagePaths.size() <= 0) {
             Toast.makeText(activity, "发布内容不能为空", Toast.LENGTH_SHORT).show();
@@ -192,6 +192,7 @@ public class ActivityCirclePublish extends BaseActivity {
 
         LoadingDialog.show(activity, "正在发布,请稍后...");
         Observable.fromIterable(imagePaths)
+                .subscribeOn(Schedulers.io())
                 .map(new Function<String, File>() {
                     @Override
                     public File apply(String imagePath) throws Exception {
@@ -244,8 +245,8 @@ public class ActivityCirclePublish extends BaseActivity {
                     @Override
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
-                        LoadingDialog.hide();
                         isRuning = false;
+                        LoadingDialog.hide();
                     }
                 });
     }
@@ -275,8 +276,8 @@ public class ActivityCirclePublish extends BaseActivity {
                     @Override
                     protected void onError(String resultMessage) {
                         super.onError(resultMessage);
-                        LoadingDialog.hide();
                         isRuning = false;
+                        LoadingDialog.hide();
                     }
                 });
     }

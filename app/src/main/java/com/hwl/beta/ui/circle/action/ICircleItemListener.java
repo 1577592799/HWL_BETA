@@ -35,11 +35,11 @@ public interface ICircleItemListener {
 
     void onMoreCommentClick();
 
-    void onDeleteClick(Circle info);
+    void onDeleteClick(int position, Circle info);
 
     void onPublishClick();
 
     void onMsgcountClick();
 
-    void onImageClick(int position,List<CircleImage> images);
+    void onImageClick(int position, List<CircleImage> images);
 }

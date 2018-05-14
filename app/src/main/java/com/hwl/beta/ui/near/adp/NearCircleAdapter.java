@@ -128,6 +128,12 @@ public class NearCircleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    public void remove(int position) {
+        nearCircles.remove(position);
+        notifyItemRangeRemoved(position, 1);
+        notifyItemRangeChanged(position, nearCircles.size() - 1);
+    }
+
     @Override
     public int getItemCount() {
         return nearCircles.size();

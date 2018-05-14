@@ -55,7 +55,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/ic_delete"
-            android:onClick="@{(view)->action.onDeleteClick(info)}"
+            android:onClick="@{(view)->action.onDeleteClick(position,info)}"
             android:visibility="gone" />
 
         <com.hwl.beta.emotion.widget.EmotionTextView

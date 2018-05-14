@@ -7,6 +7,10 @@ import com.hwl.beta.net.near.body.AddNearCircleInfoRequest;
 import com.hwl.beta.net.near.body.AddNearCircleInfoResponse;
 import com.hwl.beta.net.near.body.AddNearCommentRequest;
 import com.hwl.beta.net.near.body.AddNearCommentResponse;
+import com.hwl.beta.net.near.body.DeleteNearCircleInfoRequest;
+import com.hwl.beta.net.near.body.DeleteNearCircleInfoResponse;
+import com.hwl.beta.net.near.body.DeleteNearCommentRequest;
+import com.hwl.beta.net.near.body.DeleteNearCommentResponse;
 import com.hwl.beta.net.near.body.GetNearCircleDetailRequest;
 import com.hwl.beta.net.near.body.GetNearCircleDetailResponse;
 import com.hwl.beta.net.near.body.GetNearCircleInfosRequest;
@@ -127,6 +131,28 @@ public class NearCircleService {
         return response;
     }
 
+    public static Observable<ResponseBase<DeleteNearCommentResponse>> addComment(int commentId) {
+        DeleteNearCommentRequest requestBody = new DeleteNearCommentRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setCommentId(commentId);
+        Observable<ResponseBase<DeleteNearCommentResponse>> response = RetrofitUtils.createApi(INearCircleService.class)
+                .deleteNearComment(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
+    public static Observable<ResponseBase<DeleteNearCircleInfoResponse>> deleteNearCircleInfo(long nearCircleId) {
+        DeleteNearCircleInfoRequest requestBody = new DeleteNearCircleInfoRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setNearCircleId(nearCircleId);
+        Observable<ResponseBase<DeleteNearCircleInfoResponse>> response = RetrofitUtils.createApi(INearCircleService.class)
+                .deleteNearCircleInfo(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public interface INearCircleService {
         @POST("api/GetNearCircleInfos")
         Observable<ResponseBase<GetNearCircleInfosResponse>> getNearCircleInfos(@Body RequestBase<GetNearCircleInfosRequest> request);
@@ -145,5 +171,11 @@ public class NearCircleService {
 
         @POST("api/GetNearComments")
         Observable<ResponseBase<GetNearCommentsResponse>> getNearComments(@Body RequestBase<GetNearCommentsRequest> request);
+
+        @POST("api/DeleteNearComment")
+        Observable<ResponseBase<DeleteNearCommentResponse>> deleteNearComment(@Body RequestBase<DeleteNearCommentRequest> request);
+
+        @POST("api/DeleteNearCircleInfo")
+        Observable<ResponseBase<DeleteNearCircleInfoResponse>> deleteNearCircleInfo(@Body RequestBase<DeleteNearCircleInfoRequest> request);
     }
 }
