@@ -13,7 +13,6 @@
             android:layout_height="wrap_content" />
 
         <RelativeLayout
-            android:id="@+id/rl_privacy_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
@@ -25,12 +24,25 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:text="隐私设置" />
+                android:text="关闭所有提示" />
+
+            <Switch
+                android:id="@+id/switch_all_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:checked="false"
+                android:switchMinWidth="50dp"
+                android:textOff="  "
+                android:textOn="  "
+                android:thumb="@drawable/switch_thumb"
+                android:track="@drawable/switch_track" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_message_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
@@ -42,12 +54,26 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:text="消息提示设置" />
+                android:text="声音提示" />
+
+            <Switch
+                android:id="@+id/switch_sound_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:checked="true"
+                android:switchMinWidth="50dp"
+                android:textOff="  "
+                android:textOn="  "
+                android:thumb="@drawable/switch_thumb"
+                android:track="@drawable/switch_track" />
 
         </RelativeLayout>
+
 
         <RelativeLayout
-            android:id="@+id/rl_password_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
@@ -59,9 +85,22 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:text="密码重置" />
+                android:text="震动提示" />
+
+            <Switch
+                android:id="@+id/switch_shake_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:checked="true"
+                android:switchMinWidth="50dp"
+                android:textOff="  "
+                android:textOn="  "
+                android:thumb="@drawable/switch_thumb"
+                android:track="@drawable/switch_track" />
 
         </RelativeLayout>
-
     </LinearLayout>
 </layout>

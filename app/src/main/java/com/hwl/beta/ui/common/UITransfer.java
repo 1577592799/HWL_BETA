@@ -44,6 +44,9 @@ import com.hwl.beta.ui.user.ActivityNewFriend;
 import com.hwl.beta.ui.user.ActivityUserEdit;
 import com.hwl.beta.ui.user.ActivityUserEditItem;
 import com.hwl.beta.ui.user.ActivityUserIndex;
+import com.hwl.beta.ui.user.ActivityUserMessageSetting;
+import com.hwl.beta.ui.user.ActivityUserPasswordReset;
+import com.hwl.beta.ui.user.ActivityUserPrivacySetting;
 import com.hwl.beta.ui.user.ActivityUserSearch;
 import com.hwl.beta.ui.user.ActivityUserSetting;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
@@ -96,6 +99,21 @@ public class UITransfer {
 
     public static void toUserSettingActivity(Activity context) {
         Intent intent = new Intent(context, ActivityUserSetting.class);
+        context.startActivity(intent);
+    }
+
+    public static void toUserMessageSettingActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityUserMessageSetting.class);
+        context.startActivity(intent);
+    }
+
+    public static void toUserPrivacySettingActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityUserPrivacySetting.class);
+        context.startActivity(intent);
+    }
+
+    public static void toUserPasswordResetActivity(Activity context) {
+        Intent intent = new Intent(context, ActivityUserPasswordReset.class);
         context.startActivity(intent);
     }
 

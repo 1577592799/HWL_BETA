@@ -8,6 +8,7 @@ import android.view.View;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityUserSettingBinding;
 import com.hwl.beta.ui.common.BaseActivity;
+import com.hwl.beta.ui.common.UITransfer;
 
 public class ActivityUserSetting extends BaseActivity {
 
@@ -24,7 +25,6 @@ public class ActivityUserSetting extends BaseActivity {
     }
 
     private void initView() {
-
         binding.tbTitle.setTitle("个人设置")
                 .setImageRightHide()
                 .setImageLeftClick(new View.OnClickListener() {
@@ -34,5 +34,23 @@ public class ActivityUserSetting extends BaseActivity {
                     }
                 });
 
+        binding.rlPrivacySetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toUserPrivacySettingActivity(activity);
+            }
+        });
+        binding.rlMessageSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toUserMessageSettingActivity(activity);
+            }
+        });
+        binding.rlPasswordSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UITransfer.toUserPasswordResetActivity(activity);
+            }
+        });
     }
 }
