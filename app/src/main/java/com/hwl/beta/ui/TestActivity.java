@@ -1,40 +1,16 @@
 package com.hwl.beta.ui;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.hwl.beta.R;
-import com.hwl.beta.emotion.EmotionDefaultPannel;
-import com.hwl.beta.photoview.PhotoView;
 import com.hwl.beta.ui.common.BaseActivity;
-import com.hwl.beta.ui.common.MessageNotifyManager;
+import com.hwl.beta.ui.common.MessageNotifyManage;
 import com.hwl.beta.utils.AppUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -55,7 +31,7 @@ public class TestActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MessageNotifyManager.play();
+                MessageNotifyManage.play();
             }
         });
 

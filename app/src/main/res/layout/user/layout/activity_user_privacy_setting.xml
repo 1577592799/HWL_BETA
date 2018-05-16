@@ -27,6 +27,7 @@
                 android:text="对陌生人隐藏我的头像" />
 
             <Switch
+                android:id="@+id/switch_hide_userheadimage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -56,6 +57,7 @@
                 android:text="拒绝陌生人的聊天请求" />
 
             <Switch
+                android:id="@+id/switch_reject_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -72,6 +74,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/rl_black_users"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"

@@ -43,9 +43,11 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_sound_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
+            android:layout_marginTop="@dimen/dp_20"
             android:background="@color/white"
             android:padding="15dp">
 
@@ -74,6 +76,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/rl_shake_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"

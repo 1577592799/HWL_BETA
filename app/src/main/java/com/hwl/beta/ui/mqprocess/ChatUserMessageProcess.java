@@ -8,7 +8,7 @@ import com.hwl.beta.mq.bean.ChatUserMessageBean;
 import com.hwl.beta.mq.receive.IMessageProcess;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserSP;
-import com.hwl.beta.ui.common.MessageNotifyManager;
+import com.hwl.beta.ui.common.MessageNotifyManage;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,6 +62,6 @@ public class ChatUserMessageProcess implements IMessageProcess<ChatUserMessageBe
 
         EventBus.getDefault().post(message);
         EventBus.getDefault().post(record);
-        MessageNotifyManager.play();
+        MessageNotifyManage.play();
     }
 }

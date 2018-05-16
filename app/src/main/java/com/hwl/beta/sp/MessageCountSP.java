@@ -16,7 +16,6 @@ public class MessageCountSP {
     private static final String NEARCIRCLEMESSAGECOUNT = "nearcirclemessagecount";
     private static final String CIRCLEMESSAGECOUNT = "circlemessagecount";
 
-
     private static SharedPreferences getSP() {
         return HWLApp.getContext().getSharedPreferences(MESSAGECOUNTPREFERENCE, Context.MODE_PRIVATE);
     }

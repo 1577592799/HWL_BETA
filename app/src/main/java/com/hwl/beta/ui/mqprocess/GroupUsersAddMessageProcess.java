@@ -10,8 +10,7 @@ import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.receive.IMessageProcess;
 import com.hwl.beta.net.group.GroupService;
 import com.hwl.beta.net.group.body.GroupUsersResponse;
-import com.hwl.beta.ui.busbean.EventBusConstant;
-import com.hwl.beta.ui.common.MessageNotifyManager;
+import com.hwl.beta.ui.common.MessageNotifyManage;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBGroupAction;
 import com.hwl.beta.utils.StringUtils;
@@ -72,6 +71,6 @@ public class GroupUsersAddMessageProcess implements IMessageProcess<GroupUsersAd
 
         EventBus.getDefault().post(record);
         EventBus.getDefault().post(chatGroupMessage);
-        MessageNotifyManager.play();
+        MessageNotifyManage.play();
     }
 }

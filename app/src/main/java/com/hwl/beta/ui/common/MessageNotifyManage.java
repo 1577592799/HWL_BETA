@@ -6,10 +6,11 @@ import android.media.RingtoneManager;
 import android.os.Vibrator;
 
 import com.hwl.beta.HWLApp;
+import com.hwl.beta.sp.UserSettingSP;
 
 import java.util.Date;
 
-public class MessageNotifyManager {
+public class MessageNotifyManage {
     public static final long MAX_PLAY_TIME = 10 * 1000;//10s内不要重新播放
     private static Vibrator vibrator;
     private static Ringtone ringtone;
@@ -23,12 +24,12 @@ public class MessageNotifyManager {
     }
 
     public static void play() {
-        if (!isPlay()) return;
+        if (!isPlay() || UserSettingSP.getMessageNotifySettingCloseAll()) return;
         // 震动 100ms
-        if (vibrator != null) {
+        if (vibrator != null && UserSettingSP.getMessageNotifySettingOpenShake()) {
             vibrator.vibrate(100);
         }
-        if (ringtone != null) {
+        if (ringtone != null && UserSettingSP.getMessageNotifySettingOpenSound()) {
             ringtone.play();
         }
         prevTime = new Date();
