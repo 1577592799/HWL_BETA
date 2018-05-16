@@ -171,6 +171,33 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return 0;
     }
 
+    public void addMessage(ChatUserMessage msg) {
+        if (msg == null) return;
+        boolean isExists = false;
+        int position = messages.indexOf(msg);
+        if (position == -1) {
+            messages.add(msg);
+            notifyItemInserted(messages.size() - 1);
+        } else {
+            messages.remove(position);
+            messages.add(position, msg);
+            notifyItemChanged(position);
+        }
+    }
+
+    public void addMessages(List<ChatUserMessage> msgs) {
+        if (msgs == null || msgs.size() <= 0) return;
+        messages.addAll(0, msgs);
+//        notifyItemRangeInserted(0, messages.size()-1);
+    }
+
+    public long getMinMessageId() {
+        if (messages != null && messages.size() > 0) {
+            return messages.get(0).getMsgId();
+        }
+        return 0;
+    }
+
     @Override
     public int getItemCount() {
         return messages.size();

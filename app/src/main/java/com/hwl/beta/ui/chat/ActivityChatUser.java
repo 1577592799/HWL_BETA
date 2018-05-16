@@ -1,9 +1,11 @@
 package com.hwl.beta.ui.chat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -41,13 +43,24 @@ import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.widget.TitleBar;
 import com.hwl.beta.utils.StringUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2017/12/31.
@@ -56,12 +69,14 @@ import java.util.List;
 public class ActivityChatUser extends BaseActivity {
 
     Activity activity;
+    SmartRefreshLayout refreshLayout;
     List<ChatUserMessage> messages;
     ChatUserMessageAdapter messageAdapter;
     RecyclerView rvMessageContainer;
     ChatUserEmotionPannelListener emotionPannelListener;
     Friend user;
     boolean isFriend = false;
+    int pageSize = 10;
     long myUserId;
     long currentRecordId = 0;
 
@@ -90,18 +105,67 @@ public class ActivityChatUser extends BaseActivity {
             isFriend = true;
         }
 
-        messages = DaoUtils.getChatUserMessageManagerInstance().getFromUserMessages(myUserId, user.getId());
+        messages = DaoUtils.getChatUserMessageManagerInstance().getFromUserMessages(myUserId, user.getId(), 0, pageSize);
+        sortMessages(messages);
         if (messages == null) {
             messages = new ArrayList<>();
         }
+        initView();
 
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void loadMessages() {
+        long msgId = messageAdapter.getMinMessageId();
+        if (msgId <= 0) return;
+        Observable.just(msgId)
+                .map(new Function<Long, List<ChatUserMessage>>() {
+                    @Override
+                    public List<ChatUserMessage> apply(Long msgId) throws Exception {
+                        return DaoUtils.getChatUserMessageManagerInstance().getFromUserMessages(myUserId, user.getId(), msgId, pageSize);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<ChatUserMessage>>() {
+                    @Override
+                    public void accept(List<ChatUserMessage> msgs) throws Exception {
+                        if (msgs != null && msgs.size() > 0) {
+                            sortMessages(msgs);
+                            messageAdapter.addMessages(msgs);
+                        } else {
+                            refreshLayout.setEnableRefresh(false);
+                        }
+                        refreshLayout.finishRefresh(true);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        refreshLayout.finishRefresh(false);
+                    }
+                });
+    }
+
+    private void sortMessages(List<ChatUserMessage> messageList) {
+        if (messageList == null || messageList.size() <= 0) return;
+        Collections.sort(messageList, new Comparator<ChatUserMessage>() {
+            public int compare(ChatUserMessage arg0, ChatUserMessage arg1) {
+                return arg0.getMsgId().compareTo(arg1.getMsgId());
+            }
+        });
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initView() {
         TitleBar tbTitle = findViewById(R.id.tb_title);
         tbTitle.setTitle(user.getName())
                 .setImageRightResource(R.drawable.ic_setting)
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Toast.makeText(activity, "用户聊天信息设置", Toast.LENGTH_SHORT).show();
                         UITransfer.toChatUserSettingActivity(activity, user.getId(), user.getName(), user.getHeadImage());
                     }
                 })
@@ -139,9 +203,16 @@ public class ActivityChatUser extends BaseActivity {
             }
         });
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+        refreshLayout = findViewById(R.id.refreshLayout);
+        refreshLayout.setEnableLoadMore(false);
+        refreshLayout.setEnableScrollContentWhenLoaded(false);
+        refreshLayout.setEnableScrollContentWhenRefreshed(false);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                loadMessages();
+            }
+        });
     }
 
     @Override
@@ -176,25 +247,25 @@ public class ActivityChatUser extends BaseActivity {
         if (message == null) return;
         if (message.getFromUserId() != user.getId() && message.getFromUserId() != myUserId) return;
         checkFriendInfo(message);
-
-        boolean isExists = false;
-        int position = 0;
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
-                isExists = true;
-                position = i;
-                break;
-            }
-        }
-
-        if (isExists) {
-            messages.remove(position);
-            messages.add(position, message);
-        } else {
-            messages.add(message);
-        }
-
-        messageAdapter.notifyDataSetChanged();
+        messageAdapter.addMessage(message);
+//        boolean isExists = false;
+//        int position = 0;
+//        for (int i = 0; i < messages.size(); i++) {
+//            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
+//                isExists = true;
+//                position = i;
+//                break;
+//            }
+//        }
+//
+//        if (isExists) {
+//            messages.remove(position);
+//            messages.add(position, message);
+//        } else {
+//            messages.add(message);
+//        }
+//
+//        messageAdapter.notifyDataSetChanged();
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
@@ -278,7 +349,7 @@ public class ActivityChatUser extends BaseActivity {
         @Override
         public void onImageItemClick(int position) {
             int imageIndex = 0;
-            int imagePosition=0;
+            int imagePosition = 0;
             List<String> images = new ArrayList<>();
             for (int i = 0; i < messages.size(); i++) {
                 if (messages.get(i).getContentType() == NetConstant.CIRCLE_CONTENT_IMAGE) {
@@ -290,7 +361,7 @@ public class ActivityChatUser extends BaseActivity {
                         images.add(messages.get(i).getPreviewUrl());
                     }
                     if (i == position) {
-                        imagePosition=imageIndex;
+                        imagePosition = imageIndex;
                     }
                     imageIndex++;
                 }

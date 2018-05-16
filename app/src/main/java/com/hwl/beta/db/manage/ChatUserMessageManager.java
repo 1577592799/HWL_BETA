@@ -51,6 +51,16 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
                 .list();
     }
 
+    public List<ChatUserMessage> getFromUserMessages(long toUserId, long fromUserId, long minMessageId, int pageSize) {
+        return daoSession.getChatUserMessageDao().queryBuilder()
+                .orderDesc(ChatUserMessageDao.Properties.MsgId)
+                .whereOr(ChatUserMessageDao.Properties.FromUserId.eq(fromUserId), ChatUserMessageDao.Properties.FromUserId.eq(toUserId))
+                .whereOr(ChatUserMessageDao.Properties.ToUserId.eq(fromUserId), ChatUserMessageDao.Properties.ToUserId.eq(toUserId))
+                .where(minMessageId <= 0 ? ChatUserMessageDao.Properties.MsgId.gt(minMessageId) : ChatUserMessageDao.Properties.MsgId.lt(minMessageId))
+                .limit(pageSize)
+                .list();
+    }
+
     public boolean deleteMessage(long msgId) {
         if (msgId <= 0) return false;
         daoSession.getChatUserMessageDao().deleteByKeyInTx(msgId);

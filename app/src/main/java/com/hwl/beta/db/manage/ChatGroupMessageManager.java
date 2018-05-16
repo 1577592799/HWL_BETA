@@ -30,7 +30,18 @@ public class ChatGroupMessageManager extends BaseDao<ChatGroupMessage> {
 
 
     public List<ChatGroupMessage> getGroupMessages(String groupGuid) {
-        return daoSession.getChatGroupMessageDao().queryBuilder().where(ChatGroupMessageDao.Properties.GroupGuid.eq(groupGuid)).list();
+        return daoSession.getChatGroupMessageDao().queryBuilder()
+                .where(ChatGroupMessageDao.Properties.GroupGuid.eq(groupGuid))
+                .list();
+    }
+
+    public List<ChatGroupMessage> getGroupMessages(String groupGuid, long minMessageId, int pageSize) {
+        return daoSession.getChatGroupMessageDao().queryBuilder()
+                .orderDesc(ChatGroupMessageDao.Properties.MsgId)
+                .where(ChatGroupMessageDao.Properties.GroupGuid.eq(groupGuid))
+                .where(minMessageId <= 0 ? ChatGroupMessageDao.Properties.MsgId.gt(minMessageId) : ChatGroupMessageDao.Properties.MsgId.lt(minMessageId))
+                .limit(pageSize)
+                .list();
     }
 
     public void updateStatus(long msgId, int status) {

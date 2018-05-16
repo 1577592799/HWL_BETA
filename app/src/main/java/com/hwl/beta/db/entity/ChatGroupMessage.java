@@ -171,4 +171,13 @@ public class ChatGroupMessage implements Serializable {
     public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ChatGroupMessage) {
+            ChatGroupMessage like = (ChatGroupMessage) obj;
+            return this.getMsgId() == like.getMsgId();
+        }
+        return super.equals(obj);
+    }
 }

@@ -1,9 +1,11 @@
 package com.hwl.beta.ui.chat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -40,13 +42,24 @@ import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.widget.TitleBar;
 import com.hwl.beta.utils.FileUtils;
 import com.hwl.beta.utils.StringUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2018/2/10.
@@ -55,6 +68,7 @@ import java.util.List;
 public class ActivityChatGroup extends BaseActivity {
 
     Activity activity;
+    SmartRefreshLayout refreshLayout;
     GroupInfo groupInfo;
     ChatRecordMessage record;
     RecyclerView rvMessageContainer;
@@ -62,6 +76,7 @@ public class ActivityChatGroup extends BaseActivity {
     ChatGroupMessageAdapter messageAdapter;
     ChatGroupEmotionPannelListener emotionPannelListener;
     TitleBar tbTitle;
+    int pageSize = 10;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,11 +100,21 @@ public class ActivityChatGroup extends BaseActivity {
             record = new ChatRecordMessage();
         }
 
-        messages = DaoUtils.getChatGroupMessageManagerInstance().getGroupMessages(groupInfo.getGroupGuid());
+        messages = DaoUtils.getChatGroupMessageManagerInstance().getGroupMessages(groupInfo.getGroupGuid(), 0, pageSize);
+        sortMessages(messages);
         if (messages == null) {
             messages = new ArrayList<>();
         }
 
+        initView();
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initView() {
         tbTitle = findViewById(R.id.tb_title);
         tbTitle.setTitle(groupInfo.getGroupName())
                 .setImageRightResource(R.drawable.ic_setting)
@@ -127,9 +152,57 @@ public class ActivityChatGroup extends BaseActivity {
             }
         });
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+        refreshLayout = findViewById(R.id.refreshLayout);
+        refreshLayout.setEnableLoadMore(false);
+        refreshLayout.setEnableScrollContentWhenLoaded(false);
+        refreshLayout.setEnableScrollContentWhenRefreshed(false);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                loadMessages();
+            }
+        });
+    }
+
+    @SuppressLint("CheckResult")
+    private void loadMessages() {
+        long msgId = messageAdapter.getMinMessageId();
+        if (msgId <= 0) return;
+        Observable.just(msgId)
+                .map(new Function<Long, List<ChatGroupMessage>>() {
+                    @Override
+                    public List<ChatGroupMessage> apply(Long msgId) throws Exception {
+                        return DaoUtils.getChatGroupMessageManagerInstance().getGroupMessages(groupInfo.getGroupGuid(), msgId, pageSize);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<ChatGroupMessage>>() {
+                    @Override
+                    public void accept(List<ChatGroupMessage> msgs) throws Exception {
+                        if (msgs != null && msgs.size() > 0) {
+                            sortMessages(msgs);
+                            messageAdapter.addMessages(msgs);
+                        } else {
+                            refreshLayout.setEnableRefresh(false);
+                        }
+                        refreshLayout.finishRefresh(true);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        refreshLayout.finishRefresh(false);
+                    }
+                });
+    }
+
+    private void sortMessages(List<ChatGroupMessage> messageList) {
+        if (messageList == null || messageList.size() <= 0) return;
+        Collections.sort(messageList, new Comparator<ChatGroupMessage>() {
+            public int compare(ChatGroupMessage arg0, ChatGroupMessage arg1) {
+                return arg0.getMsgId().compareTo(arg1.getMsgId());
+            }
+        });
     }
 
     @Override
@@ -180,25 +253,26 @@ public class ActivityChatGroup extends BaseActivity {
     public void updateGroupMessage(ChatGroupMessage message) {
         if (message == null) return;
         if (!message.getGroupGuid().equals(groupInfo.getGroupGuid())) return;
+        messageAdapter.addMessage(message);
 
-        boolean isExists = false;
-        int position = 0;
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
-                isExists = true;
-                position = i;
-                break;
-            }
-        }
-
-        if (isExists) {
-            messages.remove(position);
-            messages.add(position, message);
-        } else {
-            messages.add(message);
-        }
-
-        messageAdapter.notifyDataSetChanged();
+//        boolean isExists = false;
+//        int position = 0;
+//        for (int i = 0; i < messages.size(); i++) {
+//            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
+//                isExists = true;
+//                position = i;
+//                break;
+//            }
+//        }
+//
+//        if (isExists) {
+//            messages.remove(position);
+//            messages.add(position, message);
+//        } else {
+//            messages.add(message);
+//        }
+//
+//        messageAdapter.notifyDataSetChanged();
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
@@ -260,7 +334,7 @@ public class ActivityChatGroup extends BaseActivity {
         @Override
         public void onImageItemClick(int position) {
             int imageIndex = 0;
-            int imagePosition=0;
+            int imagePosition = 0;
             List<String> images = new ArrayList<>();
             for (int i = 0; i < messages.size(); i++) {
                 if (messages.get(i).getContentType() == NetConstant.CIRCLE_CONTENT_IMAGE) {
@@ -272,7 +346,7 @@ public class ActivityChatGroup extends BaseActivity {
                         images.add(messages.get(i).getPreviewUrl());
                     }
                     if (i == position) {
-                        imagePosition=imageIndex;
+                        imagePosition = imageIndex;
                     }
                     imageIndex++;
                 }

@@ -154,4 +154,13 @@ public class ChatUserMessage implements Serializable {
     public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ChatUserMessage) {
+            ChatUserMessage like = (ChatUserMessage) obj;
+            return this.getMsgId() == like.getMsgId();
+        }
+        return super.equals(obj);
+    }
 }
