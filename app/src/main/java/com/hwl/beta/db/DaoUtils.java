@@ -30,6 +30,21 @@ public class DaoUtils {
     private static CircleManager circleManager;
     private static CircleMessageManager circleMessageManager;
 
+    public static void closeDB() {
+        friendManager = null;
+        friendRequestManager = null;
+        chatUserMessageManager = null;
+        chatRecordMessageManager = null;
+        chatGroupMessageManager = null;
+        groupInfoManager = null;
+        groupUserInfoManager = null;
+        nearCircleMessageManager = null;
+        circleManager = null;
+        circleMessageManager = null;
+        nearCircleManager = null;
+        DaoManager.getInstance().closeDataBase();
+    }
+
     public static synchronized CircleMessageManager getCircleMessageManagerInstance() {
         if (circleMessageManager == null) {
             circleMessageManager = new CircleMessageManager(HWLApp.getContext());

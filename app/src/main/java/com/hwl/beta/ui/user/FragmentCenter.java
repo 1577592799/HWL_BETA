@@ -1,7 +1,6 @@
 package com.hwl.beta.ui.user;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -16,10 +15,9 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.FragmentCenterBinding;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.net.general.GeneralService;
 import com.hwl.beta.net.general.body.CheckVersionResponse;
-import com.hwl.beta.net.resx.DownloadService;
-import com.hwl.beta.net.resx.IDownloadProgressListener;
 import com.hwl.beta.net.user.NetUserInfo;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
@@ -31,14 +29,10 @@ import com.hwl.beta.ui.user.action.ICenterListener;
 import com.hwl.beta.ui.user.bean.CenterBean;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.utils.AppUtils;
-import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2017/12/27.
@@ -160,10 +154,7 @@ public class FragmentCenter extends Fragment {
 
         @Override
         public void onLogoutClick() {
-            UserSP.clearUserInfo();
-            UserPosSP.clearPosInfo();
-
-            UITransfer.toWelcomeActivity(activity);
+            UITransfer.toLogout(activity);
             activity.finish();
         }
     }

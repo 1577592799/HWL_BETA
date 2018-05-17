@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.hwl.beta.HWLApp;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.db.ext.NearCircleExt;
+import com.hwl.beta.mq.receive.MessageReceive;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.TestActivity;
@@ -90,6 +93,13 @@ public class UITransfer {
     public static void toWelcomeActivity(Activity context) {
         Intent intent = new Intent(context, ActivityWelcome.class);
         context.startActivity(intent);
+    }
+
+    public static void toLogout(Activity context) {
+        UserSP.clearUserInfo();
+        UserPosSP.clearPosInfo();
+        DaoUtils.closeDB();
+        toWelcomeActivity(context);
     }
 
     public static void toMainActivity(Activity context) {
@@ -343,17 +353,17 @@ public class UITransfer {
             @Override
             public void onClick(View v) {
 
-                UserSP.clearUserInfo();
-                UserPosSP.clearPosInfo();
-
-                Intent intent = new Intent(fragmentActivity, ActivityWelcome.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                fragmentActivity.startActivity(intent);
+//                Intent intent = new Intent(fragmentActivity, ActivityWelcome.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                fragmentActivity.startActivity(intent);
 
                 reloginFragment.dismiss();
+                toLogout(fragmentActivity);
+                fragmentActivity.finish();
             }
         });
         reloginFragment.show(fragmentActivity.getSupportFragmentManager(), "ReloginDialogFragment");
+        MessageReceive.stop();
     }
 
     public static void toChatGroupSettingActivity(Activity context, String groupGuid) {

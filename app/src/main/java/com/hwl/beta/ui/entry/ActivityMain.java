@@ -126,6 +126,7 @@ public class ActivityMain extends FragmentActivity {
         super.onDestroy();
         activity.unregisterReceiver(networkBroadcastReceiver);
         EventBus.getDefault().unregister(this);
+        MessageReceive.stop();
         SQLiteStudioService.instance().stop();
     }
 

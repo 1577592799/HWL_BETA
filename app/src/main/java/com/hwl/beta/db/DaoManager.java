@@ -38,14 +38,10 @@ public class DaoManager {
      * @return
      */
     public static DaoManager getInstance() {
-        DaoManager instance = null;
         if (mDaoManager == null) {
             synchronized (DaoManager.class) {
-                if (instance == null) {
-                    Log.d("DaoManager", "create dao manager instance ..." + getDBName());
-                    instance = new DaoManager();
-                    mDaoManager = instance;
-                }
+                Log.d(TAG, "create dao manager instance ..." + getDBName());
+                mDaoManager = new DaoManager();
             }
         }
         return mDaoManager;
@@ -67,19 +63,12 @@ public class DaoManager {
      */
     public DaoMaster getDaoMaster() {
         if (null == mDaoMaster) {
+            Log.d(TAG, "getDaoMaster=" + getDBName());
             mHelper = new DaoMaster.DevOpenHelper(context, getDBName(), null);
-            Log.d("DaoManager", "11111当前获取到的数据库名称为：" + mHelper.getDatabaseName());
             db = mHelper.getWritableDatabase();
             mDaoMaster = new DaoMaster(db);
         }
         return mDaoMaster;
-    }
-
-    public void reset(){
-        mHelper = new DaoMaster.DevOpenHelper(context, getDBName(), null);
-        Log.d("DaoManager", "22222当前获取到的数据库名称为：" + mHelper.getDatabaseName());
-        db = mHelper.getWritableDatabase();
-        mDaoMaster = new DaoMaster(db);
     }
 
     /**
@@ -89,10 +78,7 @@ public class DaoManager {
      */
     public DaoSession getDaoSession() {
         if (null == mDaoSession) {
-            if (null == mDaoMaster) {
-                mDaoMaster = getDaoMaster();
-            }
-            mDaoSession = mDaoMaster.newSession();
+            mDaoSession = getDaoMaster().newSession();
         }
         return mDaoSession;
     }
@@ -111,21 +97,35 @@ public class DaoManager {
      * 关闭数据库
      */
     public void closeDataBase() {
-        closeHelper();
-        closeDaoSession();
-    }
-
-    public void closeDaoSession() {
         if (null != mDaoSession) {
             mDaoSession.clear();
             mDaoSession = null;
         }
-    }
-
-    public static void closeHelper() {
+        if (mDaoMaster != null) {
+            mDaoMaster = null;
+        }
+        if (db != null) {
+            db.close();
+            db = null;
+        }
         if (mHelper != null) {
             mHelper.close();
             mHelper = null;
         }
+        mDaoManager = null;
     }
+
+//    public void closeDaoSession() {
+//        if (null != mDaoSession) {
+//            mDaoSession.clear();
+//            mDaoSession = null;
+//        }
+//    }
+//
+//    public static void closeHelper() {
+//        if (mHelper != null) {
+//            mHelper.close();
+//            mHelper = null;
+//        }
+//    }
 }

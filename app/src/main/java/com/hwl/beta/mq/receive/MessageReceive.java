@@ -31,6 +31,7 @@ public class MessageReceive {
     private static int position = 0;
     private static Thread receiveThread = null;
     private static Observable intervalObservable = null;
+    private static boolean isClose = false;
 //    private static IMessageReadSpeed messageReadSpeed;
 //
 //    public static void setMessageReadSpeed(IMessageReadSpeed messageReadSpeedListener) {
@@ -105,10 +106,20 @@ public class MessageReceive {
     }
 
     private static void restartReceive() {
+        isClose = false;
         if (receiveThread != null) {
             receiveThread = null;
         }
         start();
+    }
+
+    public static void stop() {
+        if (receiveThread != null) {
+            receiveThread.interrupt();
+            receiveThread = null;
+            MQManager.closeMQConnection();
+            isClose = true;
+        }
     }
 
     public static void stopCheck() {
@@ -116,6 +127,7 @@ public class MessageReceive {
     }
 
     public static void checkConnection() {
+        if (isClose) return;
         if (intervalObservable != null) return;
         intervalObservable = Observable.interval(INTERVAL_TIME_SECONDS, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io());
