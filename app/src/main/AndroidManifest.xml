@@ -39,14 +39,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="hy83dj" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.entry.ActivityMain"
@@ -104,9 +96,5 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
-        <meta-data
-            android:name="com.openinstall.APP_KEY"
-            android:value="hy83dj" />
     </application>
 </manifest>

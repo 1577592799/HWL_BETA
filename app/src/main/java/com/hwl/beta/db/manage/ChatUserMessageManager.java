@@ -86,6 +86,13 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
         return daoSession.getChatUserSettingDao().load(userId);
     }
 
+    public boolean getChatUserSettingIsShield(long userId) {
+        if (userId <= 0) return false;
+        ChatUserSetting setting = daoSession.getChatUserSettingDao().load(userId);
+        if (setting == null) return false;
+        return setting.getIsShield();
+    }
+
     public void setChatUserSetting(ChatUserSetting userSetting) {
         if (userSetting == null) return;
         daoSession.getChatUserSettingDao().insertOrReplace(userSetting);

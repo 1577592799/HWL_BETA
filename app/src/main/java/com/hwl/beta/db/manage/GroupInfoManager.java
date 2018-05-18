@@ -47,6 +47,13 @@ public class GroupInfoManager extends BaseDao<GroupInfo> {
         return daoSession.getGroupInfoDao().queryBuilder().where(GroupInfoDao.Properties.GroupGuid.eq(groupGuid)).unique();
     }
 
+    public boolean getGroupSettingIsShield(String groupGuid) {
+        if (StringUtils.isBlank(groupGuid)) return false;
+        GroupInfo setting = get(groupGuid);
+        if (setting == null) return false;
+        return setting.getIsShield();
+    }
+
     public boolean updateUserCount(String groupGuid, int count) {
         if (StringUtils.isBlank(groupGuid)) return false;
 

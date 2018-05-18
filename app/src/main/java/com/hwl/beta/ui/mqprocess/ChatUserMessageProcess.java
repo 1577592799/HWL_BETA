@@ -37,7 +37,7 @@ public class ChatUserMessageProcess implements IMessageProcess<ChatUserMessageBe
         record.setToUserHeadImage(user.getHeadImage());
         record.setTitle(model.getFromUserName());
         record.setContentType(model.getContentType());
-        record.setContent(StringUtils.cutString(model.getContent(),25));
+        record.setContent(StringUtils.cutString(model.getContent(), 25));
         //record.setUnreadCount(1);
         record.setSendTime(model.getSendTime());
         record = DaoUtils.getChatRecordMessageManagerInstance().addOrUpdate(record);
@@ -62,6 +62,6 @@ public class ChatUserMessageProcess implements IMessageProcess<ChatUserMessageBe
 
         EventBus.getDefault().post(message);
         EventBus.getDefault().post(record);
-        MessageNotifyManage.play();
+        MessageNotifyManage.play(DaoUtils.getChatUserMessageManagerInstance().getChatUserSettingIsShield(user.getId() == record.getFromUserId() ? record.getToUserId() : record.getFromUserId()));
     }
 }

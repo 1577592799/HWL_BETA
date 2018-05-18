@@ -14,8 +14,10 @@ import android.widget.Toast;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityChatUserSettingBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.ChatUserSetting;
 import com.hwl.beta.sp.UserSP;
+import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventClearUserMessages;
@@ -80,6 +82,11 @@ public class ActivityChatUserSetting extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 userSetting.setIsShield(isChecked);
                 DaoUtils.getChatUserMessageManagerInstance().setChatUserSetting(userSetting);
+                ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().getUserRecord(myUserId, userSetting.getUserId());
+                if (recordMessage != null) {
+                    recordMessage.setIsShield(userSetting.getIsShield());
+                    EventBus.getDefault().post(new EventActionChatRecord(EventBusConstant.EB_TYPE_CHAT_RECORD_UPDATE_SHIELD, recordMessage));
+                }
             }
         });
         binding.rlSearch.setOnClickListener(new View.OnClickListener() {
@@ -109,13 +116,13 @@ public class ActivityChatUserSetting extends BaseActivity {
         binding.ivHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UITransfer.toUserIndexActivity(activity,viewUserId,viewUserName,viewUserImage);
+                UITransfer.toUserIndexActivity(activity, viewUserId, viewUserName, viewUserImage);
             }
         });
         binding.tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UITransfer.toUserIndexActivity(activity,viewUserId,viewUserName,viewUserImage);
+                UITransfer.toUserIndexActivity(activity, viewUserId, viewUserName, viewUserImage);
             }
         });
     }

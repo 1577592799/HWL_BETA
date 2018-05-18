@@ -3,10 +3,10 @@ package com.hwl.beta.ui.chat.adp;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.bumptech.glide.Glide;
 import com.hwl.beta.R;
@@ -25,12 +25,12 @@ import java.util.List;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordViewHolder> {
 
-    final Context context;
+    private Context context;
     private LayoutInflater inflater;
-    List<ChatRecordMessage> records;
-    IAdapterListener adapterListener;
-    int totalMessageCount = 0;
-    int imageSize = 100;
+    private List<ChatRecordMessage> records;
+    private IAdapterListener adapterListener;
+    private int totalMessageCount = 0;
+    private int imageSize = 100;
 
     public RecordAdapter(Context context, List<ChatRecordMessage> records, IAdapterListener adapterListener) {
         this.context = context;
@@ -42,8 +42,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
 
     @Override
     public RecordAdapter.RecordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecordItemBinding itemBinding = DataBindingUtil.inflate(inflater, R.layout.record_item, parent, false);
-        return new RecordViewHolder(itemBinding);
+        return new RecordViewHolder((RecordItemBinding) DataBindingUtil.inflate(inflater, R.layout.record_item, parent, false));
     }
 
     @Override
@@ -52,19 +51,18 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         ChatRecordMessage record = records.get(position);
         itemBinding.setRecord(record);
         itemBinding.setPosition(position);
-//        itemBinding.tvTime.setText(DateUtils.dateToStrLong2(record.getSendTime()));
+        itemBinding.tvTime.setText(DateUtils.getChatShowTime(record.getSendTime()));
+        itemBinding.ivNotify.setVisibility(record.getIsShield() ? View.VISIBLE : View.GONE);
+//        Log.d("RecordAdapter", "record.getIsShield()=" + record.getIsShield());
 
         switch (record.getRecordType()) {
             case MQConstant.CHAT_RECORD_TYPE_GROUP:
                 itemBinding.ivGroupImage.setVisibility(View.VISIBLE);
                 itemBinding.ivRecordImage.setVisibility(View.GONE);
-                List<String> groupUserImages = DaoUtils.getGroupInfoManagerInstance().getGroupUserImages(record.getGruopGuid());
-                if (groupUserImages != null && groupUserImages.size() > 0) {
-                    itemBinding.ivGroupImage.displayImage(groupUserImages)
-                            .synthesizedWidthHeight(imageSize, imageSize)
-                            .defaultImage(R.drawable.empty_photo)
-                            .load();
-                }
+                itemBinding.ivGroupImage.displayImage(record.getGroupUserImages())
+                        .synthesizedWidthHeight(imageSize, imageSize)
+                        .defaultImage(R.drawable.empty_photo)
+                        .load();
                 break;
             default:
                 itemBinding.ivGroupImage.setVisibility(View.GONE);

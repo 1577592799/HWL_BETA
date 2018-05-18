@@ -3,14 +3,17 @@ package com.hwl.beta.db.manage;
 import android.content.Context;
 
 import com.hwl.beta.db.BaseDao;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.dao.ChatRecordMessageDao;
 import com.hwl.beta.db.entity.ChatRecordMessage;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +29,14 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
         if (StringUtils.isBlank(groupGuid)) return null;
         return daoSession.getChatRecordMessageDao().queryBuilder()
                 .where(ChatRecordMessageDao.Properties.GruopGuid.eq(groupGuid))
+                .unique();
+    }
+
+    public ChatRecordMessage getUserRecord(long myUserId,long fromUserId) {
+        if (fromUserId <= 0) return null;
+        return daoSession.getChatRecordMessageDao().queryBuilder()
+                .whereOr(ChatRecordMessageDao.Properties.FromUserId.eq(fromUserId), ChatRecordMessageDao.Properties.FromUserId.eq(myUserId))
+                .whereOr(ChatRecordMessageDao.Properties.ToUserId.eq(fromUserId), ChatRecordMessageDao.Properties.ToUserId.eq(myUserId))
                 .unique();
     }
 
@@ -101,6 +112,26 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
 
     public List<ChatRecordMessage> getAll() {
         return daoSession.getChatRecordMessageDao().loadAll();
+    }
+
+    public List<ChatRecordMessage> getRecords() {
+        List<ChatRecordMessage> recordMessages = daoSession.getChatRecordMessageDao().loadAll();
+        if (recordMessages != null && recordMessages.size() > 0) {
+            for (int i = 0; i < recordMessages.size(); i++) {
+                if (recordMessages.get(i).getRecordType() == MQConstant.CHAT_RECORD_TYPE_USER) {
+                    long userId = UserSP.getUserId() == recordMessages.get(i).getFromUserId() ? recordMessages.get(i).getToUserId() : recordMessages.get(i).getFromUserId();
+                    recordMessages.get(i).setIsShield(DaoUtils.getChatUserMessageManagerInstance().getChatUserSettingIsShield(userId));
+                } else if (recordMessages.get(i).getRecordType() == MQConstant.CHAT_RECORD_TYPE_GROUP) {
+                    GroupInfo groupInfo = DaoUtils.getGroupInfoManagerInstance().get(recordMessages.get(i).getGruopGuid());
+                    if (groupInfo != null) {
+                        recordMessages.get(i).setIsShield(groupInfo.getIsShield());
+                        recordMessages.get(i).setGroupUserImages(groupInfo.getUserImages());
+                    }
+                }
+            }
+            return recordMessages;
+        }
+        return new ArrayList<>();
     }
 
     public ChatRecordMessage clearUnreadCount(long recordId) {

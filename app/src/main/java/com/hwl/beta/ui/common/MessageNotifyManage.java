@@ -23,6 +23,11 @@ public class MessageNotifyManage {
             ringtone = RingtoneManager.getRingtone(HWLApp.getContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
     }
 
+    public static void play(boolean isShield) {
+        if (isShield) return;
+        play();
+    }
+
     public static void play() {
         if (!isPlay() || UserSettingSP.getMessageNotifySettingCloseAll()) return;
         // 震动 100ms

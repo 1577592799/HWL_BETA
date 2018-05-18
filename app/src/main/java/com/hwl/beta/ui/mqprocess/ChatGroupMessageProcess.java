@@ -62,6 +62,6 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
 
         EventBus.getDefault().post(record);
         EventBus.getDefault().post(message);
-        MessageNotifyManage.play();
+        MessageNotifyManage.play(DaoUtils.getGroupInfoManagerInstance().getGroupSettingIsShield(record.getGruopGuid()));
     }
 }

@@ -28,7 +28,6 @@ public class ChatGroupMessageManager extends BaseDao<ChatGroupMessage> {
         return daoSession.getChatGroupMessageDao().loadAll();
     }
 
-
     public List<ChatGroupMessage> getGroupMessages(String groupGuid) {
         return daoSession.getChatGroupMessageDao().queryBuilder()
                 .where(ChatGroupMessageDao.Properties.GroupGuid.eq(groupGuid))

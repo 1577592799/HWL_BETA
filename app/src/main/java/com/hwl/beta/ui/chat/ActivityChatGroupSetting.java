@@ -243,6 +243,11 @@ public class ActivityChatGroupSetting extends BaseActivity {
         public void onShieldCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             group.setIsShield(isChecked);
             DaoUtils.getGroupInfoManagerInstance().add(group);
+            ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().getGroupRecord(group.getGroupGuid());
+            if (recordMessage != null) {
+                recordMessage.setIsShield(group.getIsShield());
+                EventBus.getDefault().post(new EventActionChatRecord(EventBusConstant.EB_TYPE_CHAT_RECORD_UPDATE_SHIELD, recordMessage));
+            }
         }
 
         @Override

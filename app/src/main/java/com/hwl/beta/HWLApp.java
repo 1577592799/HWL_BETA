@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.hwl.beta.sp.AppInstallStatus;
-import com.hwl.beta.ui.common.OpenInstallManage;
 import com.hwl.beta.ui.mqprocess.MQProcess;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
@@ -30,7 +29,6 @@ public class HWLApp extends Application {
 
         AppInstallStatus.setFrist();
         MQProcess.register();
-        OpenInstallManage.init();
     }
 
     @Override

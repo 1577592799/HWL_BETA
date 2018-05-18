@@ -14,6 +14,7 @@ import org.greenrobot.greendao.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/2/8.
@@ -41,6 +42,39 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
     private int unreadCount;
     @OrderBy("sendTime desc")
     private Date sendTime;
+
+    @Transient
+    private boolean isShield;
+    @Transient
+    private List<String> groupUserImages;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public boolean isShield() {
+        return isShield;
+    }
+
+    public void setShield(boolean shield) {
+        isShield = shield;
+    }
+
+    public List<String> getGroupUserImages() {
+        return groupUserImages;
+    }
+
+    public void setGroupUserImages(List<String> groupUserImages) {
+        this.groupUserImages = groupUserImages;
+    }
+
+    public boolean getIsShield() {
+        return this.isShield;
+    }
+
+    public void setIsShield(boolean isShield) {
+        this.isShield = isShield;
+    }
 
     @Generated(hash = 1096350464)
     public ChatRecordMessage(Long recordId, int recordType, String recordImage,
@@ -215,4 +249,12 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
         notifyPropertyChanged(BR.sendTime);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ChatRecordMessage) {
+            ChatRecordMessage record = (ChatRecordMessage) obj;
+            return this.getRecordId() == record.getRecordId();
+        }
+        return super.equals(obj);
+    }
 }

@@ -66,6 +66,6 @@ public class ChatFriendRequestProcess implements IMessageProcess<ChatFriendReque
         EventBus.getDefault().post(friend);
         EventBus.getDefault().post(message);
         EventBus.getDefault().post(record);
-        MessageNotifyManage.play();
+        MessageNotifyManage.play(DaoUtils.getChatUserMessageManagerInstance().getChatUserSettingIsShield(friend.getId()));
     }
 }

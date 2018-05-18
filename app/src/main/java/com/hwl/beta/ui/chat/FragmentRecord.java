@@ -55,11 +55,7 @@ public class FragmentRecord extends BaseFragment {
         activity = getActivity();
         dateComparator = new ChatRecordMessageComparator();
 
-        records = DaoUtils.getChatRecordMessageManagerInstance().getAll();
-        if (records == null) {
-            records = new ArrayList<>();
-        }
-
+        records = DaoUtils.getChatRecordMessageManagerInstance().getRecords();
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record, container, false);
         initView();
 
@@ -164,28 +160,44 @@ public class FragmentRecord extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateRecord(ChatRecordMessage record) {
         if (record == null) return;
-        for (int i = 0; i < records.size(); i++) {
-            if (record.getRecordId().equals(records.get(i).getRecordId())) {
-                records.remove(records.get(i));
-                break;
-            }
+        int position = records.indexOf(record);
+        if (position != -1) {
+            records.remove(position);
         }
         records.add(record);
         Collections.sort(records, dateComparator);
-        recordAdapter.notifyDataSetChanged();
+        recordAdapter.notifyItemRangeChanged(0, records.size());
+
+//        for (int i = 0; i < records.size(); i++) {
+//            if (record.getRecordId().equals(records.get(i).getRecordId())) {
+//                records.remove(records.get(i));
+//                break;
+//            }
+//        }
+//        records.add(record);
+//        Collections.sort(records, dateComparator);
+//        recordAdapter.notifyDataSetChanged();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void deleteRecord(EventActionChatRecord actionChatRecord) {
         if (actionChatRecord == null || actionChatRecord.getRecord() == null) return;
+        int position = records.indexOf(actionChatRecord.getRecord());
+        if (position == -1) return;
         if (actionChatRecord.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
-            for (int i = 0; i < records.size(); i++) {
-                if (actionChatRecord.getRecord().getRecordId() == records.get(i).getRecordId()) {
-                    records.remove(records.get(i));
-                    break;
-                }
-            }
-            recordAdapter.notifyDataSetChanged();
+            records.remove(position);
+            recordAdapter.notifyItemRemoved(position);
+            recordAdapter.notifyItemRangeChanged(position, records.size() - position);
+//            for (int i = 0; i < records.size(); i++) {
+//                if (actionChatRecord.getRecord().getRecordId() == records.get(i).getRecordId()) {
+//                    records.remove(records.get(i));
+//                    break;
+//                }
+//            }
+//            recordAdapter.notifyDataSetChanged();
+        } else if (actionChatRecord.getActionType() == EventBusConstant.EB_TYPE_CHAT_RECORD_UPDATE_SHIELD) {
+            records.get(position).setIsShield(actionChatRecord.getRecord().getIsShield());
+            recordAdapter.notifyItemChanged(position);
         }
     }
 
