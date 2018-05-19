@@ -29,6 +29,7 @@ import com.hwl.beta.emotion.audio.MediaManager;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatGroupMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
@@ -254,26 +255,15 @@ public class ActivityChatGroup extends BaseActivity {
         if (message == null) return;
         if (!message.getGroupGuid().equals(groupInfo.getGroupGuid())) return;
         messageAdapter.addMessage(message);
-
-//        boolean isExists = false;
-//        int position = 0;
-//        for (int i = 0; i < messages.size(); i++) {
-//            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
-//                isExists = true;
-//                position = i;
-//                break;
-//            }
-//        }
-//
-//        if (isExists) {
-//            messages.remove(position);
-//            messages.add(position, message);
-//        } else {
-//            messages.add(message);
-//        }
-//
-//        messageAdapter.notifyDataSetChanged();
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+
+        messageAdapter.updateUserName(remark.getFriendId(), remark.getFriendRemark());
     }
 
     @Override

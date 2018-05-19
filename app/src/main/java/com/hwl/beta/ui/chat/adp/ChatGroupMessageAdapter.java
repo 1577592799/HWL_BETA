@@ -39,6 +39,7 @@ import com.hwl.beta.ui.chat.holder.ChatMessageSendMessageViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageSendVideoViewHolder;
 import com.hwl.beta.utils.DateUtils;
 import com.hwl.beta.utils.ScreenUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -127,17 +128,17 @@ public class ChatGroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.V
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageReceivedMessageViewHolder) {
             ChatMessageReceivedMessageViewHolder viewHolder = (ChatMessageReceivedMessageViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getContent(), message.getFromUserName(), DateUtils.dateToStrLong2(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getContent(), message.getFromUserName(), DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedImageViewHolder) {
             ChatMessageReceivedImageViewHolder viewHolder = (ChatMessageReceivedImageViewHolder) holder;
             String showUrl = ChatImageViewBean.getShowUrl(message.getLocalUrl(), message.getPreviewUrl(), message.getOriginalUrl());
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), position, message.getFromUserName(), DateUtils.dateToStrLong2(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), position, message.getFromUserName(), DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedAudioViewHolder) {
             ChatMessageReceivedAudioViewHolder viewHolder = (ChatMessageReceivedAudioViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getPlayTime(), message.getFromUserName(), DateUtils.dateToStrLong2(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getPlayTime(), message.getFromUserName(), DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedVideoViewHolder) {
             ChatMessageReceivedVideoViewHolder viewHolder = (ChatMessageReceivedVideoViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), position, message.getFromUserName(), DateUtils.dateToStrLong2(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), position, message.getFromUserName(), DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedWelcomeTipViewHolder) {
             ChatMessageReceivedWelcomeTipViewHolder viewHolder = (ChatMessageReceivedWelcomeTipViewHolder) holder;
             viewHolder.setItemBinding(message.getContent());
@@ -205,6 +206,15 @@ public class ChatGroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.V
         return 0;
     }
 
+    public void updateUserName(long userId, String name) {
+        if (userId <= 0 || StringUtils.isBlank(name)) return;
+        for (int i = 0; i < messages.size(); i++) {
+            if (messages.get(i).getFromUserId() == userId) {
+                messages.get(i).setFromUserName(name);
+                notifyItemChanged(i);
+            }
+        }
+    }
 
     @Override
     public int getItemCount() {

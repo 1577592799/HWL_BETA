@@ -78,7 +78,6 @@ public class FragmentNear extends BaseFragment {
     Activity activity;
     List<NearCircleExt> nearCircles;
     NearCircleAdapter nearCircleAdapter;
-    //    boolean isDataChange = false;
     int pageCount = 15;
     long myUserId;
 
@@ -103,7 +102,6 @@ public class FragmentNear extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void addComment(NearCircleComment comment) {
         nearCircleAdapter.addComment(comment);
-        //NearCircleMessageSend.sendAddCommentMessage(info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId()).subscribe();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -195,29 +193,6 @@ public class FragmentNear extends BaseFragment {
             binding.refreshLayout.autoRefresh();
         }
     }
-
-//    private void saveInfo() {
-//        if (!isDataChange || nearCircles == null || nearCircles.size() <= 0) return;
-////        Log.d("FragmentNear", "save near info");
-//        isDataChange = false;
-//        Observable.fromIterable(nearCircles.subList(0, (pageCount > nearCircles.size() ? nearCircles.size() : pageCount)))
-//                .subscribeOn(Schedulers.io())
-//                .doOnNext(new Consumer<NearCircleExt>() {
-//                    @Override
-//                    public void accept(NearCircleExt nearCircleExt) throws Exception {
-//                        if (nearCircleExt != null && nearCircleExt.getInfo() != null) {
-//                            DaoUtils.getNearCircleManagerInstance().save(nearCircleExt.getInfo());
-//                            DaoUtils.getNearCircleManagerInstance().deleteImages(nearCircleExt.getInfo().getNearCircleId());
-//                            DaoUtils.getNearCircleManagerInstance().deleteComments(nearCircleExt.getInfo().getNearCircleId());
-//                            DaoUtils.getNearCircleManagerInstance().deleteLikes(nearCircleExt.getInfo().getNearCircleId());
-//                            DaoUtils.getNearCircleManagerInstance().saveImages(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getImages());
-//                            DaoUtils.getNearCircleManagerInstance().saveComments(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getComments());
-//                            DaoUtils.getNearCircleManagerInstance().saveLikes(nearCircleExt.getInfo().getNearCircleId(), nearCircleExt.getLikes());
-//                        }
-//                    }
-//                })
-//                .subscribe();
-//    }
 
     private void loadNearCircleInfoFromLocal() {
         Observable.just(1)

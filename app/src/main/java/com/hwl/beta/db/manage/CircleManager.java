@@ -3,6 +3,7 @@ package com.hwl.beta.db.manage;
 import android.content.Context;
 
 import com.hwl.beta.db.BaseDao;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.dao.CircleCommentDao;
 import com.hwl.beta.db.dao.CircleDao;
 import com.hwl.beta.db.dao.CircleImageDao;
@@ -11,6 +12,7 @@ import com.hwl.beta.db.entity.Circle;
 import com.hwl.beta.db.entity.CircleComment;
 import com.hwl.beta.db.entity.CircleImage;
 import com.hwl.beta.db.entity.CircleLike;
+import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.ext.CircleExt;
 
 import java.util.ArrayList;
@@ -181,7 +183,86 @@ public class CircleManager extends BaseDao<Circle> {
             ext.setLikes(getLikes(infos.get(i).getCircleId()));
             exts.add(ext);
         }
+
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(getCircleInfoUserIds(exts));
+        setCircleFriendInfo(exts, friends);
         return exts;
+    }
+
+    private Friend getFriend(List<Friend> friends, long userId) {
+        if (userId <= 0) return null;
+        for (int i = 0; i < friends.size(); i++) {
+            if (userId == friends.get(i).getId()) {
+                return friends.get(i);
+            }
+        }
+        return null;
+    }
+
+    private void setCircleFriendInfo(List<CircleExt> exts, List<Friend> friends) {
+        if (exts == null || exts.size() <= 0) return;
+        if (friends == null || friends.size() <= 0) return;
+
+        for (int i = 0; i < exts.size(); i++) {
+            Friend friend = getFriend(friends, exts.get(i).getInfo().getPublishUserId());
+            if (friend == null) continue;
+            exts.get(i).getInfo().setPublishUserName(friend.getShowName());
+            exts.get(i).getInfo().setPublishUserImage(friend.getHeadImage());
+
+            if (exts.get(i).getLikes() != null && exts.get(i).getLikes().size() > 0) {
+                for (int j = 0; j < exts.get(i).getLikes().size(); j++) {
+                    Friend friend2 = getFriend(friends, exts.get(i).getLikes().get(j).getLikeUserId());
+                    if (friend2 == null) continue;
+                    exts.get(i).getLikes().get(j).setLikeUserName(friend2.getShowName());
+                    exts.get(i).getLikes().get(j).setLikeUserImage(friend2.getHeadImage());
+                }
+            }
+
+            if (exts.get(i).getComments() != null && exts.get(i).getComments().size() > 0) {
+                for (int j = 0; j < exts.get(i).getComments().size(); j++) {
+                    Friend friend3 = getFriend(friends, exts.get(i).getComments().get(j).getCommentUserId());
+                    if (friend3 != null) {
+                        exts.get(i).getComments().get(j).setCommentUserName(friend3.getShowName());
+                        exts.get(i).getComments().get(j).setCommentUserImage(friend3.getHeadImage());
+                    }
+                    Friend friend4 = getFriend(friends, exts.get(i).getComments().get(j).getReplyUserId());
+                    if (friend4 != null) {
+                        exts.get(i).getComments().get(j).setReplyUserName(friend4.getShowName());
+                        exts.get(i).getComments().get(j).setReplyUserImage(friend4.getHeadImage());
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Long> getCircleInfoUserIds(List<CircleExt> exts) {
+        if (exts == null || exts.size() <= 0) return null;
+
+        List<Long> userIds = new ArrayList<>();
+        for (int i = 0; i < exts.size(); i++) {
+            if (!userIds.contains(exts.get(i).getInfo().getPublishUserId())) {
+                userIds.add(exts.get(i).getInfo().getPublishUserId());
+            }
+            if (exts.get(i).getLikes() != null && exts.get(i).getLikes().size() > 0) {
+                for (int j = 0; j < exts.get(i).getLikes().size(); j++) {
+                    if (!userIds.contains(exts.get(i).getLikes().get(j).getLikeUserId())) {
+                        userIds.add(exts.get(i).getLikes().get(j).getLikeUserId());
+                    }
+                }
+            }
+            if (exts.get(i).getComments() != null && exts.get(i).getComments().size() > 0) {
+                for (int j = 0; j < exts.get(i).getComments().size(); j++) {
+                    if (!userIds.contains(exts.get(i).getComments().get(j).getCommentUserId())) {
+                        userIds.add(exts.get(i).getComments().get(j).getCommentUserId());
+                    }
+                    if (!userIds.contains(exts.get(i).getComments().get(j).getReplyUserId())) {
+                        userIds.add(exts.get(i).getComments().get(j).getReplyUserId());
+                    }
+                }
+            }
+        }
+
+        return userIds;
     }
 
     public List<CircleExt> getUserCircles(long userId) {
@@ -200,6 +281,8 @@ public class CircleManager extends BaseDao<Circle> {
             ext.setLikes(getLikes(infos.get(i).getCircleId()));
             exts.add(ext);
         }
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(getCircleInfoUserIds(exts));
+        setCircleFriendInfo(exts, friends);
         return exts;
     }
 
@@ -213,6 +296,11 @@ public class CircleManager extends BaseDao<Circle> {
                 getComments(model.getCircleId()),
                 getLikes(model.getCircleId())
         );
+
+        List<CircleExt> exts = new ArrayList<>();
+        exts.add(info);
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(getCircleInfoUserIds(exts));
+        setCircleFriendInfo(exts, friends);
         return info;
     }
 

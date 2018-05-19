@@ -25,7 +25,7 @@ public class NearCircleMessage {
 
     public String getShowTime() {
         if (this.actionTime != null)
-            return DateUtils.dateToStrLong2(this.actionTime);
+            return DateUtils.getChatShowTime(this.actionTime);
         return null;
     }
 

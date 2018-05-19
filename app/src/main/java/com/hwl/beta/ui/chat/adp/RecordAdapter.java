@@ -16,6 +16,7 @@ import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.utils.DateUtils;
 import com.hwl.beta.utils.DisplayUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import java.util.List;
 
@@ -53,7 +54,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         itemBinding.setPosition(position);
         itemBinding.tvTime.setText(DateUtils.getChatShowTime(record.getSendTime()));
         itemBinding.ivNotify.setVisibility(record.getIsShield() ? View.VISIBLE : View.GONE);
-//        Log.d("RecordAdapter", "record.getIsShield()=" + record.getIsShield());
 
         switch (record.getRecordType()) {
             case MQConstant.CHAT_RECORD_TYPE_GROUP:
@@ -99,6 +99,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
             }
         });
     }
+
+//    public void updateUserRecordTitle(long userId,String title){
+//        if(userId<=0|| StringUtils.isBlank(title)) return;
+//        for (int i = 0; i < records.size(); i++) {
+//
+//        }
+//    }
 
     @Override
     public long getItemId(int position) {

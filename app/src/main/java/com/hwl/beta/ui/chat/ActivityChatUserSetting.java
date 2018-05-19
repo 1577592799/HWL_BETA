@@ -16,16 +16,20 @@ import com.hwl.beta.databinding.ActivityChatUserSettingBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.ChatUserSetting;
+import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventClearUserMessages;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class ActivityChatUserSetting extends BaseActivity {
 
@@ -41,6 +45,7 @@ public class ActivityChatUserSetting extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
+        myUserId = UserSP.getUserId();
 
         viewUserId = getIntent().getLongExtra("userid", 0);
         if (viewUserId <= 0) {
@@ -48,9 +53,14 @@ public class ActivityChatUserSetting extends BaseActivity {
             finish();
         }
 
-        myUserId = UserSP.getUserId();
-        viewUserName = getIntent().getStringExtra("username");
-        viewUserImage = getIntent().getStringExtra("userimage");
+        Friend friend = DaoUtils.getFriendManagerInstance().get(viewUserId);
+        if (friend != null) {
+            viewUserName = friend.getShowName();
+            viewUserImage = friend.getHeadImage();
+        } else {
+            viewUserName = getIntent().getStringExtra("username");
+            viewUserImage = getIntent().getStringExtra("userimage");
+        }
         userSetting = DaoUtils.getChatUserMessageManagerInstance().getChatUserSetting(viewUserId);
         if (userSetting == null) {
             userSetting = new ChatUserSetting();
@@ -62,6 +72,24 @@ public class ActivityChatUserSetting extends BaseActivity {
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_chat_user_setting);
 
         initView();
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0 || remark.getFriendId() != viewUserId)
+            return;
+        viewUserName = remark.getFriendRemark();
+        binding.tvName.setText(viewUserName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.hwl.beta.db.BaseDao;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.dao.GroupUserInfoDao;
+import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
 import com.hwl.beta.utils.StringUtils;
@@ -96,9 +98,27 @@ public class GroupUserInfoManager extends BaseDao<GroupUserInfo> {
 
     public List<GroupUserInfo> getUsers(String groupGuid) {
         if (StringUtils.isBlank(groupGuid)) return null;
-        return daoSession.getGroupUserInfoDao().queryBuilder()
+        List<GroupUserInfo> groupUserInfos = daoSession.getGroupUserInfoDao().queryBuilder()
                 .where(GroupUserInfoDao.Properties.GroupGuid.eq(groupGuid))
                 .list();
+
+        List<Long> userIds = new ArrayList<>(groupUserInfos.size());
+        for (int i = 0; i < groupUserInfos.size(); i++) {
+            userIds.add(groupUserInfos.get(i).getUserId());
+        }
+
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(userIds);
+        if (friends != null && friends.size() > 0) {
+            for (int i = 0; i < friends.size(); i++) {
+                for (int j = 0; j < groupUserInfos.size(); j++) {
+                    if (friends.get(i).getId() == groupUserInfos.get(j).getUserId()) {
+                        groupUserInfos.get(j).setUserName(friends.get(i).getShowName());
+                    }
+                }
+            }
+        }
+
+        return groupUserInfos;
     }
 
     public GroupUserInfo setUserName(String groupGuid, long userId, String userName) {

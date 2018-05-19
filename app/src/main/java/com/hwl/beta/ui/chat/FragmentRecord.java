@@ -23,6 +23,7 @@ import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.chat.adp.RecordAdapter;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.ChatRecordMessageComparator;
@@ -167,16 +168,6 @@ public class FragmentRecord extends BaseFragment {
         records.add(record);
         Collections.sort(records, dateComparator);
         recordAdapter.notifyItemRangeChanged(0, records.size());
-
-//        for (int i = 0; i < records.size(); i++) {
-//            if (record.getRecordId().equals(records.get(i).getRecordId())) {
-//                records.remove(records.get(i));
-//                break;
-//            }
-//        }
-//        records.add(record);
-//        Collections.sort(records, dateComparator);
-//        recordAdapter.notifyDataSetChanged();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -188,16 +179,25 @@ public class FragmentRecord extends BaseFragment {
             records.remove(position);
             recordAdapter.notifyItemRemoved(position);
             recordAdapter.notifyItemRangeChanged(position, records.size() - position);
-//            for (int i = 0; i < records.size(); i++) {
-//                if (actionChatRecord.getRecord().getRecordId() == records.get(i).getRecordId()) {
-//                    records.remove(records.get(i));
-//                    break;
-//                }
-//            }
-//            recordAdapter.notifyDataSetChanged();
         } else if (actionChatRecord.getActionType() == EventBusConstant.EB_TYPE_CHAT_RECORD_UPDATE_SHIELD) {
             records.get(position).setIsShield(actionChatRecord.getRecord().getIsShield());
             recordAdapter.notifyItemChanged(position);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+        for (int i = 0; i < records.size(); i++) {
+            if (records.get(i).getFromUserId() == remark.getFriendId() && records.get(i).getRecordType() == MQConstant.CHAT_RECORD_TYPE_USER) {
+                ChatRecordMessage record = records.get(i);
+                if (!record.getFromUserName().equals(remark.getFriendRemark())) {
+                    record.setFromUserName(remark.getFriendRemark());
+                    record.setTitle(remark.getFriendRemark());
+                    recordAdapter.notifyItemChanged(i);
+                }
+            }
         }
     }
 
@@ -216,7 +216,6 @@ public class FragmentRecord extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        Log.d("FragmentRecord", "onDestroy");
         EventBus.getDefault().unregister(this);
     }
 }

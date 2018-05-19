@@ -3,6 +3,7 @@ package com.hwl.beta.db.manage;
 import android.content.Context;
 
 import com.hwl.beta.db.BaseDao;
+import com.hwl.beta.db.dao.FriendDao;
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.utils.CharacterParser;
 import com.hwl.beta.utils.StringUtils;
@@ -78,6 +79,13 @@ public class FriendManager extends BaseDao<Friend> {
         if (friendId <= 0) return null;
 
         return daoSession.getFriendDao().loadByRowId(friendId);
+    }
+
+    public List<Friend> getList(List<Long> friendIds) {
+        if (friendIds == null || friendIds.size() <= 0) return null;
+        return daoSession.getFriendDao().queryBuilder()
+                .where(FriendDao.Properties.Id.in(friendIds))
+                .list();
     }
 
     public List<Friend> getAll() {

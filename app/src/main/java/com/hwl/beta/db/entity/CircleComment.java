@@ -47,7 +47,7 @@ public class CircleComment implements Serializable {
 
     public String getShowTime() {
         if (this.commentTime != null)
-            return DateUtils.dateToStrLong2(this.commentTime);
+            return DateUtils.getChatShowTime(this.commentTime);
         return null;
     }
 

@@ -30,6 +30,7 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.chat.action.IChatGroupSettingListener;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.UITransfer;
@@ -106,6 +107,19 @@ public class ActivityChatGroupSetting extends BaseActivity {
             removeUserItem();
             addUserItem();
             userAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+        for (int i = 0; i < users.size(); i++) {
+            if (remark.getFriendId() == users.get(i).getId()) {
+                users.get(i).setUserName(remark.getFriendRemark());
+                userAdapter.notifyDataSetChanged();
+                break;
+            }
         }
     }
 

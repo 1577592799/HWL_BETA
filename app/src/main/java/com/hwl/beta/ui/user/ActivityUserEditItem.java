@@ -1,6 +1,7 @@
 package com.hwl.beta.ui.user;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.RadioButton;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityUserEditItemBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.net.user.UserService;
@@ -19,6 +21,7 @@ import com.hwl.beta.net.user.body.SetFriendRemarkResponse;
 import com.hwl.beta.net.user.body.SetUserInfoResponse;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
@@ -135,6 +138,9 @@ public class ActivityUserEditItem extends BaseActivity {
             if (friend != null && friend.getId() > 0) {
                 friend.setRemark(itemBean.getEditContent());
                 DaoUtils.getFriendManagerInstance().save(friend);
+                EventBus.getDefault().post(new EventUpdateFriendRemark(friend.getId(), friend.getFirstLetter(), friend.getRemark()));
+                ChatRecordMessage record = DaoUtils.getChatRecordMessageManagerInstance().updateUserRecrdTitle(UserSP.getUserId(), friend.getId(), friend.getRemark(), friend.getHeadImage());
+                if (record != null) EventBus.getDefault().post(record);
             }
             finish();
             LoadingDialog.hide();

@@ -2,6 +2,7 @@ package com.hwl.beta.ui.user;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventDeleteFriend;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
@@ -45,10 +47,14 @@ import com.hwl.beta.ui.dialog.AddFriendDialogFragment;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.user.action.IUserIndexListener;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
+import com.hwl.beta.ui.user.bean.UserEditItemBean;
 import com.hwl.beta.ui.user.bean.UserIndexBean;
 import com.hwl.beta.utils.DisplayUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +126,31 @@ public class ActivityUserIndex extends BaseActivity {
                         showUserActionDialog();
                     }
                 });
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0 || remark.getFriendId() != friend.getId())
+            return;
+        friend.setRemark(remark.getFriendRemark());
+        if (StringUtils.isNotBlank(friend.getRemark())) {
+            binding.tvShowName.setText(friend.getRemark());
+            binding.tvUsername.setText(friend.getName());
+            binding.llUsername.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvShowName.setText(friend.getName());
+            binding.llUsername.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void setCircles() {
@@ -155,40 +186,94 @@ public class ActivityUserIndex extends BaseActivity {
 
     private void initData() {
         ImageViewBean.loadImage(binding.ivHeader, userBean.getUserImage());
-        binding.tvName.setText(userBean.getShowName());
-        binding.tvArea.setText(userBean.getRegisterAddress());
-        binding.tvNotes.setText(userBean.getUserLifeNotes());
-
-        if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
-            binding.tvSymbol.setVisibility(View.GONE);
-            binding.llNotes.setVisibility(View.GONE);
-            binding.llCircles.setVisibility(View.GONE);
-            binding.llArea.setVisibility(View.GONE);
-            binding.btnAddFriend.setVisibility(View.VISIBLE);
-        } else {
-            binding.tvSymbol.setVisibility(View.VISIBLE);
-            binding.llNotes.setVisibility(View.VISIBLE);
-            binding.llCircles.setVisibility(View.VISIBLE);
-            binding.llArea.setVisibility(View.VISIBLE);
-            binding.btnAddFriend.setVisibility(View.GONE);
-            binding.tvSymbol.setText(userBean.getSymbol());
+        if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
+            if (StringUtils.isNotBlank(friend.getRemark())) {
+                binding.tvShowName.setText(friend.getRemark());
+                binding.tvUsername.setText(friend.getName());
+                binding.llUsername.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvShowName.setText(friend.getName());
+                binding.llUsername.setVisibility(View.GONE);
+            }
+            if (StringUtils.isNotBlank(friend.getSymbol())) {
+                binding.tvSymbol.setText(friend.getSymbol());
+                binding.llSymbol.setVisibility(View.VISIBLE);
+            } else {
+                binding.llSymbol.setVisibility(View.GONE);
+            }
+            binding.tvArea.setText(userBean.getRegisterAddress());
+            binding.tvNotes.setText(userBean.getUserLifeNotes());
 
             this.setCircleImages();
             this.setCircleTexts();
-        }
 
-        if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
-            binding.llRemark.setVisibility(View.VISIBLE);
-            binding.tvRemark.setText(userBean.getRemark());
-        } else {
-            binding.llRemark.setVisibility(View.GONE);
-        }
-
-        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
-            binding.btnSendMessage.setVisibility(View.GONE);
-        } else {
+            binding.llRemarkSet.setVisibility(View.VISIBLE);
+            binding.llArea.setVisibility(View.VISIBLE);
+            binding.llNotes.setVisibility(View.VISIBLE);
+            binding.llCircles.setVisibility(View.VISIBLE);
             binding.btnSendMessage.setVisibility(View.VISIBLE);
+            binding.btnAddFriend.setVisibility(View.GONE);
+        } else if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
+            binding.tvShowName.setText(friend.getName());
+            binding.tvSymbol.setText(friend.getSymbol());
+            binding.tvArea.setText(userBean.getRegisterAddress());
+            binding.tvNotes.setText(userBean.getUserLifeNotes());
+
+            this.setCircleImages();
+            this.setCircleTexts();
+
+            binding.llSymbol.setVisibility(View.VISIBLE);
+            binding.llUsername.setVisibility(View.GONE);
+            binding.llRemarkSet.setVisibility(View.GONE);
+            binding.llArea.setVisibility(View.VISIBLE);
+            binding.llNotes.setVisibility(View.VISIBLE);
+            binding.llCircles.setVisibility(View.VISIBLE);
+            binding.btnSendMessage.setVisibility(View.GONE);
+            binding.btnAddFriend.setVisibility(View.GONE);
+        } else {
+            binding.llRemarkSet.setVisibility(View.GONE);
+            binding.llSymbol.setVisibility(View.GONE);
+            binding.llArea.setVisibility(View.GONE);
+            binding.llNotes.setVisibility(View.GONE);
+            binding.llCircles.setVisibility(View.GONE);
+            binding.btnSendMessage.setVisibility(View.VISIBLE);
+            binding.btnAddFriend.setVisibility(View.VISIBLE);
         }
+
+//        binding.tvName.setText(userBean.getShowName());
+//        binding.tvArea.setText(userBean.getRegisterAddress());
+//        binding.tvNotes.setText(userBean.getUserLifeNotes());
+//
+//        if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
+//            binding.tvSymbol.setVisibility(View.GONE);
+//            binding.llNotes.setVisibility(View.GONE);
+//            binding.llCircles.setVisibility(View.GONE);
+//            binding.llArea.setVisibility(View.GONE);
+//            binding.btnAddFriend.setVisibility(View.VISIBLE);
+//        } else {
+//            binding.tvSymbol.setVisibility(View.VISIBLE);
+//            binding.llNotes.setVisibility(View.VISIBLE);
+//            binding.llCircles.setVisibility(View.VISIBLE);
+//            binding.llArea.setVisibility(View.VISIBLE);
+//            binding.btnAddFriend.setVisibility(View.GONE);
+//            binding.tvSymbol.setText(userBean.getSymbol());
+//
+//            this.setCircleImages();
+//            this.setCircleTexts();
+//        }
+//
+//        if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
+//            binding.llRemark.setVisibility(View.VISIBLE);
+//            binding.tvRemark.setText(userBean.getRemark());
+//        } else {
+//            binding.llRemark.setVisibility(View.GONE);
+//        }
+//
+//        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
+//            binding.btnSendMessage.setVisibility(View.GONE);
+//        } else {
+//            binding.btnSendMessage.setVisibility(View.VISIBLE);
+//        }
     }
 
     private void setCircleImages() {
@@ -322,7 +407,7 @@ public class ActivityUserIndex extends BaseActivity {
 
         @Override
         public void onRemarkClick() {
-
+            UITransfer.toUserEditItemActivity(activity, UserEditItemBean.ACTIONTYPE_REMARK, userBean.getRemark(), userBean.getUserId());
         }
 
         @Override

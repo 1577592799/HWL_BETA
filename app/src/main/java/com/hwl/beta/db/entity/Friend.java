@@ -35,6 +35,18 @@ public class Friend extends BaseObservable implements Serializable {
     private String messageCount;
     @Transient
     private int imageRes;
+    @Transient
+    private String showName;
+
+    public String getShowName() {
+        if (StringUtils.isNotBlank(this.remark))
+            return this.remark;
+        else if (StringUtils.isNotBlank(this.name))
+            return this.name;
+
+        return showName;
+    }
+
     private String updateTime;
 
     @Bindable
@@ -59,7 +71,7 @@ public class Friend extends BaseObservable implements Serializable {
 
     @Generated(hash = 1893035974)
     public Friend(long id, String symbol, String name, String remark, String firstLetter, String headImage, String lifeNotes, int sex, String circleBackImage, String country, String province,
-            String updateTime) {
+                  String updateTime) {
         this.id = id;
         this.symbol = symbol;
         this.name = name;

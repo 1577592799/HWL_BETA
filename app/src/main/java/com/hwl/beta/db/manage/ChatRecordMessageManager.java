@@ -32,12 +32,24 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
                 .unique();
     }
 
-    public ChatRecordMessage getUserRecord(long myUserId,long fromUserId) {
+    public ChatRecordMessage getUserRecord(long myUserId, long fromUserId) {
         if (fromUserId <= 0) return null;
         return daoSession.getChatRecordMessageDao().queryBuilder()
                 .whereOr(ChatRecordMessageDao.Properties.FromUserId.eq(fromUserId), ChatRecordMessageDao.Properties.FromUserId.eq(myUserId))
                 .whereOr(ChatRecordMessageDao.Properties.ToUserId.eq(fromUserId), ChatRecordMessageDao.Properties.ToUserId.eq(myUserId))
                 .unique();
+    }
+
+    public ChatRecordMessage updateUserRecrdTitle(long myUserId, long fromUserId, String userName, String userImage) {
+        if (fromUserId <= 0) return null;
+        ChatRecordMessage record = getUserRecord(myUserId, fromUserId);
+        if (record == null) return null;
+        if (StringUtils.isNotBlank(userName))
+            record.setTitle(userName);
+        if (StringUtils.isNotBlank(userImage))
+            record.setRecordImage(userImage);
+        daoSession.getChatRecordMessageDao().update(record);
+        return record;
     }
 
     public ChatRecordMessage deleteGroupRecord(String groupGuid) {

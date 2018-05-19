@@ -31,6 +31,7 @@ import com.hwl.beta.net.NetConstant;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventClearUserMessages;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.chat.action.IChatMessageItemListener;
 import com.hwl.beta.ui.chat.adp.ChatUserMessageAdapter;
 import com.hwl.beta.ui.chat.bean.ChatImageViewBean;
@@ -69,6 +70,7 @@ import io.reactivex.schedulers.Schedulers;
 public class ActivityChatUser extends BaseActivity {
 
     Activity activity;
+    TitleBar tbTitle;
     SmartRefreshLayout refreshLayout;
     List<ChatUserMessage> messages;
     ChatUserMessageAdapter messageAdapter;
@@ -78,7 +80,6 @@ public class ActivityChatUser extends BaseActivity {
     boolean isFriend = false;
     int pageSize = 10;
     long myUserId;
-    long currentRecordId = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +87,6 @@ public class ActivityChatUser extends BaseActivity {
         setContentView(R.layout.activity_chat_user);
         activity = this;
 
-        currentRecordId = getIntent().getLongExtra("recordid", 0);
         long userId = getIntent().getLongExtra("userid", 0);
         String userName = getIntent().getStringExtra("username");
         String userImage = getIntent().getStringExtra("userimage");
@@ -160,13 +160,13 @@ public class ActivityChatUser extends BaseActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
-        TitleBar tbTitle = findViewById(R.id.tb_title);
-        tbTitle.setTitle(user.getName())
+        tbTitle = findViewById(R.id.tb_title);
+        tbTitle.setTitle(user.getShowName())
                 .setImageRightResource(R.drawable.ic_setting)
                 .setImageRightClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UITransfer.toChatUserSettingActivity(activity, user.getId(), user.getName(), user.getHeadImage());
+                        UITransfer.toChatUserSettingActivity(activity, user.getId(), user.getShowName(), user.getHeadImage());
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {
@@ -219,6 +219,7 @@ public class ActivityChatUser extends BaseActivity {
     protected void onPause() {
         super.onPause();
         MediaManager.release();
+        long currentRecordId = getIntent().getLongExtra("recordid", 0);
         if (currentRecordId > 0) {
             ChatRecordMessage recordMessage = DaoUtils.getChatRecordMessageManagerInstance().clearUnreadCount(currentRecordId);
             if (recordMessage != null) {
@@ -248,25 +249,16 @@ public class ActivityChatUser extends BaseActivity {
         if (message.getFromUserId() != user.getId() && message.getFromUserId() != myUserId) return;
         checkFriendInfo(message);
         messageAdapter.addMessage(message);
-//        boolean isExists = false;
-//        int position = 0;
-//        for (int i = 0; i < messages.size(); i++) {
-//            if (messages.get(i).getMsgId().equals(message.getMsgId())) {
-//                isExists = true;
-//                position = i;
-//                break;
-//            }
-//        }
-//
-//        if (isExists) {
-//            messages.remove(position);
-//            messages.add(position, message);
-//        } else {
-//            messages.add(message);
-//        }
-//
-//        messageAdapter.notifyDataSetChanged();
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0 || remark.getFriendId() != user.getId())
+            return;
+
+        user.setRemark(remark.getFriendRemark());
+        tbTitle.setTitle(user.getShowName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

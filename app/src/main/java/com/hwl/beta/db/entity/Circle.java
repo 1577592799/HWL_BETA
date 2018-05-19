@@ -35,7 +35,7 @@ public class Circle implements Serializable {
 
     public String getShowTime() {
         if (this.publishTime != null)
-            return DateUtils.dateToStrLong2(this.publishTime);
+            return DateUtils.getChatShowTime(this.publishTime);
         return null;
     }
 

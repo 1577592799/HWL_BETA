@@ -22,12 +22,14 @@ import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventDeleteFriend;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.FriendComparator;
 import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.convert.DBFriendAction;
 import com.hwl.beta.ui.user.adp.FriendAdapter;
 import com.hwl.beta.ui.widget.SideBar;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -116,7 +118,7 @@ public class FragmentUser extends BaseFragment {
             Friend user = users.get(2);
             if (user == null) return;
             user.setMessageCount(MessageCountSP.getFriendRequestCountDesc());
-        }else if(ebType==EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE){
+        } else if (ebType == EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE) {
             Friend user = users.get(0);
             if (user == null) return;
             user.setMessageCount(MessageCountSP.getCircleMessageCountDesc());
@@ -146,6 +148,20 @@ public class FragmentUser extends BaseFragment {
         for (int i = 0; i < users.size(); i++) {
             if (friend.getFriendId() == users.get(i).getId()) {
                 users.remove(i);
+                friendAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+        for (int i = 0; i < users.size(); i++) {
+            if (remark.getFriendId() == users.get(i).getId()) {
+                users.get(i).setFirstLetter(remark.getFirstLetter());
+                users.get(i).setRemark(remark.getFriendRemark());
                 friendAdapter.notifyDataSetChanged();
                 break;
             }
