@@ -6,8 +6,6 @@ package com.hwl.beta.ui.entry.action;
 
 public interface IMainListener {
 
-    void onLoad();
-
     void initVPContainer();
 
     void initLocation();

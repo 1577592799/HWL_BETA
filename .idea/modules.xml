@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/HWL_BETA.iml" filepath="$PROJECT_DIR$/HWL_BETA.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/autolayout/autolayout.iml" filepath="$PROJECT_DIR$/autolayout/autolayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/badge/badge.iml" filepath="$PROJECT_DIR$/badge/badge.iml" />
       <module fileurl="file://$PROJECT_DIR$/emotion/emotion.iml" filepath="$PROJECT_DIR$/emotion/emotion.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobshare/mobshare.iml" filepath="$PROJECT_DIR$/mobshare/mobshare.iml" />
       <module fileurl="file://$PROJECT_DIR$/photoview/photoview.iml" filepath="$PROJECT_DIR$/photoview/photoview.iml" />

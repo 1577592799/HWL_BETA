@@ -4,16 +4,20 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.hwl.beta.R;
+import com.hwl.beta.badge.Badge;
+import com.hwl.beta.badge.QBadgeView;
 import com.hwl.beta.databinding.RecordItemBinding;
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.mq.MQConstant;
+import com.hwl.beta.ui.widget.BadgeNumber;
 import com.hwl.beta.utils.DateUtils;
 import com.hwl.beta.utils.DisplayUtils;
 import com.hwl.beta.utils.StringUtils;
@@ -54,6 +58,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         itemBinding.setPosition(position);
         itemBinding.tvTime.setText(DateUtils.getChatShowTime(record.getSendTime()));
         itemBinding.ivNotify.setVisibility(record.getIsShield() ? View.VISIBLE : View.GONE);
+        holder.badge.setBadgeNumber(record.getUnreadCount());
 
         switch (record.getRecordType()) {
             case MQConstant.CHAT_RECORD_TYPE_GROUP:
@@ -100,13 +105,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         });
     }
 
-//    public void updateUserRecordTitle(long userId,String title){
-//        if(userId<=0|| StringUtils.isBlank(title)) return;
-//        for (int i = 0; i < records.size(); i++) {
-//
-//        }
-//    }
-
     @Override
     public long getItemId(int position) {
         return records.get(position).getRecordId();
@@ -127,10 +125,21 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
 
     public class RecordViewHolder extends RecyclerView.ViewHolder {
         RecordItemBinding itemBinding;
+        Badge badge;
 
         public RecordViewHolder(RecordItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.itemBinding = itemBinding;
+            badge = BadgeNumber.bindBadgeView(context, itemBinding.llImageContainer);
+//            badge = new QBadgeView(context).bindTarget(itemBinding.llImageContainer);
+//            badge.setBadgeGravity(Gravity.TOP | Gravity.END);
+//            badge.setOnDragStateChangedListener(new Badge.OnDragStateChangedListener() {
+//                @Override
+//                public void onDragStateChanged(int dragState, Badge badge, View targetView) {
+//                    if (dragState == STATE_SUCCEED) {
+//                    }
+//                }
+//            });
         }
 
         public RecordItemBinding getItemBinding() {

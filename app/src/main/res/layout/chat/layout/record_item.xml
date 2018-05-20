@@ -13,50 +13,46 @@
             type="com.hwl.beta.db.entity.ChatRecordMessage"></variable>
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <com.hwl.beta.ui.chat.synthesizer.SynthesizedImageView
-            android:id="@+id/iv_group_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/empty_photo"
-            android:visibility="gone"
-            app:synthesized_default_image="@drawable/empty_photo"
-            app:synthesized_image_bg="@color/color_b2b2b2"
-            app:synthesized_image_gap="2dp"
-            app:synthesized_image_size="50dp" />
-
-        <ImageView
-            android:id="@+id/iv_record_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/empty_photo"
-            android:visibility="visible" />
-
-        <com.hwl.beta.ui.widget.TipNumberView
-            android:id="@+id/tnv_msg_count"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginLeft="-8dp"
-            android:layout_marginTop="-3dp"
-            android:gravity="center"
-            android:text='@{record.unreadCount+""}'
-            android:textColor="@color/white"
-            android:textSize="@dimen/dp_8"
-            android:visibility="@{record.unreadCount>0?android.view.View.VISIBLE:android.view.View.GONE}" />
+        android:background="@color/white">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/ll_image_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.hwl.beta.ui.chat.synthesizer.SynthesizedImageView
+                android:id="@+id/iv_group_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/dp_10"
+                android:src="@drawable/empty_photo"
+                android:visibility="gone"
+                app:synthesized_default_image="@drawable/empty_photo"
+                app:synthesized_image_bg="@color/color_b2b2b2"
+                app:synthesized_image_gap="2dp"
+                app:synthesized_image_size="50dp" />
+
+            <ImageView
+                android:id="@+id/iv_record_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/dp_10"
+                android:src="@drawable/empty_photo"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_message_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="4"
-            android:orientation="vertical">
+            android:layout_toRightOf="@+id/ll_image_container"
+            android:orientation="vertical"
+            android:paddingVertical="10dp">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -79,10 +75,11 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="right">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/ll_message_container"
+            android:gravity="right"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/tv_time"
@@ -104,6 +101,6 @@
                 android:src="@drawable/ic_notify_off"
                 android:visibility="gone" />
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </layout>

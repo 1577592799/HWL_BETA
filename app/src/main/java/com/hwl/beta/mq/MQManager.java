@@ -105,9 +105,14 @@ public class MQManager {
 
     public static void closeMQConnection() {
         if (mqconn != null) {
-            mqconn.closeChannel(channel);
-            mqconn.closeConnection();
-            mqconn = null;
+            new Thread() {
+                @Override
+                public void run() {
+                    mqconn.closeChannel(channel);
+                    mqconn.closeConnection();
+                    mqconn = null;
+                }
+            }.start();
         }
     }
 

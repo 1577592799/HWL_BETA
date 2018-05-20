@@ -47,6 +47,7 @@ import com.hwl.beta.ui.entry.bean.MainBean;
 import com.hwl.beta.ui.near.FragmentNear;
 import com.hwl.beta.ui.user.FragmentCenter;
 import com.hwl.beta.ui.user.FragmentUser;
+import com.hwl.beta.ui.widget.BadgeNumber;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,13 +70,19 @@ public class ActivityMain extends FragmentActivity {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         activity = this;
-        mainBean = new MainBean(MessageCountSP.getChatMessageCountDesc(), MessageCountSP.getFriendRequestCountDesc());
+        mainBean = new MainBean(MessageCountSP.getChatMessageCount(), MessageCountSP.getNearCircleMessageCount(), MessageCountSP.getFriendRequestCount(), MessageCountSP.getCircleMessageCount(), 0);
         mainListener = new MainListener();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setMainBean(mainBean);
         binding.setAction(mainListener);
 
-        mainListener.onLoad();
+        initView();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    private void initView() {
         mainListener.initLocation();
         mainListener.initVPContainer();
         binding.tbTitle.setTitle("位置获取中...")
@@ -93,25 +100,20 @@ public class ActivityMain extends FragmentActivity {
                     }
                 });
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+        MessageReceive.start();
+        SQLiteStudioService.instance().start(activity);
         activity.registerReceiver(networkBroadcastReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        SQLiteStudioService.instance().start(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         EventBus.getDefault().postSticky(EventBusConstant.EB_TYPE_NEAR_INFO_UPDATE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateMessageCount(Integer ebType) {
         if (ebType == EventBusConstant.EB_TYPE_FRIEND_REQUEST_UPDATE) {
-            mainBean.setFriendRequestCountDesc(MessageCountSP.getFriendRequestCountDesc());
+            mainBean.setFriendMessageCount(MessageCountSP.getFriendRequestCount());
         } else if (ebType == EventBusConstant.EB_TYPE_CHAT_MESSAGE_UPDATE) {
-            mainBean.setChatMessageCountDesc(MessageCountSP.getChatMessageCountDesc());
+            mainBean.setChatMessageCount(MessageCountSP.getChatMessageCount());
+        } else if (ebType == EventBusConstant.EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE) {
+            mainBean.setNearMessageCount(MessageCountSP.getNearCircleMessageCount());
         }
     }
 
@@ -177,20 +179,20 @@ public class ActivityMain extends FragmentActivity {
         popup.show();
     }
 
-    private void showMessageCount() {
-        int chatMessageCount = MessageCountSP.getChatMessageCount();
-        int friendRequestCount = MessageCountSP.getFriendRequestCount();
-        if (chatMessageCount > 0) {
-            binding.tnvMsgCount.setVisibility(View.VISIBLE);
-        } else {
-            binding.tnvMsgCount.setVisibility(View.GONE);
-        }
-        if (friendRequestCount > 0) {
-            binding.tnvFriendCount.setVisibility(View.VISIBLE);
-        } else {
-            binding.tnvFriendCount.setVisibility(View.GONE);
-        }
-    }
+//    private void showMessageCount() {
+////        int chatMessageCount = MessageCountSP.getChatMessageCount();
+////        int friendRequestCount = MessageCountSP.getFriendRequestCount();
+////        if (chatMessageCount > 0) {
+////            binding.tnvMsgCount.setVisibility(View.VISIBLE);
+////        } else {
+////            binding.tnvMsgCount.setVisibility(View.GONE);
+////        }
+////        if (friendRequestCount > 0) {
+////            binding.tnvFriendCount.setVisibility(View.VISIBLE);
+////        } else {
+////            binding.tnvFriendCount.setVisibility(View.GONE);
+////        }
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -211,12 +213,6 @@ public class ActivityMain extends FragmentActivity {
     public class MainListener implements IMainListener {
         LocationService locationService;
         LocationDialogFragment locationTip;
-
-        @Override
-        public void onLoad() {
-            MessageReceive.start();
-            SQLiteStudioService.instance().start(activity);
-        }
 
         @Override
         public void initVPContainer() {

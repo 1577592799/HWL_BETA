@@ -14,10 +14,10 @@
 
     <ImageView
         android:id="@+id/iv_delete"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginTop="-5dp"
-        android:layout_marginRight="-5dp"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="-7dp"
+        android:layout_marginRight="-7dp"
         android:layout_alignEnd="@+id/iv_image"
         android:layout_alignRight="@+id/iv_image"
         android:layout_alignTop="@+id/iv_image"
