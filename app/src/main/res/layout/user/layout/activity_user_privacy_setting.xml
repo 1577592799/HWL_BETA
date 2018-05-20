@@ -24,36 +24,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:text="对陌生人隐藏我的头像" />
-
-            <Switch
-                android:id="@+id/switch_hide_userheadimage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:checked="false"
-                android:switchMinWidth="50dp"
-                android:textOff="  "
-                android:textOn="  "
-                android:thumb="@drawable/switch_thumb"
-                android:track="@drawable/switch_track" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:background="@color/white"
-            android:padding="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
                 android:text="拒绝陌生人的聊天请求" />
 
             <Switch
@@ -87,6 +57,13 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="我的黑名单" />
+
+            <ImageView
+                android:layout_width="@dimen/dp_15"
+                android:layout_height="@dimen/dp_15"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/arrow_right" />
 
         </RelativeLayout>
     </LinearLayout>

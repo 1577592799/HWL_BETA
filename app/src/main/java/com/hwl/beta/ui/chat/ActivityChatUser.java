@@ -180,13 +180,7 @@ public class ActivityChatUser extends BaseActivity {
         final EmotionControlPannel ecpEmotion = findViewById(R.id.ecp_emotion);
         ecpEmotion.setEmotionPannelListener(emotionPannelListener);
 
-        messageAdapter = new ChatUserMessageAdapter(activity, messages, new ChatMessageItemListener(),
-                new ChatUserMessageAdapter.IAdapterListener() {
-                    @Override
-                    public void onLoadLastReceivedMessageComplete(ChatUserMessage message) {
-                        checkFriendInfo(message);
-                    }
-                });
+        messageAdapter = new ChatUserMessageAdapter(activity, messages, new ChatMessageItemListener());
         rvMessageContainer = findViewById(R.id.rv_message_container);
         rvMessageContainer.setAdapter(messageAdapter);
         rvMessageContainer.setLayoutManager(new LinearLayoutManager(activity));
@@ -228,26 +222,25 @@ public class ActivityChatUser extends BaseActivity {
         }
     }
 
-    private void checkFriendInfo(ChatUserMessage message) {
-        if (message == null) return;
-        //检测用户的名称和头像j是否已经更改
-        if (message.getFromUserId() == user.getId()) {
-            if (!message.getFromUserHeadImage().equals(user.getHeadImage()) || !message.getFromUserName().equals(user.getName())) {
-                user.setHeadImage(message.getFromUserHeadImage());
-                user.setName(message.getFromUserName());
-                if (isFriend) {
-                    //Log.d("CheckFriendInfo", "更换用户头像成功");
-                    DaoUtils.getFriendManagerInstance().save(user);
-                }
-            }
-        }
-    }
+//    private void checkFriendInfo(ChatUserMessage message) {
+//        if (message == null) return;
+//        //检测用户的名称和头像j是否已经更改
+//        if (message.getFromUserId() == user.getId()) {
+//            if (!message.getFromUserHeadImage().equals(user.getHeadImage()) || !message.getFromUserName().equals(user.getName())) {
+//                user.setHeadImage(message.getFromUserHeadImage());
+//                user.setName(message.getFromUserName());
+//                if (isFriend) {
+//                    DaoUtils.getFriendManagerInstance().save(user);
+//                }
+//            }
+//        }
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateMessage(ChatUserMessage message) {
         if (message == null) return;
         if (message.getFromUserId() != user.getId() && message.getFromUserId() != myUserId) return;
-        checkFriendInfo(message);
+//        checkFriendInfo(message);
         messageAdapter.addMessage(message);
         rvMessageContainer.scrollToPosition(messageAdapter.getItemCount() - 1);
     }

@@ -22,7 +22,7 @@ public class NearCircleComment implements Serializable {
     private long commentUserId;
     private String commentUserName;
     private String commentUserImage;
-    private int replyUserId;
+    private long replyUserId;
     private String replyUserName;
     private String replyUserImage;
     private String content;
@@ -35,11 +35,10 @@ public class NearCircleComment implements Serializable {
         return null;
     }
 
-    @Generated(hash = 141379766)
+    @Generated(hash = 1892715940)
     public NearCircleComment(int commentId, long nearCircleId, long commentUserId,
-                             String commentUserName, String commentUserImage, int replyUserId,
-                             String replyUserName, String replyUserImage, String content,
-                             Date commentTime) {
+            String commentUserName, String commentUserImage, long replyUserId,
+            String replyUserName, String replyUserImage, String content, Date commentTime) {
         this.commentId = commentId;
         this.nearCircleId = nearCircleId;
         this.commentUserId = commentUserId;
@@ -96,11 +95,11 @@ public class NearCircleComment implements Serializable {
         this.commentUserImage = commentUserImage;
     }
 
-    public int getReplyUserId() {
+    public long getReplyUserId() {
         return this.replyUserId;
     }
 
-    public void setReplyUserId(int replyUserId) {
+    public void setReplyUserId(long replyUserId) {
         this.replyUserId = replyUserId;
     }
 

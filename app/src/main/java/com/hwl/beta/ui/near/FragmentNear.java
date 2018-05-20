@@ -1,5 +1,6 @@
 package com.hwl.beta.ui.near;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -35,6 +36,7 @@ import com.hwl.beta.net.near.body.SetNearLikeInfoResponse;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.common.BaseFragment;
 import com.hwl.beta.ui.common.KeyBoardAction;
 import com.hwl.beta.ui.common.UITransfer;
@@ -117,18 +119,25 @@ public class FragmentNear extends BaseFragment {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+
+        DaoUtils.getNearCircleManagerInstance().updateNearCircleFriendList(nearCircles, remark.getFriendId(), new Function() {
+            @Override
+            public Object apply(Object o) throws Exception {
+                nearCircleAdapter.notifyItemChanged((Integer) o);
+                return o;
+            }
+        });
+    }
+
     @Override
     protected void onFragmentFirstVisible() {
         binding.pbLoading.setVisibility(View.VISIBLE);
         loadNearCircleInfoFromLocal();
     }
-
-//    @Override
-//    protected void onFragmentVisibleChange(boolean isVisible) {
-//        if (!isVisible) {
-//            saveInfo();
-//        }
-//    }
 
     @Override
     public void onDestroy() {
@@ -148,13 +157,11 @@ public class FragmentNear extends BaseFragment {
         binding.refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
-//                Log.d("FragmentNear", "min=" + nearCircles.get(nearCircles.size() - 1).getInfo().getNearCircleId());
                 loadNearCircleInfoFromServer(nearCircles.get(nearCircles.size() - 1).getInfo().getNearCircleId());
             }
         });
 
         binding.refreshLayout.setEnableLoadMore(false);
-//        binding.refreshLayout.autoRefresh();
         binding.llMessageTip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,6 +201,7 @@ public class FragmentNear extends BaseFragment {
         }
     }
 
+    @SuppressLint("CheckResult")
     private void loadNearCircleInfoFromLocal() {
         Observable.just(1)
                 .map(new Function<Integer, List<NearCircleExt>>() {

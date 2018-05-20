@@ -34,11 +34,9 @@ public abstract class BaseActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         SwipeBackHelper.onDestroy(this);
-        //ViewServer.get(this).removeWindow(this);
     }
 
     public void onResume() {
         super.onResume();
-        //ViewServer.get(this).setFocusedWindow(this);
     }
 }

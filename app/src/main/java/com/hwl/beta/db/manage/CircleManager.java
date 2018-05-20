@@ -18,6 +18,8 @@ import com.hwl.beta.db.ext.CircleExt;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.functions.Function;
+
 public class CircleManager extends BaseDao<Circle> {
     public CircleManager(Context context) {
         super(context);
@@ -200,10 +202,15 @@ public class CircleManager extends BaseDao<Circle> {
     }
 
     private void setCircleFriendInfo(List<CircleExt> exts, List<Friend> friends) {
+        setCircleFriendInfo(exts, friends, null);
+    }
+
+    private void setCircleFriendInfo(List<CircleExt> exts, List<Friend> friends, Function func) {
         if (exts == null || exts.size() <= 0) return;
         if (friends == null || friends.size() <= 0) return;
 
         for (int i = 0; i < exts.size(); i++) {
+            if (exts.get(i).getInfo() == null) continue;
             Friend friend = getFriend(friends, exts.get(i).getInfo().getPublishUserId());
             if (friend == null) continue;
             exts.get(i).getInfo().setPublishUserName(friend.getShowName());
@@ -230,6 +237,14 @@ public class CircleManager extends BaseDao<Circle> {
                         exts.get(i).getComments().get(j).setReplyUserName(friend4.getShowName());
                         exts.get(i).getComments().get(j).setReplyUserImage(friend4.getHeadImage());
                     }
+                }
+            }
+
+            if (func != null) {
+                try {
+                    func.apply(i);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -321,5 +336,14 @@ public class CircleManager extends BaseDao<Circle> {
             exts.add(ext);
         }
         return exts;
+    }
+
+    public void updateCircleFriendList(List<CircleExt> exts, long friendId, Function func) {
+        if (friendId <= 0) return;
+        if (exts == null || exts.size() <= 0) return;
+        List<Long> fids = new ArrayList<>();
+        fids.add(friendId);
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(fids);
+        setCircleFriendInfo(exts, friends, func);
     }
 }

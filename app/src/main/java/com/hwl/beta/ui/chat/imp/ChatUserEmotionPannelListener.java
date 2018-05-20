@@ -131,7 +131,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
         sendChatMessage(0, MQConstant.CHAT_MESSAGE_CONTENT_TYPE_IMAGE, "图片", file.getAbsolutePath(), 0, 0);
     }
 
-    private void sendChatMessage(long messageId, int contentType, String content, String localPath, long size, long playTime) {
+    private void sendChatMessage(final long messageId, int contentType, String content, String localPath, long size, long playTime) {
         final ChatUserMessage message = new ChatUserMessage();
         if (messageId > 0) {
             message.setMsgId(messageId);
@@ -198,7 +198,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
                             case MQConstant.CHAT_MESSAGE_CONTENT_TYPE_VIDEO:
                                 return upAndSendVideo(message);
                             case MQConstant.CHAT_MESSAGE_CONTENT_TYPE_WORD:
-                                return ChatMessageSend.sendChatUserMessage(recordMessage.getToUserId(), recordMessage.getContentType(), recordMessage.getContent());
+                                return ChatMessageSend.sendChatUserMessage(message.getMsgId(), recordMessage.getToUserId(), recordMessage.getContentType(), recordMessage.getContent());
                         }
                         return Observable.just(false);
                     }
@@ -297,6 +297,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
                     public ObservableSource<? extends Boolean> apply(Boolean succ) throws Exception {
                         if (succ) {
                             return ChatMessageSend.sendChatUserMessage(
+                                    message.getMsgId(),
                                     message.getToUserId(),
                                     message.getContentType(),
                                     message.getContent(),
@@ -338,6 +339,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
                     public ObservableSource<? extends Boolean> apply(Boolean succ) throws Exception {
                         if (succ) {
                             return ChatMessageSend.sendChatUserMessage(
+                                    message.getMsgId(),
                                     message.getToUserId(),
                                     message.getContentType(),
                                     message.getContent(),

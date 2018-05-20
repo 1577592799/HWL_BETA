@@ -173,10 +173,10 @@ public class ChatGroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.V
                 } else {
                     return 203;
                 }
+            default:
             case MQConstant.CHAT_MESSAGE_CONTENT_TYPE_WELCOME_TIP:
                 return 300;
         }
-        return 0;
     }
 
     public void addMessage(ChatGroupMessage msg) {

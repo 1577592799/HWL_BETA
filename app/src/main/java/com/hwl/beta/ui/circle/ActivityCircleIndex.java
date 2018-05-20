@@ -35,6 +35,7 @@ import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionCircleComment;
 import com.hwl.beta.ui.busbean.EventActionCircleLike;
 import com.hwl.beta.ui.busbean.EventBusConstant;
+import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.circle.action.ICircleItemListener;
 import com.hwl.beta.ui.circle.adp.CircleIndexAdapter;
 import com.hwl.beta.ui.common.BaseActivity;
@@ -124,6 +125,20 @@ public class ActivityCircleIndex extends BaseActivity {
         } else if (action.getActionType() == EventBusConstant.EB_TYPE_ACTINO_REMOVE) {
             circleAdapter.removeLike(action.getLike());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateRemark(EventUpdateFriendRemark remark) {
+        if (remark == null || remark.getFriendId() <= 0)
+            return;
+
+        DaoUtils.getCircleManagerInstance().updateCircleFriendList(circles, remark.getFriendId(), new Function() {
+            @Override
+            public Object apply(Object o) throws Exception {
+                circleAdapter.notifyItemChanged((Integer) o);
+                return o;
+            }
+        });
     }
 
     private void initView() {

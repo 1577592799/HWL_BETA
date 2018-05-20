@@ -12,6 +12,7 @@ public class UserIndexBean {
     public static final int IDCARD_MINE = 2;
     public static final int IDCARD_OTHER = 3;
 
+    private int idcard;
     private long userId;
     private String showName;
     private String userImage;
@@ -20,7 +21,6 @@ public class UserIndexBean {
     private String registerAddress;
     private String userCircleBackImage;
     private String userLifeNotes;
-    private int idcard;
     private List<String> circleImages;
     private List<String> circleTexts;
 

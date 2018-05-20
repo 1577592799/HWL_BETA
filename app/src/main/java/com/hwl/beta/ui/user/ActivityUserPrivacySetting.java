@@ -35,7 +35,7 @@ public class ActivityUserPrivacySetting extends BaseActivity {
                 })
                 .setImageRightHide();
 
-        binding.switchHideUserheadimage.setChecked(UserSettingSP.getPrivacySettingHideUserheadimage());
+//        binding.switchHideUserheadimage.setChecked(UserSettingSP.getPrivacySettingHideUserheadimage());
         binding.switchRejectChat.setChecked(UserSettingSP.getPrivacySettingRejectChat());
 
         binding.rlBlackUsers.setOnClickListener(new View.OnClickListener() {
@@ -45,12 +45,12 @@ public class ActivityUserPrivacySetting extends BaseActivity {
             }
         });
 
-        binding.switchHideUserheadimage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                UserSettingSP.setPrivaySettingHideUserheadimage(isChecked);
-            }
-        });
+//        binding.switchHideUserheadimage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                UserSettingSP.setPrivaySettingHideUserheadimage(isChecked);
+//            }
+//        });
 
         binding.switchRejectChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

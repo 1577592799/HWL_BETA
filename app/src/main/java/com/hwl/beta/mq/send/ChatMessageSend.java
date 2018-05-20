@@ -56,11 +56,12 @@ public class ChatMessageSend {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<Boolean> sendChatUserMessage(long toUserId, int contentType, String content) {
-        return sendChatUserMessage(toUserId, contentType, content, null, null, content.length(), 0);
+    public static Observable<Boolean> sendChatUserMessage(long msgId,long toUserId, int contentType, String content) {
+        return sendChatUserMessage(msgId,toUserId, contentType, content, null, null, content.length(), 0);
     }
 
-    public static Observable<Boolean> sendChatUserMessage(long toUserId,
+    public static Observable<Boolean> sendChatUserMessage(long msgId,
+                                                          long toUserId,
                                                           int contentType,
                                                           String content,
                                                           String previewUrl,
@@ -68,6 +69,7 @@ public class ChatMessageSend {
                                                           long size,
                                                           long playTime) {
         ChatUserMessageBean message = new ChatUserMessageBean();
+        message.setMsgId(msgId);
         message.setFromUserId(UserSP.getUserId());
         message.setFromUserName(UserSP.getUserShowName());
         message.setFromUserHeadImage(UserSP.getUserHeadImage());

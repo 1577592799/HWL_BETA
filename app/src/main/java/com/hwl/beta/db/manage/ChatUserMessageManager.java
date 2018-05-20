@@ -6,6 +6,7 @@ import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.dao.ChatUserMessageDao;
 import com.hwl.beta.db.entity.ChatUserMessage;
 import com.hwl.beta.db.entity.ChatUserSetting;
+import com.hwl.beta.mq.MQConstant;
 
 import java.util.List;
 
@@ -24,6 +25,12 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
         return daoSession.getChatUserMessageDao().insertOrReplace(request);
     }
 
+    public ChatUserMessage get(long msgId) {
+        if (msgId <= 0) return null;
+
+        return daoSession.getChatUserMessageDao().load(msgId);
+    }
+
     public boolean updateLocalPath(long msgId, String localPath) {
         ChatUserMessage message = daoSession.getChatUserMessageDao().loadByRowId(msgId);
         if (message == null) return false;
@@ -38,6 +45,40 @@ public class ChatUserMessageManager extends BaseDao<ChatUserMessage> {
         if (message == null) return;
         message.setSendStatus(status);
         save(message);
+    }
+
+    public boolean isExistsRejectMessage(long toUserId, long fromUserId) {
+        if (toUserId <= 0 || fromUserId <= 0) return false;
+        List<ChatUserMessage> msgs = daoSession.getChatUserMessageDao().queryBuilder()
+                .whereOr(ChatUserMessageDao.Properties.FromUserId.eq(fromUserId), ChatUserMessageDao.Properties.FromUserId.eq(toUserId))
+                .whereOr(ChatUserMessageDao.Properties.ToUserId.eq(fromUserId), ChatUserMessageDao.Properties.ToUserId.eq(toUserId))
+                .orderDesc(ChatUserMessageDao.Properties.MsgId)
+                .limit(2)
+                .list();
+        if (msgs == null || msgs.size() <= 0) return false;
+        for (int i = 0; i < msgs.size(); i++) {
+            if (msgs.get(i).getContentType() == MQConstant.CHAT_MESSAGE_CONTENT_TYPE_REJECT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isExistsRejectCozyMessage(long toUserId, long fromUserId) {
+        if (toUserId <= 0 || fromUserId <= 0) return false;
+        List<ChatUserMessage> msgs = daoSession.getChatUserMessageDao().queryBuilder()
+                .whereOr(ChatUserMessageDao.Properties.FromUserId.eq(fromUserId), ChatUserMessageDao.Properties.FromUserId.eq(toUserId))
+                .whereOr(ChatUserMessageDao.Properties.ToUserId.eq(fromUserId), ChatUserMessageDao.Properties.ToUserId.eq(toUserId))
+                .where(ChatUserMessageDao.Properties.ContentType.eq(MQConstant.CHAT_MESSAGE_CONTENT_TYPE_REJECT_COZY))
+                .orderDesc(ChatUserMessageDao.Properties.MsgId)
+                .list();
+        if (msgs == null || msgs.size() <= 0) return false;
+        for (int i = 0; i < msgs.size(); i++) {
+            if (msgs.get(i).getContentType() == MQConstant.CHAT_MESSAGE_CONTENT_TYPE_REJECT_COZY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ChatUserMessage> getAll() {

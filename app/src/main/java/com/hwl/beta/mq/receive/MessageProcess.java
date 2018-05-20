@@ -13,6 +13,7 @@ import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
 import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
 import com.hwl.beta.mq.bean.UserLogoutMessageBean;
+import com.hwl.beta.mq.bean.UserRejectChatMessageBean;
 import com.hwl.beta.ui.mqprocess.FriendRequestProcess;
 
 /**
@@ -34,6 +35,15 @@ public class MessageProcess {
     private static IMessageProcess<NearCircleCommentMessageBean> nearCircleCommentMessageProcess;
     private static IMessageProcess<CircleLikeMessageBean> circleLikeMessageProcess;
     private static IMessageProcess<CircleCommentMessageBean> circleCommentMessageProcess;
+    private static IMessageProcess<UserRejectChatMessageBean> userRejectChatMessageProcess;
+
+    public static IMessageProcess<UserRejectChatMessageBean> getUserRejectChatMessageProcess() {
+        return userRejectChatMessageProcess;
+    }
+
+    public static void registerUserRejectChatMessageProcess(IMessageProcess<UserRejectChatMessageBean> process) {
+        userRejectChatMessageProcess = process;
+    }
 
     public static IMessageProcess<UserLogoutMessageBean> getUserLogoutMessageProcess() {
         return userLogoutMessageProcess;

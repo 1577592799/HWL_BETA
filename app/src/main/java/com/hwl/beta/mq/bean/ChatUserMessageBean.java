@@ -7,6 +7,7 @@ import java.util.Date;
  */
 
 public class ChatUserMessageBean {
+    private long msgId;
     private long fromUserId;
     private String fromUserName;
     private String fromUserHeadImage;
@@ -20,6 +21,14 @@ public class ChatUserMessageBean {
     private long size;
     private long playTime;
     private Date sendTime;
+
+    public long getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(long msgId) {
+        this.msgId = msgId;
+    }
 
     public int getImageWidth() {
         return imageWidth;

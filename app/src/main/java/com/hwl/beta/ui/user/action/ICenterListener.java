@@ -5,6 +5,9 @@ package com.hwl.beta.ui.user.action;
  */
 
 public interface ICenterListener {
+
+    void onInfoClick();
+
     void onHeadImageClick();
 
     void onCircleClick();

@@ -15,6 +15,7 @@ import com.hwl.beta.databinding.ReceivedAudioItemBinding;
 import com.hwl.beta.databinding.ReceivedImageItemBinding;
 import com.hwl.beta.databinding.ReceivedMessageItemBinding;
 import com.hwl.beta.databinding.ReceivedVideoItemBinding;
+import com.hwl.beta.databinding.ReceivedWelcomeTipBinding;
 import com.hwl.beta.databinding.SendAudioItemBinding;
 import com.hwl.beta.databinding.SendImageItemBinding;
 import com.hwl.beta.databinding.SendMessageItemBinding;
@@ -28,6 +29,7 @@ import com.hwl.beta.ui.chat.holder.ChatMessageReceivedAudioViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageReceivedImageViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageReceivedMessageViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageReceivedVideoViewHolder;
+import com.hwl.beta.ui.chat.holder.ChatMessageReceivedWelcomeTipViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageSendAudioViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageSendImageViewHolder;
 import com.hwl.beta.ui.chat.holder.ChatMessageSendMessageViewHolder;
@@ -45,8 +47,6 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     final LayoutInflater inflater;
     List<ChatUserMessage> messages;
     IChatMessageItemListener itemListener;
-    IAdapterListener adapterListener;
-    boolean isLoadReceived = false;
     long myUserId = 0;
 
     public ChatUserMessageAdapter(Context context, List<ChatUserMessage> messages, IChatMessageItemListener itemListener) {
@@ -55,11 +55,6 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);
         myUserId = UserSP.getUserId();
-    }
-
-    public ChatUserMessageAdapter(Context context, List<ChatUserMessage> messages, IChatMessageItemListener itemListener, IAdapterListener adapterListener) {
-        this(context, messages, itemListener);
-        this.adapterListener = adapterListener;
     }
 
     @Override
@@ -81,6 +76,8 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 return new ChatMessageReceivedAudioViewHolder((ReceivedAudioItemBinding) DataBindingUtil.inflate(inflater, R.layout.received_audio_item, parent, false));
             case 203:
                 return new ChatMessageReceivedVideoViewHolder((ReceivedVideoItemBinding) DataBindingUtil.inflate(inflater, R.layout.received_video_item, parent, false));
+            case 300:
+                return new ChatMessageReceivedWelcomeTipViewHolder((ReceivedWelcomeTipBinding) DataBindingUtil.inflate(inflater, R.layout.received_welcome_tip, parent, false));
         }
         return null;
     }
@@ -125,17 +122,20 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             setSendStatus(message.getSendStatus(), viewHolder.getItemBinding().pbMessageStatus, viewHolder.getItemBinding().ivMessageStatusFail);
         } else if (holder instanceof ChatMessageReceivedMessageViewHolder) {
             ChatMessageReceivedMessageViewHolder viewHolder = (ChatMessageReceivedMessageViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getContent(),null, DateUtils.getChatShowTime(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getContent(), null, DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedImageViewHolder) {
             ChatMessageReceivedImageViewHolder viewHolder = (ChatMessageReceivedImageViewHolder) holder;
             String showUrl = ChatImageViewBean.getShowUrl(message.getLocalUrl(), message.getPreviewUrl(), message.getOriginalUrl());
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), position,null, DateUtils.getChatShowTime(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), showUrl), position, null, DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedAudioViewHolder) {
             ChatMessageReceivedAudioViewHolder viewHolder = (ChatMessageReceivedAudioViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getPlayTime(),null, DateUtils.getChatShowTime(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage()), position, message.getPlayTime(), null, DateUtils.getChatShowTime(message.getSendTime()));
         } else if (holder instanceof ChatMessageReceivedVideoViewHolder) {
             ChatMessageReceivedVideoViewHolder viewHolder = (ChatMessageReceivedVideoViewHolder) holder;
-            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), position,null, DateUtils.getChatShowTime(message.getSendTime()));
+            viewHolder.setItemBinding(itemListener, new ChatImageViewBean(message.getFromUserHeadImage(), message.getPreviewUrl()), position, null, DateUtils.getChatShowTime(message.getSendTime()));
+        } else if (holder instanceof ChatMessageReceivedWelcomeTipViewHolder) {
+            ChatMessageReceivedWelcomeTipViewHolder viewHolder = (ChatMessageReceivedWelcomeTipViewHolder) holder;
+            viewHolder.setItemBinding(message.getContent());
         }
     }
 
@@ -167,13 +167,14 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 } else {
                     return 203;
                 }
+            default:
+            case MQConstant.CHAT_MESSAGE_CONTENT_TYPE_REJECT:
+                return 300;
         }
-        return 0;
     }
 
     public void addMessage(ChatUserMessage msg) {
         if (msg == null) return;
-        boolean isExists = false;
         int position = messages.indexOf(msg);
         if (position == -1) {
             messages.add(msg);
@@ -201,9 +202,5 @@ public class ChatUserMessageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public int getItemCount() {
         return messages.size();
-    }
-
-    public interface IAdapterListener {
-        void onLoadLastReceivedMessageComplete(ChatUserMessage message);
     }
 }

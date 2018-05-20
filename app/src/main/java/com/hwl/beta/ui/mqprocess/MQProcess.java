@@ -23,6 +23,7 @@ public class MQProcess {
         MessageProcess.registerNearCircleCommentMessageProcess(new NearCircleCommentMessageProcess());
         MessageProcess.registerCircleLikeMessageProcess(new CircleLikeMessageProcess());
         MessageProcess.registerCircleCommentMessageProcess(new CircleCommentMessageProcess());
+        MessageProcess.registerUserRejectChatMessageProcess(new UserRejectChatMessageProcess());
         MQManager.registerConnectionStatusEvent(new DefaultConnectionStatus());
     }
 

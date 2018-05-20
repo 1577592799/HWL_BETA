@@ -88,7 +88,7 @@ public class ActivityUserIndex extends BaseActivity {
         friend = DaoUtils.getFriendManagerInstance().get(userBean.getUserId());
         if (friend != null) {
             userBean.setIdcard(UserIndexBean.IDCARD_FRIEND);
-            userBean.setShowName(friend.getName());
+            userBean.setShowName(friend.getShowName());
             userBean.setUserImage(friend.getHeadImage());
             userBean.setRegisterAddress(friend.getCountry());
             userBean.setRemark(friend.getRemark());
@@ -187,16 +187,16 @@ public class ActivityUserIndex extends BaseActivity {
     private void initData() {
         ImageViewBean.loadImage(binding.ivHeader, userBean.getUserImage());
         if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
-            if (StringUtils.isNotBlank(friend.getRemark())) {
-                binding.tvShowName.setText(friend.getRemark());
-                binding.tvUsername.setText(friend.getName());
+            if (StringUtils.isNotBlank(userBean.getRemark())) {
+                binding.tvShowName.setText(userBean.getRemark());
+                binding.tvUsername.setText(userBean.getShowName());
                 binding.llUsername.setVisibility(View.VISIBLE);
             } else {
-                binding.tvShowName.setText(friend.getName());
+                binding.tvShowName.setText(userBean.getShowName());
                 binding.llUsername.setVisibility(View.GONE);
             }
-            if (StringUtils.isNotBlank(friend.getSymbol())) {
-                binding.tvSymbol.setText(friend.getSymbol());
+            if (StringUtils.isNotBlank(userBean.getSymbol())) {
+                binding.tvSymbol.setText(userBean.getSymbol());
                 binding.llSymbol.setVisibility(View.VISIBLE);
             } else {
                 binding.llSymbol.setVisibility(View.GONE);
@@ -214,8 +214,13 @@ public class ActivityUserIndex extends BaseActivity {
             binding.btnSendMessage.setVisibility(View.VISIBLE);
             binding.btnAddFriend.setVisibility(View.GONE);
         } else if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
-            binding.tvShowName.setText(friend.getName());
-            binding.tvSymbol.setText(friend.getSymbol());
+            binding.tvShowName.setText(userBean.getShowName());
+            if (StringUtils.isNotBlank(userBean.getSymbol())) {
+                binding.tvSymbol.setText(userBean.getSymbol());
+                binding.llSymbol.setVisibility(View.VISIBLE);
+            } else {
+                binding.llSymbol.setVisibility(View.GONE);
+            }
             binding.tvArea.setText(userBean.getRegisterAddress());
             binding.tvNotes.setText(userBean.getUserLifeNotes());
 
@@ -231,7 +236,9 @@ public class ActivityUserIndex extends BaseActivity {
             binding.btnSendMessage.setVisibility(View.GONE);
             binding.btnAddFriend.setVisibility(View.GONE);
         } else {
+            binding.tvShowName.setText(userBean.getShowName());
             binding.llRemarkSet.setVisibility(View.GONE);
+            binding.llUsername.setVisibility(View.GONE);
             binding.llSymbol.setVisibility(View.GONE);
             binding.llArea.setVisibility(View.GONE);
             binding.llNotes.setVisibility(View.GONE);
@@ -239,41 +246,6 @@ public class ActivityUserIndex extends BaseActivity {
             binding.btnSendMessage.setVisibility(View.VISIBLE);
             binding.btnAddFriend.setVisibility(View.VISIBLE);
         }
-
-//        binding.tvName.setText(userBean.getShowName());
-//        binding.tvArea.setText(userBean.getRegisterAddress());
-//        binding.tvNotes.setText(userBean.getUserLifeNotes());
-//
-//        if (userBean.getIdcard() == UserIndexBean.IDCARD_OTHER) {
-//            binding.tvSymbol.setVisibility(View.GONE);
-//            binding.llNotes.setVisibility(View.GONE);
-//            binding.llCircles.setVisibility(View.GONE);
-//            binding.llArea.setVisibility(View.GONE);
-//            binding.btnAddFriend.setVisibility(View.VISIBLE);
-//        } else {
-//            binding.tvSymbol.setVisibility(View.VISIBLE);
-//            binding.llNotes.setVisibility(View.VISIBLE);
-//            binding.llCircles.setVisibility(View.VISIBLE);
-//            binding.llArea.setVisibility(View.VISIBLE);
-//            binding.btnAddFriend.setVisibility(View.GONE);
-//            binding.tvSymbol.setText(userBean.getSymbol());
-//
-//            this.setCircleImages();
-//            this.setCircleTexts();
-//        }
-//
-//        if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND) {
-//            binding.llRemark.setVisibility(View.VISIBLE);
-//            binding.tvRemark.setText(userBean.getRemark());
-//        } else {
-//            binding.llRemark.setVisibility(View.GONE);
-//        }
-//
-//        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) {
-//            binding.btnSendMessage.setVisibility(View.GONE);
-//        } else {
-//            binding.btnSendMessage.setVisibility(View.VISIBLE);
-//        }
     }
 
     private void setCircleImages() {
@@ -299,8 +271,6 @@ public class ActivityUserIndex extends BaseActivity {
         binding.fblCircleContainer.setFlexWrap(FlexWrap.WRAP);
         binding.fblCircleContainer.setBackgroundColor(getResources().getColor(R.color.color_f3f3f3));
         FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(FlexboxLayout.LayoutParams.MATCH_PARENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
-//        params.width= FlexboxLayout.LayoutParams.MATCH_PARENT;
-//        params.height=FlexboxLayout.LayoutParams.WRAP_CONTENT;
         params.leftMargin = 5;
         params.rightMargin = 5;
         params.topMargin = 5;
@@ -315,7 +285,7 @@ public class ActivityUserIndex extends BaseActivity {
     }
 
     private void loadFriendInfo() {
-        if (userBean.getIdcard() == UserIndexBean.IDCARD_MINE) return;
+        if (userBean.getIdcard() != UserIndexBean.IDCARD_FRIEND) return;
         UserService.getUserDetails(userBean.getUserId())
                 .subscribe(new NetDefaultObserver<GetUserDetailsResponse>() {
                     @Override
@@ -334,7 +304,7 @@ public class ActivityUserIndex extends BaseActivity {
 
                             initData();
 
-                            if (userBean.getIdcard() == UserIndexBean.IDCARD_FRIEND && friend != null) {
+                            if (friend != null) {
                                 Friend tempFriend = DBFriendAction.convertToFriendInfo(response.getUserDetailsInfo());
                                 if (!tempFriend.toString().equals(friend.toString())) {
                                     DaoUtils.getFriendManagerInstance().save(tempFriend);

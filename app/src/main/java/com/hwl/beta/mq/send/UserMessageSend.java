@@ -6,6 +6,7 @@ import com.hwl.beta.mq.bean.FriendDeleteMessageBean;
 import com.hwl.beta.mq.bean.FriendRequestBean;
 import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
 import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
+import com.hwl.beta.mq.bean.UserRejectChatMessageBean;
 import com.hwl.beta.mq.receive.MessageReceive;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.utils.ByteUtils;
@@ -65,5 +66,29 @@ public class UserMessageSend {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public static Observable<Boolean> sendRejectChatMessage(long userId, long msgId) {
+        if (userId <= 0) return Observable.just(false);
+
+        UserRejectChatMessageBean message = new UserRejectChatMessageBean();
+        message.setFromUserId(UserSP.getUserId());
+        message.setFromUserName(UserSP.getUserName());
+        message.setToUserId(userId);
+        message.setMsgId(msgId);
+        message.setSendTime(new Date());
+
+        return Observable.just(message)
+                .map(new Function<UserRejectChatMessageBean, Boolean>() {
+                    @Override
+                    public Boolean apply(UserRejectChatMessageBean messageBean) throws Exception {
+                        MQManager.sendMessage(
+                                MessageReceive.getMessageQueueName(messageBean.getToUserId()),
+                                ByteUtils.mergeToStart(MQConstant.USER_REJECT_CHAT_MESSAGE, MessageReceive.convertToBytes(messageBean))
+                        );
+                        return true;
+                    }
+                })
+                .subscribeOn(Schedulers.io());
     }
 }

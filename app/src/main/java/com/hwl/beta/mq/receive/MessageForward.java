@@ -16,6 +16,7 @@ import com.hwl.beta.mq.bean.GroupUsersAddMessageBean;
 import com.hwl.beta.mq.bean.NearCircleLikeMessageBean;
 import com.hwl.beta.mq.bean.NearCircleCommentMessageBean;
 import com.hwl.beta.mq.bean.UserLogoutMessageBean;
+import com.hwl.beta.mq.bean.UserRejectChatMessageBean;
 import com.hwl.beta.utils.ByteUtils;
 import com.hwl.beta.utils.StringUtils;
 
@@ -148,6 +149,13 @@ public class MessageForward {
                 messageProcess = MessageProcess.getCircleCommentMessageProcess();
                 if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
                     messageProcess.execute(messageType, gson.fromJson(bodyJson, CircleCommentMessageBean.class));
+                }
+                break;
+            case MQConstant.USER_REJECT_CHAT_MESSAGE:
+                bodyJson = new String(bodyBytes);
+                messageProcess = MessageProcess.getUserRejectChatMessageProcess();
+                if (messageProcess != null && StringUtils.isNotBlank(bodyJson)) {
+                    messageProcess.execute(messageType, gson.fromJson(bodyJson, UserRejectChatMessageBean.class));
                 }
                 break;
         }

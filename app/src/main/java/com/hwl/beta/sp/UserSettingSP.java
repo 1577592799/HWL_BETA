@@ -12,7 +12,7 @@ public class UserSettingSP {
     private static final String MESSAGENOTIFYSETTING_OPENSOUND = "messagenotifysetting_opensound";
     private static final String MESSAGENOTIFYSETTING_OPENSHAKE = "messagenotifysetting_openshake";
     //用户隐私设置
-    private static final String PRAVICYSETTING_HIDEUSERHEADIMAGE = "pravicysetting_hideuserheadimage";
+//    private static final String PRAVICYSETTING_HIDEUSERHEADIMAGE = "pravicysetting_hideuserheadimage";
     private static final String PRAVICYSETTING_REJECTCHAT = "pravicysetting_rejectchat";
 
     private static SharedPreferences getSP() {
@@ -29,15 +29,15 @@ public class UserSettingSP {
         editor.commit();
     }
 
-    public static boolean getPrivacySettingHideUserheadimage() {
-        return getSP().getBoolean(PRAVICYSETTING_HIDEUSERHEADIMAGE, false);
-    }
-
-    public static void setPrivaySettingHideUserheadimage(boolean isHide) {
-        final SharedPreferences.Editor editor = getSP().edit();
-        editor.putBoolean(PRAVICYSETTING_HIDEUSERHEADIMAGE, isHide);
-        editor.commit();
-    }
+//    public static boolean getPrivacySettingHideUserheadimage() {
+//        return getSP().getBoolean(PRAVICYSETTING_HIDEUSERHEADIMAGE, false);
+//    }
+//
+//    public static void setPrivaySettingHideUserheadimage(boolean isHide) {
+//        final SharedPreferences.Editor editor = getSP().edit();
+//        editor.putBoolean(PRAVICYSETTING_HIDEUSERHEADIMAGE, isHide);
+//        editor.commit();
+//    }
 
     public static boolean getMessageNotifySettingOpenShake() {
         return getSP().getBoolean(MESSAGENOTIFYSETTING_OPENSHAKE, true);

@@ -100,8 +100,13 @@ public class FragmentCenter extends Fragment {
     public class CenterListener implements ICenterListener {
 
         @Override
-        public void onHeadImageClick() {
+        public void onInfoClick() {
             UITransfer.toUserEditActivity(activity);
+        }
+
+        @Override
+        public void onHeadImageClick() {
+            UITransfer.toImageBrowseActivity(activity, UserSP.getUserHeadImage());
         }
 
         @Override

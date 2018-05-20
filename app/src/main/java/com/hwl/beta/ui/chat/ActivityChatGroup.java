@@ -155,8 +155,8 @@ public class ActivityChatGroup extends BaseActivity {
 
         refreshLayout = findViewById(R.id.refreshLayout);
         refreshLayout.setEnableLoadMore(false);
-        refreshLayout.setEnableScrollContentWhenLoaded(false);
-        refreshLayout.setEnableScrollContentWhenRefreshed(false);
+//        refreshLayout.setEnableScrollContentWhenLoaded(false);
+//        refreshLayout.setEnableScrollContentWhenRefreshed(false);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

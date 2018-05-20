@@ -29,7 +29,7 @@ public class NearCircleCommentDao extends AbstractDao<NearCircleComment, Void> {
         public final static Property CommentUserId = new Property(2, long.class, "commentUserId", false, "COMMENT_USER_ID");
         public final static Property CommentUserName = new Property(3, String.class, "commentUserName", false, "COMMENT_USER_NAME");
         public final static Property CommentUserImage = new Property(4, String.class, "commentUserImage", false, "COMMENT_USER_IMAGE");
-        public final static Property ReplyUserId = new Property(5, int.class, "replyUserId", false, "REPLY_USER_ID");
+        public final static Property ReplyUserId = new Property(5, long.class, "replyUserId", false, "REPLY_USER_ID");
         public final static Property ReplyUserName = new Property(6, String.class, "replyUserName", false, "REPLY_USER_NAME");
         public final static Property ReplyUserImage = new Property(7, String.class, "replyUserImage", false, "REPLY_USER_IMAGE");
         public final static Property Content = new Property(8, String.class, "content", false, "CONTENT");
@@ -158,7 +158,7 @@ public class NearCircleCommentDao extends AbstractDao<NearCircleComment, Void> {
             cursor.getLong(offset + 2), // commentUserId
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // commentUserName
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // commentUserImage
-            cursor.getInt(offset + 5), // replyUserId
+            cursor.getLong(offset + 5), // replyUserId
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // replyUserName
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // replyUserImage
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // content
@@ -174,7 +174,7 @@ public class NearCircleCommentDao extends AbstractDao<NearCircleComment, Void> {
         entity.setCommentUserId(cursor.getLong(offset + 2));
         entity.setCommentUserName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setCommentUserImage(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setReplyUserId(cursor.getInt(offset + 5));
+        entity.setReplyUserId(cursor.getLong(offset + 5));
         entity.setReplyUserName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setReplyUserImage(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setContent(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
