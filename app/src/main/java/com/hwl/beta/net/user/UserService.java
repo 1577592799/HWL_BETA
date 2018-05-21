@@ -31,6 +31,8 @@ import com.hwl.beta.net.user.body.UserLoginRequest;
 import com.hwl.beta.net.user.body.UserLoginResponse;
 import com.hwl.beta.net.user.body.UserRegisterRequest;
 import com.hwl.beta.net.user.body.UserRegisterResponse;
+import com.hwl.beta.net.user.body.SetUserCircleBackImageRequest;
+import com.hwl.beta.net.user.body.SetUserCircleBackImageResponse;
 import com.hwl.beta.sp.UserSP;
 
 import io.reactivex.Observable;
@@ -185,6 +187,17 @@ public class UserService {
         return response;
     }
 
+    public static Observable<ResponseBase<SetUserCircleBackImageResponse>> setUserCircleBackImage(String circleBackImageUrl) {
+        SetUserCircleBackImageRequest requestBody = new SetUserCircleBackImageRequest();
+        requestBody.setUserId(UserSP.getUserId());
+        requestBody.setCircleBackImageUrl(circleBackImageUrl);
+        Observable<ResponseBase<SetUserCircleBackImageResponse>> response = RetrofitUtils.createApi(IUserService.class)
+                .setUserCircleBackImage(new RequestBase(UserSP.getUserToken(), requestBody))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        return response;
+    }
+
     public static Observable<ResponseBase<SetFriendRemarkResponse>> setFriendRemark(long friendId, String remark) {
         SetFriendRemarkRequest requestBody = new SetFriendRemarkRequest();
         requestBody.setMyUserId(UserSP.getUserId());
@@ -250,6 +263,9 @@ public class UserService {
 
         @POST("api/SetUserHeadImage")
         Observable<ResponseBase<SetUserInfoResponse>> setUserHeadImage(@Body RequestBase<SetUserHeadImageRequest> request);
+
+        @POST("api/SetUserCircleBackImage")
+        Observable<ResponseBase<SetUserCircleBackImageResponse>> setUserCircleBackImage(@Body RequestBase<SetUserCircleBackImageRequest> request);
 
         @POST("api/SetUserName")
         Observable<ResponseBase<SetUserInfoResponse>> setUserName(@Body RequestBase<SetUserNameRequest> request);
