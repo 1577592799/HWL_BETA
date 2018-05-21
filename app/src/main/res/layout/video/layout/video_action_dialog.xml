@@ -3,10 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="20dp"
-    android:paddingLeft="22.5dp"
-    android:paddingRight="22.5dp"
-    android:paddingTop="20dp">
+    android:padding="@dimen/dp_20">
 
     <Button
         android:id="@+id/btn_send"

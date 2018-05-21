@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageSelectBinding;
+import com.hwl.beta.ucrop.UCrop;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.imgselect.action.IImageSelectItemListener;
 import com.hwl.beta.ui.imgselect.action.IImageSelectListener;
@@ -122,7 +123,11 @@ public class ActivityImageSelect extends BaseActivity {
         if (resultCode == RESULT_OK)
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
-                    clipPhoto(Uri.fromFile(tempFile), PHOTO_REQUEST_CAMERA);//开始裁减图片
+//                    clipPhoto(Uri.fromFile(tempFile), PHOTO_REQUEST_CAMERA);//开始裁减图片
+                    Uri source = Uri.fromFile(tempFile);
+                    Uri temp = Uri.fromFile(new File(getTempFileName()));
+                    UCrop uCrop = UCrop.of(source, temp);
+                    uCrop.start(activity);
                     break;
                 case PHOTO_REQUEST_CUT:
                     Bitmap bitmap = data.getParcelableExtra("data");
@@ -134,6 +139,11 @@ public class ActivityImageSelect extends BaseActivity {
                     setResult(RESULT_OK, intent);
                     finish();
                     break;
+                case UCrop.REQUEST_CROP:
+                    Uri resultUri = UCrop.getOutput(data);
+                    Toast.makeText(activity, resultUri.getPath(), Toast.LENGTH_SHORT).show();
+                    break;
+
             }
     }
 
@@ -252,7 +262,11 @@ public class ActivityImageSelect extends BaseActivity {
         @Override
         public void onImageClick(ImageBean image) {
             if (selectBean.getSelectType() == ImageSelectType.USER_HEAD) {
-                clipPhoto(Uri.fromFile(new File(image.getPath())), PHOTO_REQUEST_CUT);//开始裁减图片
+                //clipPhoto(Uri.fromFile(new File(image.getPath())), PHOTO_REQUEST_CUT);//开始裁减图片
+                Uri source = Uri.fromFile(new File(image.getPath()));
+                Uri temp = Uri.fromFile(new File(getTempFileName()));
+                UCrop uCrop = UCrop.of(source, temp);
+                uCrop.start(activity);
             } else {
                 Toast.makeText(activity, image.getPath(), Toast.LENGTH_SHORT).show();
             }

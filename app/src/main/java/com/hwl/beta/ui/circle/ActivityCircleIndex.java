@@ -1,7 +1,9 @@
 package com.hwl.beta.ui.circle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +12,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -46,6 +50,7 @@ import com.hwl.beta.ui.common.rxext.NetDefaultObserver;
 import com.hwl.beta.ui.convert.DBCircleAction;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
+import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.NetworkUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -319,8 +324,11 @@ public class ActivityCircleIndex extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        //showResult();
+//                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        showResult();
+                        if (e.getMessage().equals(NetConstant.RESPONSE_RELOGIN)) {
+                            UITransfer.toReloginDialog((FragmentActivity) activity);
+                        }
                     }
 
                     @Override
@@ -355,6 +363,22 @@ public class ActivityCircleIndex extends BaseActivity {
         @Override
         public void onItemViewClick(View view) {
             KeyBoardAction.hideSoftInput(view);
+        }
+
+        @Override
+        public void onCircleBackImageClick() {
+            final Dialog circleBackImageDialog = new Dialog(activity, R.style.BottomDialog);
+            LinearLayout root = (LinearLayout) LayoutInflater.from(activity).inflate(
+                    R.layout.circle_back_image_action_dialog, null);
+            root.findViewById(R.id.btn_change).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UITransfer.toImageSelectActivity(activity, ImageSelectType.USER_HEAD, 1);
+                    circleBackImageDialog.dismiss();
+                }
+            });
+            circleBackImageDialog.setContentView(root);
+            circleBackImageDialog.show();
         }
 
         @Override
@@ -474,7 +498,7 @@ public class ActivityCircleIndex extends BaseActivity {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            deleteCircle(position,info.getCircleId());
+                            deleteCircle(position, info.getCircleId());
                             dialog.dismiss();
                         }
                     })

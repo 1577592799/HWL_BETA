@@ -17,6 +17,8 @@ public interface ICircleItemListener {
 
     void onItemViewClick(View view);
 
+    void onCircleBackImageClick();
+
     void onMyUserHeadClick();
 
     void onUserHeadClick(Circle info);

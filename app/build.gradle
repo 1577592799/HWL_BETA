@@ -81,4 +81,5 @@ dependencies {
     implementation project(path: ':mobshare')
     implementation files('libs/core-3.2.1.jar')
     implementation project(path: ':badge')
+    implementation project(path: ':ucrop')
 }
