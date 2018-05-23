@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
@@ -20,7 +22,6 @@ import android.widget.Toast;
 import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageSelectBinding;
-import com.hwl.beta.ucrop.UCrop;
 import com.hwl.beta.ui.common.BaseActivity;
 import com.hwl.beta.ui.imgselect.action.IImageSelectItemListener;
 import com.hwl.beta.ui.imgselect.action.IImageSelectListener;
@@ -29,6 +30,7 @@ import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.imgselect.bean.ImageDirBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,6 +43,7 @@ import java.util.List;
  * Created by Administrator on 2018/1/20.
  */
 public class ActivityImageSelect extends BaseActivity {
+    private static final String TAG = "ActivityImageSelect";
     private static final int PHOTO_REQUEST_CAMERA = 1;// 拍照
     private static final int PHOTO_REQUEST_CUT = 2;// 结果
     private static final String TEMP_FILE_NAME = "temp.jpg";
@@ -86,7 +89,7 @@ public class ActivityImageSelect extends BaseActivity {
                         onBackPressed();
                     }
                 });
-        if (selectBean.getSelectType() == ImageSelectType.USER_HEAD) {
+        if (selectBean.getSelectType() == ImageSelectType.USER_HEAD || selectBean.getSelectType() == ImageSelectType.CIRCLE_BACK_IMAGE) {
             binding.tbTitle.setTitleRightHide();
         } else {
             binding.tbTitle
@@ -120,14 +123,13 @@ public class ActivityImageSelect extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK)
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
 //                    clipPhoto(Uri.fromFile(tempFile), PHOTO_REQUEST_CAMERA);//开始裁减图片
                     Uri source = Uri.fromFile(tempFile);
                     Uri temp = Uri.fromFile(new File(getTempFileName()));
-                    UCrop uCrop = UCrop.of(source, temp);
-                    uCrop.start(activity);
+                    toUCropActivity(source, temp);
                     break;
                 case PHOTO_REQUEST_CUT:
                     Bitmap bitmap = data.getParcelableExtra("data");
@@ -141,10 +143,25 @@ public class ActivityImageSelect extends BaseActivity {
                     break;
                 case UCrop.REQUEST_CROP:
                     Uri resultUri = UCrop.getOutput(data);
-                    Toast.makeText(activity, resultUri.getPath(), Toast.LENGTH_SHORT).show();
+                    Intent intent2 = new Intent();
+                    intent2.putExtra("localpath", resultUri.getPath());
+                    setResult(RESULT_OK, intent2);
+                    finish();
                     break;
-
             }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            handleCropError(data);
+        }
+    }
+
+    private void handleCropError(@NonNull Intent result) {
+        final Throwable cropError = UCrop.getError(result);
+        if (cropError != null) {
+            Log.e(TAG, "handleCropError: ", cropError);
+            Toast.makeText(activity, cropError.getMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(activity, "Unexpected error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void clipPhoto(Uri uri, int type) {
@@ -236,7 +253,7 @@ public class ActivityImageSelect extends BaseActivity {
         }
 
         private void setCamera() {
-            if (selectBean.getSelectType() == ImageSelectType.USER_HEAD) {
+            if (selectBean.getSelectType() == ImageSelectType.USER_HEAD || selectBean.getSelectType() == ImageSelectType.CIRCLE_BACK_IMAGE) {
                 images.add(0, new ImageBean());
             }
         }
@@ -246,6 +263,32 @@ public class ActivityImageSelect extends BaseActivity {
 
         }
 
+    }
+
+    private void toUCropActivity(Uri sourceUri, Uri saveUri) {
+        UCrop uCrop = UCrop.of(sourceUri, saveUri);
+        UCrop.Options options = new UCrop.Options();
+        options.setToolbarColor(activity.getResources().getColor(R.color.main));
+        options.setHideBottomControls(true);
+        options.setShowCropGrid(false);
+//        options.setCompressionQuality(60);
+//        options.setFreeStyleCropEnabled(true);
+//        uCrop.withAspectRatio(0.1f,0.1f);
+
+        switch (selectBean.getSelectType()) {
+            case ImageSelectType.USER_HEAD:
+                options.withAspectRatio(1, 1);
+                options.withMaxResultSize(150, 150);
+                uCrop.withOptions(options);
+                uCrop.start(activity);
+                break;
+            case ImageSelectType.CIRCLE_BACK_IMAGE:
+                options.withAspectRatio(4, 3);
+                options.withMaxResultSize(400, 300);
+                uCrop.withOptions(options);
+                uCrop.start(activity);
+                break;
+        }
     }
 
     public class ImageSelectItemListener implements IImageSelectItemListener {
@@ -261,15 +304,10 @@ public class ActivityImageSelect extends BaseActivity {
 
         @Override
         public void onImageClick(ImageBean image) {
-            if (selectBean.getSelectType() == ImageSelectType.USER_HEAD) {
-                //clipPhoto(Uri.fromFile(new File(image.getPath())), PHOTO_REQUEST_CUT);//开始裁减图片
-                Uri source = Uri.fromFile(new File(image.getPath()));
-                Uri temp = Uri.fromFile(new File(getTempFileName()));
-                UCrop uCrop = UCrop.of(source, temp);
-                uCrop.start(activity);
-            } else {
-                Toast.makeText(activity, image.getPath(), Toast.LENGTH_SHORT).show();
-            }
+            Uri source = Uri.fromFile(new File(image.getPath()));
+            Uri temp = Uri.fromFile(new File(getTempFileName()));
+            toUCropActivity(source, temp);
+//            Toast.makeText(activity, image.getPath(), Toast.LENGTH_SHORT).show();
         }
 
         @Override

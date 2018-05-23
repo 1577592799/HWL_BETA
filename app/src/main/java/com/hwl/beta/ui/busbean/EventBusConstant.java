@@ -17,6 +17,7 @@ public class EventBusConstant {
     public static final int EB_TYPE_CHAT_RECORD_UPDATE_SHIELD = 201;
     public static final int EB_TYPE_USER_UPDATE = 300;
     public static final int EB_TYPE_USER_HEAD_UPDATE = 301;
+//    public static final int EB_TYPE_USER_CIRCLE_IMAGE_UPDATE = 302;
     public static final int EB_TYPE_NETWORK_CONNECT_UPDATE = 400;
     public static final int EB_TYPE_NETWORK_BREAK_UPDATE = 401;
     public static final int EB_TYPE_CIRCLE_INFO_UPDATE = 500;

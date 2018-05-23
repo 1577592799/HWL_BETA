@@ -89,7 +89,7 @@
         <activity android:name=".ui.group.ActivityGroup" />
         <activity android:name=".ui.group.ActivityGroupAdd" />
         <activity
-            android:name="com.hwl.beta.ucrop.UCropActivity"
+            android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

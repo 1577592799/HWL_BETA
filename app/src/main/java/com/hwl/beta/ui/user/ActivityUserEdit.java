@@ -3,6 +3,7 @@ package com.hwl.beta.ui.user;
 import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -31,12 +32,16 @@ import com.hwl.beta.ui.user.action.IUserEditListener;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.user.bean.UserEditBean;
 import com.hwl.beta.ui.user.bean.UserEditItemBean;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 
 /**
@@ -104,13 +109,14 @@ public class ActivityUserEdit extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == 1) {
-            byte[] bitmap = data.getByteArrayExtra("bitmap");
-            if (bitmap == null || bitmap.length <= 0) {
+//            byte[] bitmap = data.getByteArrayExtra("bitmap");
+            String localPath = data.getStringExtra("localpath");
+            if (StringUtils.isBlank(localPath)) {
                 Toast.makeText(activity, "上传数据不能为空", Toast.LENGTH_SHORT).show();
                 return;
             }
             LoadingDialog.show(activity, "正在上传...");
-            UploadService.upImage(bitmap, ResxType.USERHEADIMAGE)
+            UploadService.upImage(new File(localPath), ResxType.USERHEADIMAGE)
                     .flatMap(new Function<ResponseBase<UpResxResponse>, Observable<ResponseBase<SetUserInfoResponse>>>() {
                         @Override
                         public Observable<ResponseBase<SetUserInfoResponse>> apply(ResponseBase<UpResxResponse> response) throws Exception {
@@ -120,6 +126,7 @@ public class ActivityUserEdit extends BaseActivity {
                                 throw new Exception("头像上传失败");
                         }
                     })
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new NetDefaultObserver<SetUserInfoResponse>() {
                         @Override
                         protected void onSuccess(SetUserInfoResponse response) {

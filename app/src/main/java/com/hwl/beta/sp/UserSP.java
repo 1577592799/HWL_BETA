@@ -89,6 +89,12 @@ public class UserSP {
         return getSP().getString(USER_CIRCLEBACKIMAGE, null);
     }
 
+    public static void setUserCirclebackimage(String userCirclebackimage) {
+        final SharedPreferences.Editor editor = getSP().edit();
+        editor.putString(USER_CIRCLEBACKIMAGE, userCirclebackimage);
+        editor.commit();
+    }
+
     public static void setUserName(String userName) {
         final SharedPreferences.Editor editor = getSP().edit();
         editor.putString(USER_NAME, userName);

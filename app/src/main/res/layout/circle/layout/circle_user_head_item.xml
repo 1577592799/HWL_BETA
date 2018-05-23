@@ -29,12 +29,12 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp">
+            android:layout_height="300dp">
 
             <ImageView
                 android:id="@+id/iv_circle_back"
                 android:layout_width="match_parent"
-                android:layout_height="225dp"
+                android:layout_height="260dp"
                 android:background="@color/user_circle_background"
                 android:onClick="@{view->action.onBackImageClick()}"
                 android:scaleType="centerCrop"
@@ -45,20 +45,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/iv_user_header"
-                android:paddingBottom="30dp"
                 android:text="@{userName}"
                 android:textColor="@color/white"
                 android:textSize="15dp" />
 
             <ImageView
                 android:id="@+id/iv_user_header"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="30dp"
                 android:src="@drawable/empty_photo"
                 app:imageUrl="@{image.imageUrl}" />
         </RelativeLayout>

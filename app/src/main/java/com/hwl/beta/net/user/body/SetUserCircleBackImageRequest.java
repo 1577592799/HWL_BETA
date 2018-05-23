@@ -7,19 +7,19 @@ public class SetUserCircleBackImageRequest {
     private long UserId;
     private String CircleBackImageUrl;
 
+    public String getCircleBackImageUrl() {
+        return CircleBackImageUrl;
+    }
+
+    public void setCircleBackImageUrl(String circleBackImageUrl) {
+        CircleBackImageUrl = circleBackImageUrl;
+    }
+
     public long getUserId() {
         return UserId;
     }
 
     public void setUserId(long userId) {
         UserId = userId;
-    }
-
-    public String getCircleBackImageUrl() {
-        return CircleBackImageUrl;
-    }
-
-    public void setCircleBackImageUrl(String CircleBackImageUrl) {
-        CircleBackImageUrl = CircleBackImageUrl;
     }
 }

@@ -15,7 +15,6 @@
             <option value="$PROJECT_DIR$/mobshare" />
             <option value="$PROJECT_DIR$/photoview" />
             <option value="$PROJECT_DIR$/swipeback" />
-            <option value="$PROJECT_DIR$/ucrop" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -72,6 +72,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.github.yalantis:ucrop:2.2.2'
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/SQLiteStudioRemote.jar')
     implementation project(':emotion')
@@ -81,5 +82,4 @@ dependencies {
     implementation project(path: ':mobshare')
     implementation files('libs/core-3.2.1.jar')
     implementation project(path: ':badge')
-    implementation project(path: ':ucrop')
 }

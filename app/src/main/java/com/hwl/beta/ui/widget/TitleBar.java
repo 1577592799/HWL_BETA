@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,8 @@ public class TitleBar extends RelativeLayout {
     final Context currContext;
     ImageView imgLeft, imgRight;
     TextView tvTitle, tvTitleRightInfo;
+    RelativeLayout rlTitleLeft;
+    LinearLayout llTitleRight;
 
     public TitleBar(Context context) {
         super(context);
@@ -41,6 +44,8 @@ public class TitleBar extends RelativeLayout {
     private void init() {
         View view = LayoutInflater.from(currContext).inflate(R.layout.title_bar, this, false);
 
+        rlTitleLeft = view.findViewById(R.id.rl_title_left);
+        llTitleRight = view.findViewById(R.id.ll_title_right);
         imgLeft = (ImageView) view.findViewById(R.id.img_title_left_back);
         imgRight = (ImageView) view.findViewById(R.id.img_title_right_info);
         tvTitle = (TextView) view.findViewById(R.id.tv_title_content);
@@ -100,13 +105,13 @@ public class TitleBar extends RelativeLayout {
     }
 
     public TitleBar setImageLeftClick(OnClickListener click) {
-        imgLeft.setOnClickListener(click);
+        rlTitleLeft.setOnClickListener(click);
         return this;
     }
 
-    public ImageView getImageRightView() {
-        return imgRight;
-    }
+//    public ImageView getImageRightView() {
+//        return imgRight;
+//    }
 
     public TitleBar setImageRightResource(int resId) {
         imgRight.setImageResource(resId);
@@ -114,7 +119,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     public TitleBar setImageRightClick(OnClickListener click) {
-        imgRight.setOnClickListener(click);
+        llTitleRight.setOnClickListener(click);
         return this;
     }
 

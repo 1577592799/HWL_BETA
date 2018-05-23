@@ -6,6 +6,11 @@ package com.hwl.beta.net.user.body;
 
 public class SetUserCircleBackImageResponse {
     private int Status;
+    private String CircleBackImageUrl;
+
+    public String getCircleBackImageUrl() {
+        return CircleBackImageUrl;
+    }
 
     public int getStatus() {
         return Status;

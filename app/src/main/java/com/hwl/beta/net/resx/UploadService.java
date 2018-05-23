@@ -44,8 +44,8 @@ public class UploadService {
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", "userhead.png", requestFile);
         return RetrofitUtils.createResxApi(IUploadService.class)
                 .upImage(body, UserSP.getUserToken(), resxType)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
+//                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static Observable<ResponseBase<UpResxResponse>> upAudio(File file) {

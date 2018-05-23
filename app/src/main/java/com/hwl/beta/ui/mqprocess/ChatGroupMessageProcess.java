@@ -44,7 +44,7 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
         record.setFromUserHeadImage(model.getFromUserHeadImage());
         record.setTitle(model.getGroupName());
         record.setContentType(model.getContentType());
-        record.setContent(fromUserName + " : " + StringUtils.cutString(model.getContent(), 25));
+        record.setContent(StringUtils.isBlank(fromUserName) ? "" : (fromUserName + " : ") + StringUtils.cutString(model.getContent(), 25));
         //record.setUnreadCount(1);
         record.setSendTime(model.getSendTime());
         record = DaoUtils.getChatRecordMessageManagerInstance().addOrUpdate(record);

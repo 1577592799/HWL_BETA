@@ -81,7 +81,7 @@ public class CircleUserIndexAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.setItemBinding(itemListener, (Calendar.getInstance().get(Calendar.MONTH) + 1) + "月", Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
         } else if (holder instanceof CircleUserHeadItemViewHolder) {
             CircleUserHeadItemViewHolder viewHolder = (CircleUserHeadItemViewHolder) holder;
-            viewHolder.setItemBinding(new ImageViewBean(info.getViewUserImage(), info.getViewCircleBackImage()), info.getViewUserName(), info.getViewUserLifeNotes());
+            viewHolder.setItemBinding(itemListener, new ImageViewBean(info.getViewUserImage(), info.getViewCircleBackImage()), info.getViewUserName(), info.getViewUserLifeNotes());
             prevShowDate = "";
             prevMonth = 0;
             prevDay = 0;

@@ -81,7 +81,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
 
     @Override
     public void onSelectImageClick() {
-        UITransfer.toImageSelectActivity(activity, ImageSelectType.CHAT_PUBLISH, 2, 1);
+        UITransfer.toImageSelectActivity(activity, ImageSelectType.CHAT_PUBLISH, 6, 1);
     }
 
     @Override

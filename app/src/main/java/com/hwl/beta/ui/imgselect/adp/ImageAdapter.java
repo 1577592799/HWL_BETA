@@ -59,7 +59,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
         //如果选择的是多张图片，就排除照相的功能
-        if (position == 0 && imageSelectType == ImageSelectType.USER_HEAD) {
+        if (position == 0 && (imageSelectType == ImageSelectType.USER_HEAD || imageSelectType == ImageSelectType.CIRCLE_BACK_IMAGE)) {
             return 0;
         }
         return 1;
@@ -87,7 +87,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else {
                 itemBinding.cbSelect.setChecked(false);
             }
-            if (imageSelectType == ImageSelectType.USER_HEAD) {
+            if (imageSelectType == ImageSelectType.USER_HEAD || imageSelectType == ImageSelectType.CIRCLE_BACK_IMAGE) {
                 itemBinding.cbSelect.setVisibility(View.GONE);
             } else {
                 itemBinding.cbSelect.setVisibility(View.VISIBLE);

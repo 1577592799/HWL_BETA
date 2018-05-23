@@ -28,12 +28,19 @@ import com.hwl.beta.db.entity.CircleLike;
 import com.hwl.beta.db.ext.CircleExt;
 import com.hwl.beta.mq.send.CircleMessageSend;
 import com.hwl.beta.net.NetConstant;
+import com.hwl.beta.net.ResponseBase;
 import com.hwl.beta.net.circle.CircleService;
 import com.hwl.beta.net.circle.NetCircleInfo;
 import com.hwl.beta.net.circle.NetCircleMatchInfo;
 import com.hwl.beta.net.circle.body.DeleteCircleInfoResponse;
 import com.hwl.beta.net.circle.body.GetCircleInfosResponse;
 import com.hwl.beta.net.circle.body.SetLikeInfoResponse;
+import com.hwl.beta.net.resx.ResxType;
+import com.hwl.beta.net.resx.UploadService;
+import com.hwl.beta.net.resx.body.UpResxResponse;
+import com.hwl.beta.net.user.UserService;
+import com.hwl.beta.net.user.body.SetUserCircleBackImageResponse;
+import com.hwl.beta.net.user.body.SetUserInfoResponse;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionCircleComment;
@@ -51,8 +58,10 @@ import com.hwl.beta.ui.convert.DBCircleAction;
 import com.hwl.beta.ui.dialog.LoadingDialog;
 import com.hwl.beta.ui.imgselect.ActivityImageBrowse;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
+import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.ui.widget.CircleActionMorePop;
 import com.hwl.beta.utils.NetworkUtils;
+import com.hwl.beta.utils.StringUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -61,6 +70,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -152,9 +162,6 @@ public class ActivityCircleIndex extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         UITransfer.toCirclePublishActivity(activity);
-//                        MessageCountSP.setCircleMessageCountIncrease();
-                        //MessageCountSP.setCircleMessageCountReduce();
-//                        circleAdapter.notifyItemChanged(1);
                     }
                 })
                 .setImageLeftClick(new View.OnClickListener() {
@@ -222,6 +229,49 @@ public class ActivityCircleIndex extends BaseActivity {
                 circles.remove(i);
                 break;
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 1) {
+            String localPath = data.getStringExtra("localpath");
+            if (StringUtils.isBlank(localPath)) {
+                Toast.makeText(activity, "上传数据不能为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            LoadingDialog.show(activity, "正在上传...");
+            UploadService.upImage(new File(localPath), ResxType.CIRCLEBACK)
+                    .flatMap(new Function<ResponseBase<UpResxResponse>, Observable<ResponseBase<SetUserCircleBackImageResponse>>>() {
+                        @Override
+                        public Observable<ResponseBase<SetUserCircleBackImageResponse>> apply(ResponseBase<UpResxResponse> response) throws Exception {
+                            if (response != null && response.getResponseBody() != null && response.getResponseBody().isSuccess()) {
+                                return UserService.setUserCircleBackImage(response.getResponseBody().getOriginalUrl());
+                            } else
+                                throw new Exception("圈子封面上传失败");
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new NetDefaultObserver<SetUserCircleBackImageResponse>() {
+                        @Override
+                        protected void onSuccess(SetUserCircleBackImageResponse response) {
+                            LoadingDialog.hide();
+                            if (response.getStatus() == NetConstant.RESULT_SUCCESS) {
+                                UserSP.setUserCirclebackimage(response.getCircleBackImageUrl());
+                                circleAdapter.notifyItemChanged(0);
+                                Toast.makeText(activity, "圈子封面上传成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                onError("圈子封面上传失败");
+                            }
+                        }
+
+                        @Override
+                        protected void onError(String resultMessage) {
+                            super.onError(resultMessage);
+                            LoadingDialog.hide();
+                        }
+                    });
         }
     }
 
@@ -326,7 +376,7 @@ public class ActivityCircleIndex extends BaseActivity {
                     public void onError(Throwable e) {
 //                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         showResult();
-                        if (e.getMessage().equals(NetConstant.RESPONSE_RELOGIN)) {
+                        if (e != null && e.getMessage().equals(NetConstant.RESPONSE_RELOGIN)) {
                             UITransfer.toReloginDialog((FragmentActivity) activity);
                         }
                     }
@@ -337,10 +387,6 @@ public class ActivityCircleIndex extends BaseActivity {
                         if (updateCount > 0) {
                             circleAdapter.notifyItemRangeChanged(0, circles.size());
                         }
-
-//                        if (updateCount > 0 || insertCount > 0) {
-//                            isDataChange = true;
-//                        }
                     }
                 });
     }
@@ -373,7 +419,7 @@ public class ActivityCircleIndex extends BaseActivity {
             root.findViewById(R.id.btn_change).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UITransfer.toImageSelectActivity(activity, ImageSelectType.USER_HEAD, 1);
+                    UITransfer.toImageSelectActivity(activity, ImageSelectType.CIRCLE_BACK_IMAGE, 1);
                     circleBackImageDialog.dismiss();
                 }
             });
