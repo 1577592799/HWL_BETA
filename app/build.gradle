@@ -73,6 +73,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.yalantis:ucrop:2.2.2'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/SQLiteStudioRemote.jar')
     implementation project(':emotion')

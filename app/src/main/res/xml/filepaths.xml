@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--<cache-path-->
+        <!--name="cacheDir"-->
+        <!--path="cache/" />-->
+    <root-path path="" name="tempdir" />
+</paths>

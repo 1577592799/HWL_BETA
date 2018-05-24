@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageSelectBinding;
 import com.hwl.beta.ui.common.BaseActivity;
+import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.imgselect.action.IImageSelectItemListener;
 import com.hwl.beta.ui.imgselect.action.IImageSelectListener;
 import com.hwl.beta.ui.imgselect.adp.ImageAdapter;
@@ -30,6 +32,7 @@ import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.imgselect.bean.ImageDirBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
+import com.hwl.beta.utils.StorageUtils;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +62,7 @@ public class ActivityImageSelect extends BaseActivity {
     int imageTotalCount = 0;
     ImageFilter imageFilter;
     ImageAdapter imageAdapter;
-    File tempFile;
+//    File tempFile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,9 +130,9 @@ public class ActivityImageSelect extends BaseActivity {
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
 //                    clipPhoto(Uri.fromFile(tempFile), PHOTO_REQUEST_CAMERA);//开始裁减图片
-                    Uri source = Uri.fromFile(tempFile);
-                    Uri temp = Uri.fromFile(new File(getTempFileName()));
-                    toUCropActivity(source, temp);
+//                    Uri source = Uri.fromFile(tempFile);
+//                    Uri temp = Uri.fromFile(new File(getTempFileName()));
+                    toUCropActivity(StorageUtils.getUriForTempFile(), StorageUtils.getUriForTempFile());
                     break;
                 case PHOTO_REQUEST_CUT:
                     Bitmap bitmap = data.getParcelableExtra("data");
@@ -164,25 +167,25 @@ public class ActivityImageSelect extends BaseActivity {
         }
     }
 
-    private void clipPhoto(Uri uri, int type) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setAction("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");// mUri是已经选择的图片Uri
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);// 裁剪框比例
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 150);// 输出图片大小
-        intent.putExtra("outputY", 150);
-        intent.putExtra("scale", true);//黑边
-        intent.putExtra("circleCrop ", false);
-        intent.putExtra("scaleUpIfNeeded", true);//黑边
-        intent.putExtra("return-data", true);
-
-        if (type == PHOTO_REQUEST_CAMERA) {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        }
-        startActivityForResult(intent, PHOTO_REQUEST_CUT);
-    }
+//    private void clipPhoto(Uri uri, int type) {
+//        Intent intent = new Intent("com.android.camera.action.CROP");
+//        intent.setAction("com.android.camera.action.CROP");
+//        intent.setDataAndType(uri, "image/*");// mUri是已经选择的图片Uri
+//        intent.putExtra("crop", "true");
+//        intent.putExtra("aspectX", 1);// 裁剪框比例
+//        intent.putExtra("aspectY", 1);
+//        intent.putExtra("outputX", 150);// 输出图片大小
+//        intent.putExtra("outputY", 150);
+//        intent.putExtra("scale", true);//黑边
+//        intent.putExtra("circleCrop ", false);
+//        intent.putExtra("scaleUpIfNeeded", true);//黑边
+//        intent.putExtra("return-data", true);
+//
+//        if (type == PHOTO_REQUEST_CAMERA) {
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+//        }
+//        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+//    }
 
     static class ImageFilter implements FilenameFilter {
         public ImageFilter() {
@@ -266,6 +269,7 @@ public class ActivityImageSelect extends BaseActivity {
     }
 
     private void toUCropActivity(Uri sourceUri, Uri saveUri) {
+        Log.d(TAG, sourceUri.getPath() + "   " + saveUri.getPath());
         UCrop uCrop = UCrop.of(sourceUri, saveUri);
         UCrop.Options options = new UCrop.Options();
         options.setToolbarColor(activity.getResources().getColor(R.color.main));
@@ -295,18 +299,19 @@ public class ActivityImageSelect extends BaseActivity {
 
         @Override
         public void onCameraClick() {
-            tempFile = new File(getTempFileName());
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // 下面这句指定调用相机拍照后的照片存储的路径
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
-            startActivityForResult(cameraIntent, PHOTO_REQUEST_CAMERA);// CAMERA_OK是用作判断返回结果的标识
+//            tempFile = new File(getTempFileName());
+//            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            // 下面这句指定调用相机拍照后的照片存储的路径
+//            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, StorageUtils.getUriForTempFile());
+//            startActivityForResult(cameraIntent, PHOTO_REQUEST_CAMERA);// CAMERA_OK是用作判断返回结果的标识
+            UITransfer.toSystemCamera(activity, PHOTO_REQUEST_CAMERA);
         }
 
         @Override
         public void onImageClick(ImageBean image) {
-            Uri source = Uri.fromFile(new File(image.getPath()));
-            Uri temp = Uri.fromFile(new File(getTempFileName()));
-            toUCropActivity(source, temp);
+//            Uri source = Uri.fromFile(new File(image.getPath()));
+//            Uri temp = Uri.fromFile(new File(getTempFileName()));
+            toUCropActivity(Uri.fromFile(new File(image.getPath())), StorageUtils.getUriForTempFile());
 //            Toast.makeText(activity, image.getPath(), Toast.LENGTH_SHORT).show();
         }
 

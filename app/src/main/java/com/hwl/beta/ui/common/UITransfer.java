@@ -1,13 +1,17 @@
 package com.hwl.beta.ui.common;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.usage.StorageStats;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.hwl.beta.HWLApp;
 import com.hwl.beta.db.DaoUtils;
@@ -54,10 +58,17 @@ import com.hwl.beta.ui.user.ActivityUserSearch;
 import com.hwl.beta.ui.user.ActivityUserSetting;
 import com.hwl.beta.ui.video.ActivityVideoPlay;
 import com.hwl.beta.ui.video.ActivityVideoSelect;
+import com.hwl.beta.utils.StorageUtils;
 import com.hwl.beta.utils.StringUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 /**
  * Created by Administrator on 2018/3/27.
@@ -164,11 +175,25 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toImageSelectActivity(Activity context, int selectType, int requestCode) {
+    public static void toSystemCamera(Activity activity, int requestCode) {
+        toSystemCamera(activity, StorageUtils.getUriForTempFile(), requestCode);
+    }
+
+    public static void toSystemCamera(Activity activity, Uri saveUri, int requestCode) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void toImageSelectActivity(final Activity context, final int selectType, final int requestCode) {
         toImageSelectActivity(context, selectType, 1, requestCode);
     }
 
     public static void toImageSelectActivity(Activity context, int selectType, int selectCount, int requestCode) {
+        if (!PermissionsAction.checkCamera(context)) {
+            return;
+        }
+
         Intent intent = new Intent(context, ActivityImageSelect.class);
         intent.putExtra("selecttype", selectType);
         intent.putExtra("selectcount", selectCount);
