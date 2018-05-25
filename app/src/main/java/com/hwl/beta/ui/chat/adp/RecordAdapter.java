@@ -4,7 +4,6 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.hwl.beta.R;
 import com.hwl.beta.badge.Badge;
-import com.hwl.beta.badge.QBadgeView;
 import com.hwl.beta.databinding.RecordItemBinding;
-import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatRecordMessage;
 import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.ui.widget.BadgeNumber;
@@ -64,10 +61,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
             case MQConstant.CHAT_RECORD_TYPE_GROUP:
                 itemBinding.ivGroupImage.setVisibility(View.VISIBLE);
                 itemBinding.ivRecordImage.setVisibility(View.GONE);
-                itemBinding.ivGroupImage.displayImage(record.getGroupUserImages())
-                        .synthesizedWidthHeight(imageSize, imageSize)
-                        .defaultImage(R.drawable.empty_photo)
-                        .load();
+                itemBinding.ivGroupImage.setImagesData(record.getGroupUserImages());
                 break;
             default:
                 itemBinding.ivGroupImage.setVisibility(View.GONE);
@@ -113,6 +107,18 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
     @Override
     public int getItemCount() {
         return records.size();
+    }
+
+    public void updateGroupImage(String groupGuid, List<String> groupUserImages) {
+        if (StringUtils.isBlank(groupGuid) || groupUserImages == null || groupUserImages.size() <= 0)
+            return;
+        for (int i = 0; i < records.size(); i++) {
+            if (records.get(i).getRecordType() == MQConstant.CHAT_RECORD_TYPE_GROUP && records.get(i).getGruopGuid().equals(groupGuid)) {
+                records.get(i).setGroupUserImages(groupUserImages);
+                notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     public interface IAdapterListener {

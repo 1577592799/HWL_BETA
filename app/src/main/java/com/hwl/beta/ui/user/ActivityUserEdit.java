@@ -146,6 +146,11 @@ public class ActivityUserEdit extends BaseActivity {
                             super.onError(resultMessage);
                             LoadingDialog.hide();
                         }
+
+                        @Override
+                        protected void onRelogin() {
+                            UITransfer.toReloginDialog((FragmentActivity) activity);
+                        }
                     });
         }
     }

@@ -3,5 +3,5 @@
     <!--<cache-path-->
         <!--name="cacheDir"-->
         <!--path="cache/" />-->
-    <root-path path="" name="tempdir" />
+    <cache-path name="cacheDir" path="/" />
 </paths>

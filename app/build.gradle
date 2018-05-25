@@ -41,14 +41,13 @@ android {
         }
     }
     greendao {
-        schemaVersion 21 //数据库版本号
+        schemaVersion 22 //数据库版本号
         daoPackage 'com.hwl.beta.db.dao'// 设置DaoMaster、DaoSession、Dao 包名
         targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
     }
     dataBinding {
         enabled = true
     }
-    buildToolsVersion '27.0.3'
 }
 
 dependencies {

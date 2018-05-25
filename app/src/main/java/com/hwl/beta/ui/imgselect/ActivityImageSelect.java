@@ -130,9 +130,8 @@ public class ActivityImageSelect extends BaseActivity {
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
 //                    clipPhoto(Uri.fromFile(tempFile), PHOTO_REQUEST_CAMERA);//开始裁减图片
-//                    Uri source = Uri.fromFile(tempFile);
-//                    Uri temp = Uri.fromFile(new File(getTempFileName()));
-                    toUCropActivity(StorageUtils.getUriForTempFile(), StorageUtils.getUriForTempFile());
+                    Uri source = Uri.fromFile(StorageUtils.getTempImageFile());
+                    toUCropActivity(source, source);
                     break;
                 case PHOTO_REQUEST_CUT:
                     Bitmap bitmap = data.getParcelableExtra("data");

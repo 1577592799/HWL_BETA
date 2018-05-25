@@ -30,14 +30,14 @@ public final class StorageUtils {
     //    private static final String INDIVIDUAL_DIR_NAME = "uil-images";
     private static final String TAG = "StorageUtils";
     private static final String TEMP_IMAGE_FILE_NAME = "temp.png";
-    //与xml/filepaths.xml中的name配置一样
-    private static final String TEMP_DIR_NAME = "tempdir";
+    //与xml/filepaths.xml中的name对应的path配置一样
+//    private static final String TEMP_DIR_NAME = "hwl_temp";
 
     private StorageUtils() {
     }
 
     public static File getTempImageFile() {
-        File file = new File(getTempImageDirName() + File.separator + TEMP_IMAGE_FILE_NAME);
+        File file = new File(getTempImageFilePath());
         if (!file.getParentFile().exists()) {
             try {
                 file.getParentFile().mkdirs();
@@ -45,40 +45,37 @@ public final class StorageUtils {
                 e.printStackTrace();
             }
         }
-        Log.d("StorageUtils", file.getAbsolutePath());
         return file;
     }
 
-    public static String getTempImageDirName() {
-        String rootPath = getRootPath();
-        Log.d(TAG, "StorageUtils=" + rootPath);
-        return rootPath + File.separator + TEMP_DIR_NAME;
+    public static String getTempImageFilePath() {
+        return HWLApp.getContext().getCacheDir() + File.separator + TEMP_IMAGE_FILE_NAME;
     }
 
     public static Uri getUriForTempFile() {
         return getUriForFile(getTempImageFile());
     }
 
-    public static String getRootPath() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath(); // filePath:  /sdcard/
-        } else {
-            return Environment.getDataDirectory().getAbsolutePath() + "/data"; // filePath:  /data/data/
-        }
-    }
+//    public static String getRootPath() {
+//        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+//            return Environment.getExternalStorageDirectory().getAbsolutePath(); // filePath:  /sdcard/
+//        } else {
+//            return Environment.getDataDirectory().getAbsolutePath() + "/data"; // filePath:  /data/data/
+//        }
+//    }
 
     public static Uri getUriForFile(File file) {
         if (file == null) {
             throw new NullPointerException();
         }
-        Log.d(TAG, "StorageUtils2=" + file.getAbsolutePath());
+//        Log.d(TAG, "StorageUtils2=" + file.getAbsolutePath());
         Uri uri;
         if (Build.VERSION.SDK_INT >= 24) {
             uri = FileProvider.getUriForFile(HWLApp.getContext(), HWLApp.getContext().getPackageName() + ".fileprovider", file);
         } else {
             uri = Uri.fromFile(file);
         }
-        Log.d(TAG, "StorageUtils3=" + uri.getPath());
+//        Log.d(TAG, "StorageUtils3=" + uri.getPath());
         return uri;
     }
 

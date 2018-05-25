@@ -198,7 +198,6 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
                         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
                         record.setGruopGuid(message.getGroupGuid());
                         record.setGroupName(message.getGroupName());
-                        record.setGroupImage(message.getGroupImage());
                         record.setRecordImage(message.getGroupImage());
                         record.setFromUserId(message.getFromUserId());
                         record.setFromUserName(message.getFromUserName());

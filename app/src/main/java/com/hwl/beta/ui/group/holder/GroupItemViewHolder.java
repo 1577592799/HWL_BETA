@@ -20,9 +20,7 @@ public class GroupItemViewHolder extends RecyclerView.ViewHolder {
     public void setItemBinding(View.OnClickListener itemListener, List<String> groupUserImages, String groupName) {
         this.itemBinding.getRoot().setOnClickListener(itemListener);
         if (groupUserImages != null && groupUserImages.size() > 0) {
-            this.itemBinding.ivGroupImage.displayImage(groupUserImages)
-                    .defaultImage(R.drawable.empty_photo)
-                    .load();
+            this.itemBinding.ivGroupImage.setImagesData(groupUserImages);
         }
         this.itemBinding.setName(groupName);
     }

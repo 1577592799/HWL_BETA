@@ -23,7 +23,8 @@ public class EventBusConstant {
     public static final int EB_TYPE_CIRCLE_INFO_UPDATE = 500;
     public static final int EB_TYPE_CIRCLE_MESSAGE_UPDATE = 501;
     public static final int EB_TYPE_NEAR_INFO_UPDATE = 600;
-    public static final int EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE = 600;
+    public static final int EB_TYPE_NEAR_CIRCLE_MESSAGE_UPDATE = 601;
+    public static final int EB_TYPE_GROUP_IMAGE_UPDATE = 700;
 
     public static final int EB_TYPE_ACTINO_ADD = 20000;
     public static final int EB_TYPE_ACTINO_REMOVE = 20001;

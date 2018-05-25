@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityMainBinding;
 import com.hwl.beta.db.DaoUtils;
+import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.mq.bean.UserLogoutMessageBean;
 import com.hwl.beta.mq.receive.MessageReceive;
 import com.hwl.beta.net.NetConstant;
@@ -35,6 +36,7 @@ import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserPosSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.TabFragmentPagerAdapter;
+import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.chat.FragmentRecord;
 import com.hwl.beta.ui.common.ShareTransfer;
@@ -179,21 +181,6 @@ public class ActivityMain extends FragmentActivity {
         popup.show();
     }
 
-//    private void showMessageCount() {
-////        int chatMessageCount = MessageCountSP.getChatMessageCount();
-////        int friendRequestCount = MessageCountSP.getFriendRequestCount();
-////        if (chatMessageCount > 0) {
-////            binding.tnvMsgCount.setVisibility(View.VISIBLE);
-////        } else {
-////            binding.tnvMsgCount.setVisibility(View.GONE);
-////        }
-////        if (friendRequestCount > 0) {
-////            binding.tnvFriendCount.setVisibility(View.VISIBLE);
-////        } else {
-////            binding.tnvFriendCount.setVisibility(View.GONE);
-////        }
-//    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -282,14 +269,11 @@ public class ActivityMain extends FragmentActivity {
                                         //往本地存储一份定位数据
                                         UserPosSP.setUserPos(res.getUserPosId(), res.getUserGroupGuid(), Float.parseFloat(request.getLatitude()), Float.parseFloat(request.getLongitude()), request.getCountry(), request.getProvince(), request.getCity(), request.getDistrict(), request.getStreet(), request.getDetails());
                                         if (res.getGroupUserInfos() != null && res.getGroupUserInfos().size() > 0) {
-                                            List<String> groupUserImages = new ArrayList<>();
-                                            for (int i = 0; i < res.getGroupUserInfos().size(); i++) {
-                                                groupUserImages.add(res.getGroupUserInfos().get(i).getUserHeadImage());
-                                                if (i >= 8) break;
-                                            }
                                             //保存组和组用户数据到本地
-                                            DaoUtils.getGroupInfoManagerInstance().add(DBGroupAction.convertToNearGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size(), groupUserImages));
+                                            GroupInfo groupInfo = DBGroupAction.convertToNearGroupInfo(res.getUserGroupGuid(), res.getGroupUserInfos().size(), DBGroupAction.convertToGroupUserImages(res.getGroupUserInfos()));
+                                            DaoUtils.getGroupInfoManagerInstance().add(groupInfo);
                                             DaoUtils.getGroupUserInfoManagerInstance().addListAsync(DBGroupAction.convertToGroupUserInfos(res.getGroupUserInfos()));
+                                            EventBus.getDefault().post(new EventActionGroup(EventBusConstant.EB_TYPE_GROUP_IMAGE_UPDATE, groupInfo));
                                         }
                                     }
                                 }

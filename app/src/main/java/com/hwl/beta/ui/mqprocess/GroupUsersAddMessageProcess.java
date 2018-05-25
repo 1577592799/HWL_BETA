@@ -52,7 +52,6 @@ public class GroupUsersAddMessageProcess implements IMessageProcess<GroupUsersAd
         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
         record.setGruopGuid(groupInfo.getGroupGuid());
         record.setGroupName(groupInfo.getGroupName());
-        record.setGroupImage("");
         record.setRecordImage("");
         record.setTitle(StringUtils.cutString(groupInfo.getGroupName(), 18));
         record.setContentType(message.getContentType());

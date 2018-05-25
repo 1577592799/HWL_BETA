@@ -1,5 +1,7 @@
 package com.hwl.beta.ui.mqprocess;
 
+import android.util.Log;
+
 import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.entity.ChatGroupMessage;
 import com.hwl.beta.db.entity.ChatRecordMessage;
@@ -12,6 +14,8 @@ import com.hwl.beta.ui.convert.DBFriendAction;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/2/9.
@@ -32,19 +36,24 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
             }
         }
 
+        List<String> groupUserImages = model.getGroupUserImages();
+        if (groupUserImages == null || groupUserImages.size() <= 0) {
+            groupUserImages = DaoUtils.getGroupInfoManagerInstance().getGroupUserImages(model.getGroupGuid());
+        }
+
         ChatRecordMessage record = new ChatRecordMessage();
         //record.setRecordId(1);
         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
         record.setGruopGuid(model.getGroupGuid());
         record.setGroupName(model.getGroupName());
-        record.setGroupImage(model.getGroupImage());
-        record.setRecordImage(model.getGroupImage());
+        record.setGroupUserImages(groupUserImages);
+//        record.setRecordImage(model.getGroupImage());
         record.setFromUserId(model.getFromUserId());
         record.setFromUserName(fromUserName);
         record.setFromUserHeadImage(model.getFromUserHeadImage());
         record.setTitle(model.getGroupName());
         record.setContentType(model.getContentType());
-        record.setContent(StringUtils.isBlank(fromUserName) ? "" : (fromUserName + " : ") + StringUtils.cutString(model.getContent(), 25));
+        record.setContent(StringUtils.isBlank(fromUserName) ? StringUtils.cutString(model.getContent(), 25) : (fromUserName + " : ") + StringUtils.cutString(model.getContent(), 25));
         //record.setUnreadCount(1);
         record.setSendTime(model.getSendTime());
         record = DaoUtils.getChatRecordMessageManagerInstance().addOrUpdate(record);
@@ -53,7 +62,7 @@ public class ChatGroupMessageProcess implements IMessageProcess<ChatGroupMessage
 //        message.setMsgId(1);
         message.setGroupGuid(model.getGroupGuid());
         message.setGroupName(model.getGroupName());
-        message.setGroupImage(model.getGroupImage());
+//        message.setGroupImage(model.getGroupImage());
         message.setFromUserId(model.getFromUserId());
         message.setFromUserName(fromUserName);
         message.setFromUserHeadImage(model.getFromUserHeadImage());

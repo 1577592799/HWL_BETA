@@ -89,7 +89,6 @@ public class ChatRecordMessageManager extends BaseDao<ChatRecordMessage> {
             existsRecord.setToUserHeadImage(request.getToUserHeadImage());
 
             existsRecord.setGroupName(request.getGroupName());
-            existsRecord.setGroupImage(request.getGroupImage());
             existsRecord.setRecordImage(request.getRecordImage());
 
             if (request.getFromUserId() != UserSP.getUserId()) {

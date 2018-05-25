@@ -112,4 +112,14 @@ public class DBGroupAction {
 
         return groupUserInfos;
     }
+
+    public static List<String> convertToGroupUserImages(List<NetGroupUserInfo> userInfos) {
+        if (userInfos == null || userInfos.size() <= 0) return null;
+        List<String> groupUserImages = new ArrayList<>();
+        for (int i = 0; i < userInfos.size(); i++) {
+            groupUserImages.add(userInfos.get(i).getUserHeadImage());
+            if (i >= 8) break;
+        }
+        return groupUserImages;
+    }
 }

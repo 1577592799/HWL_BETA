@@ -35,12 +35,11 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
         public final static Property ToUserHeadImage = new Property(8, String.class, "toUserHeadImage", false, "TO_USER_HEAD_IMAGE");
         public final static Property GruopGuid = new Property(9, String.class, "gruopGuid", false, "GRUOP_GUID");
         public final static Property GroupName = new Property(10, String.class, "groupName", false, "GROUP_NAME");
-        public final static Property GroupImage = new Property(11, String.class, "groupImage", false, "GROUP_IMAGE");
-        public final static Property Title = new Property(12, String.class, "title", false, "TITLE");
-        public final static Property ContentType = new Property(13, int.class, "contentType", false, "CONTENT_TYPE");
-        public final static Property Content = new Property(14, String.class, "content", false, "CONTENT");
-        public final static Property UnreadCount = new Property(15, int.class, "unreadCount", false, "UNREAD_COUNT");
-        public final static Property SendTime = new Property(16, java.util.Date.class, "sendTime", false, "SEND_TIME");
+        public final static Property Title = new Property(11, String.class, "title", false, "TITLE");
+        public final static Property ContentType = new Property(12, int.class, "contentType", false, "CONTENT_TYPE");
+        public final static Property Content = new Property(13, String.class, "content", false, "CONTENT");
+        public final static Property UnreadCount = new Property(14, int.class, "unreadCount", false, "UNREAD_COUNT");
+        public final static Property SendTime = new Property(15, java.util.Date.class, "sendTime", false, "SEND_TIME");
     }
 
 
@@ -67,12 +66,11 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
                 "\"TO_USER_HEAD_IMAGE\" TEXT," + // 8: toUserHeadImage
                 "\"GRUOP_GUID\" TEXT," + // 9: gruopGuid
                 "\"GROUP_NAME\" TEXT," + // 10: groupName
-                "\"GROUP_IMAGE\" TEXT," + // 11: groupImage
-                "\"TITLE\" TEXT," + // 12: title
-                "\"CONTENT_TYPE\" INTEGER NOT NULL ," + // 13: contentType
-                "\"CONTENT\" TEXT," + // 14: content
-                "\"UNREAD_COUNT\" INTEGER NOT NULL ," + // 15: unreadCount
-                "\"SEND_TIME\" INTEGER);"); // 16: sendTime
+                "\"TITLE\" TEXT," + // 11: title
+                "\"CONTENT_TYPE\" INTEGER NOT NULL ," + // 12: contentType
+                "\"CONTENT\" TEXT," + // 13: content
+                "\"UNREAD_COUNT\" INTEGER NOT NULL ," + // 14: unreadCount
+                "\"SEND_TIME\" INTEGER);"); // 15: sendTime
     }
 
     /** Drops the underlying database table. */
@@ -128,26 +126,21 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
             stmt.bindString(11, groupName);
         }
  
-        String groupImage = entity.getGroupImage();
-        if (groupImage != null) {
-            stmt.bindString(12, groupImage);
-        }
- 
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(13, title);
+            stmt.bindString(12, title);
         }
-        stmt.bindLong(14, entity.getContentType());
+        stmt.bindLong(13, entity.getContentType());
  
         String content = entity.getContent();
         if (content != null) {
-            stmt.bindString(15, content);
+            stmt.bindString(14, content);
         }
-        stmt.bindLong(16, entity.getUnreadCount());
+        stmt.bindLong(15, entity.getUnreadCount());
  
         java.util.Date sendTime = entity.getSendTime();
         if (sendTime != null) {
-            stmt.bindLong(17, sendTime.getTime());
+            stmt.bindLong(16, sendTime.getTime());
         }
     }
 
@@ -198,26 +191,21 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
             stmt.bindString(11, groupName);
         }
  
-        String groupImage = entity.getGroupImage();
-        if (groupImage != null) {
-            stmt.bindString(12, groupImage);
-        }
- 
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(13, title);
+            stmt.bindString(12, title);
         }
-        stmt.bindLong(14, entity.getContentType());
+        stmt.bindLong(13, entity.getContentType());
  
         String content = entity.getContent();
         if (content != null) {
-            stmt.bindString(15, content);
+            stmt.bindString(14, content);
         }
-        stmt.bindLong(16, entity.getUnreadCount());
+        stmt.bindLong(15, entity.getUnreadCount());
  
         java.util.Date sendTime = entity.getSendTime();
         if (sendTime != null) {
-            stmt.bindLong(17, sendTime.getTime());
+            stmt.bindLong(16, sendTime.getTime());
         }
     }
 
@@ -240,12 +228,11 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // toUserHeadImage
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // gruopGuid
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // groupName
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // groupImage
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // title
-            cursor.getInt(offset + 13), // contentType
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // content
-            cursor.getInt(offset + 15), // unreadCount
-            cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)) // sendTime
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // title
+            cursor.getInt(offset + 12), // contentType
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // content
+            cursor.getInt(offset + 14), // unreadCount
+            cursor.isNull(offset + 15) ? null : new java.util.Date(cursor.getLong(offset + 15)) // sendTime
         );
         return entity;
     }
@@ -263,12 +250,11 @@ public class ChatRecordMessageDao extends AbstractDao<ChatRecordMessage, Long> {
         entity.setToUserHeadImage(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setGruopGuid(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setGroupName(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setGroupImage(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setTitle(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setContentType(cursor.getInt(offset + 13));
-        entity.setContent(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setUnreadCount(cursor.getInt(offset + 15));
-        entity.setSendTime(cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)));
+        entity.setTitle(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setContentType(cursor.getInt(offset + 12));
+        entity.setContent(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setUnreadCount(cursor.getInt(offset + 14));
+        entity.setSendTime(cursor.isNull(offset + 15) ? null : new java.util.Date(cursor.getLong(offset + 15)));
      }
     
     @Override

@@ -22,6 +22,7 @@ import com.hwl.beta.mq.MQConstant;
 import com.hwl.beta.sp.MessageCountSP;
 import com.hwl.beta.sp.UserSP;
 import com.hwl.beta.ui.busbean.EventActionChatRecord;
+import com.hwl.beta.ui.busbean.EventActionGroup;
 import com.hwl.beta.ui.busbean.EventBusConstant;
 import com.hwl.beta.ui.busbean.EventUpdateFriendRemark;
 import com.hwl.beta.ui.chat.adp.RecordAdapter;
@@ -182,6 +183,15 @@ public class FragmentRecord extends BaseFragment {
         } else if (actionChatRecord.getActionType() == EventBusConstant.EB_TYPE_CHAT_RECORD_UPDATE_SHIELD) {
             records.get(position).setIsShield(actionChatRecord.getRecord().getIsShield());
             recordAdapter.notifyItemChanged(position);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateGroupImage(EventActionGroup actionGroup) {
+        if (actionGroup == null || actionGroup.getGroupInfo() == null)
+            return;
+        if (actionGroup.getActionType() == EventBusConstant.EB_TYPE_GROUP_IMAGE_UPDATE) {
+            recordAdapter.updateGroupImage(actionGroup.getGroupInfo().getGroupGuid(), actionGroup.getGroupInfo().getUserImages());
         }
     }
 

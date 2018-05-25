@@ -41,7 +41,6 @@ public class GroupEditMessageProcess implements IMessageProcess<GroupEditMessage
         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
         record.setGruopGuid(model.getGroupGuid());
         record.setGroupName(groupInfo.getGroupName());
-        record.setGroupImage("");
         record.setRecordImage("");
 //        record.setFromUserId(model.getBuildUserId());
 //        record.setFromUserName(model.getBuildUserName());

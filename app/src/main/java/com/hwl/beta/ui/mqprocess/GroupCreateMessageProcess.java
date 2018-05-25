@@ -26,7 +26,6 @@ public class GroupCreateMessageProcess implements IMessageProcess<GroupCreateMes
         record.setRecordType(MQConstant.CHAT_RECORD_TYPE_GROUP);
         record.setGruopGuid(model.getGroupGuid());
         record.setGroupName(model.getGroupName());
-        record.setGroupImage("");
         record.setRecordImage("");
         record.setFromUserId(model.getBuildUserId());
         record.setFromUserName(model.getBuildUserName());

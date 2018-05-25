@@ -35,7 +35,6 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
     private String toUserHeadImage;
     private String gruopGuid;
     private String groupName;
-    private String groupImage;
     private String title;
     private int contentType;
     private String content;
@@ -76,12 +75,11 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
         this.isShield = isShield;
     }
 
-    @Generated(hash = 1096350464)
-    public ChatRecordMessage(Long recordId, int recordType, String recordImage,
-                             long fromUserId, String fromUserName, String fromUserHeadImage,
-                             long toUserId, String toUserName, String toUserHeadImage,
-                             String gruopGuid, String groupName, String groupImage, String title,
-                             int contentType, String content, int unreadCount, Date sendTime) {
+    @Generated(hash = 1168776574)
+    public ChatRecordMessage(Long recordId, int recordType, String recordImage, long fromUserId,
+            String fromUserName, String fromUserHeadImage, long toUserId, String toUserName,
+            String toUserHeadImage, String gruopGuid, String groupName, String title, int contentType,
+            String content, int unreadCount, Date sendTime) {
         this.recordId = recordId;
         this.recordType = recordType;
         this.recordImage = recordImage;
@@ -93,7 +91,6 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
         this.toUserHeadImage = toUserHeadImage;
         this.gruopGuid = gruopGuid;
         this.groupName = groupName;
-        this.groupImage = groupImage;
         this.title = title;
         this.contentType = contentType;
         this.content = content;
@@ -191,14 +188,6 @@ public class ChatRecordMessage extends BaseObservable implements Serializable {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public String getGroupImage() {
-        return this.groupImage;
-    }
-
-    public void setGroupImage(String groupImage) {
-        this.groupImage = groupImage;
     }
 
     @Bindable

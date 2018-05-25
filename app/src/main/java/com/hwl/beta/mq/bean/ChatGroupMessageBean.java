@@ -1,6 +1,7 @@
 package com.hwl.beta.mq.bean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/2/9.
@@ -9,7 +10,7 @@ import java.util.Date;
 public class ChatGroupMessageBean {
     private String groupGuid;
     private String groupName;
-    private String groupImage;
+    private List<String> groupUserImages;
     private long fromUserId;
     private String fromUserName;
     private String fromUserHeadImage;
@@ -22,6 +23,14 @@ public class ChatGroupMessageBean {
     private long size;
     private long playTime;
     private Date sendTime;
+
+    public List<String> getGroupUserImages() {
+        return groupUserImages;
+    }
+
+    public void setGroupUserImages(List<String> groupUserImages) {
+        this.groupUserImages = groupUserImages;
+    }
 
     public int getImageWidth() {
         return imageWidth;
@@ -77,14 +86,6 @@ public class ChatGroupMessageBean {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public String getGroupImage() {
-        return groupImage;
-    }
-
-    public void setGroupImage(String groupImage) {
-        this.groupImage = groupImage;
     }
 
     public String getGroupGuid() {
