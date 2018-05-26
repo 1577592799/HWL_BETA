@@ -38,9 +38,6 @@ public class ActivityNearMessages extends BaseActivity {
         super.onCreate(savedInstanceState);
         activity = this;
         messages = DaoUtils.getNearCircleMessageManagerInstance().getAll();
-        if (messages == null) {
-            messages = new ArrayList<>();
-        }
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_near_messages);
 
         initView();

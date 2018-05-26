@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="100px">
+        android:paddingTop="15dp">
 
         <View
             android:layout_width="150dp"

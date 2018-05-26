@@ -11,8 +11,26 @@ public class NearCircleCommentMessageBean {
     private String content;
     private int commentId;
     private String comment;
+    private long replyUserId;
+    private String replyUserName;
     private int actionType;
     private Date actionTime;
+
+    public long getReplyUserId() {
+        return replyUserId;
+    }
+
+    public void setReplyUserId(long replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
+    public String getReplyUserName() {
+        return replyUserName;
+    }
+
+    public void setReplyUserName(String replyUserName) {
+        this.replyUserName = replyUserName;
+    }
 
     public int getCommentId() {
         return commentId;

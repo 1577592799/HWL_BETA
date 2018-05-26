@@ -37,9 +37,6 @@ public class ActivityCircleMessages extends BaseActivity {
         super.onCreate(savedInstanceState);
         activity = this;
         messages = DaoUtils.getCircleMessageManagerInstance().getAll();
-        if (messages == null) {
-            messages = new ArrayList<>();
-        }
         binding = DataBindingUtil.setContentView(activity, R.layout.activity_circle_messages);
 
         initView();

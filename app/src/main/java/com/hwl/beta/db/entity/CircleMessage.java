@@ -18,15 +18,18 @@ public class CircleMessage {
     private String userName;
     private int commentId;
     private String comment;
+    private long replyUserId;
+    private String replyUserName;
     private String content;
     private String userImage;
     private Date actionTime;
     private int status;
 
-    @Generated(hash = 792838443)
+    @Generated(hash = 300962169)
     public CircleMessage(Long id, int type, long circleId, long userId,
-            String userName, int commentId, String comment, String content,
-            String userImage, Date actionTime, int status) {
+            String userName, int commentId, String comment, long replyUserId,
+            String replyUserName, String content, String userImage, Date actionTime,
+            int status) {
         this.id = id;
         this.type = type;
         this.circleId = circleId;
@@ -34,6 +37,8 @@ public class CircleMessage {
         this.userName = userName;
         this.commentId = commentId;
         this.comment = comment;
+        this.replyUserId = replyUserId;
+        this.replyUserName = replyUserName;
         this.content = content;
         this.userImage = userImage;
         this.actionTime = actionTime;
@@ -136,6 +141,22 @@ public class CircleMessage {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public long getReplyUserId() {
+        return this.replyUserId;
+    }
+
+    public void setReplyUserId(long replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
+    public String getReplyUserName() {
+        return this.replyUserName;
+    }
+
+    public void setReplyUserName(String replyUserName) {
+        this.replyUserName = replyUserName;
     }
 
 }

@@ -133,9 +133,15 @@ public class ActivityNearDetail extends BaseActivity {
     private void bindData() {
         ImageViewBean.loadImage(binding.ivHeader, info.getInfo().getPublishUserImage());
         binding.tvUsername.setText(info.getInfo().getPublishUserName());
-        binding.tvContent.setText(info.getInfo().getContent());
         binding.tvPosDesc.setText(info.getInfo().getFromPosDesc());
         binding.tvPublicTime.setText(info.getInfo().getShowTime());
+
+        if (StringUtils.isBlank(info.getInfo().getContent())) {
+            binding.tvContent.setVisibility(View.GONE);
+        } else {
+            binding.tvContent.setVisibility(View.VISIBLE);
+            binding.tvContent.setText(info.getInfo().getContent());
+        }
 
         if (info.getInfo().getPublishUserId() == myUserId) {
             binding.ivDelete.setVisibility(View.VISIBLE);
@@ -174,7 +180,7 @@ public class ActivityNearDetail extends BaseActivity {
                                 info.setImages(DBNearCircleAction.convertToNearCircleImageInfos(response.getNearCircleInfo().getNearCircleId(), response.getNearCircleInfo().getPublishUserId(), response.getNearCircleInfo().getImages()));
                                 bindData();
                             } else {
-                                if (response.getNearCircleInfo().getUpdateTime() != null &&!response.getNearCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
+                                if (response.getNearCircleInfo().getUpdateTime() != null && !response.getNearCircleInfo().getUpdateTime().equals(info.getInfo().getUpdateTime())) {
                                     info.getInfo().setUpdateTime(response.getNearCircleInfo().getUpdateTime());
                                     setLikeViews(info.getLikes());
                                     commentAdapter.notifyItemRangeChanged(0, info.getComments().size());
@@ -200,7 +206,8 @@ public class ActivityNearDetail extends BaseActivity {
 
     private void saveInfo(String lastUpdateTime) {
         //如果没有新的更新就不保存
-        if (StringUtils.isBlank(lastUpdateTime) ||lastUpdateTime.equals(info.getInfo().getUpdateTime())) return;
+        if (StringUtils.isBlank(lastUpdateTime) || lastUpdateTime.equals(info.getInfo().getUpdateTime()))
+            return;
         //只存在我发布的信息
         if (info != null && info.getInfo() != null && info.getInfo().getPublishUserId() == myUserId) {
             DaoUtils.getNearCircleManagerInstance().save(info.getInfo());
@@ -286,9 +293,9 @@ public class ActivityNearDetail extends BaseActivity {
         @Override
         public void onCommentContentClick(NearCircleComment comment) {
             if (comment.getCommentUserId() == myUserId) {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), info.getInfo().getPublishUserId(), info.getNearCircleMessageContent());
             } else {
-                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(),info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(),info.getNearCircleMessageContent());
+                UITransfer.toNearCommentPublishActivity(activity, comment.getNearCircleId(), info.getInfo().getPublishUserId(), comment.getCommentUserId(), comment.getCommentUserName(), info.getNearCircleMessageContent());
             }
         }
 
@@ -316,7 +323,7 @@ public class ActivityNearDetail extends BaseActivity {
             mMorePopupWindow.setActionMoreListener(new CircleActionMorePop.IActionMoreListener() {
                 @Override
                 public void onCommentClick(int position) {
-                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(),info.getInfo().getPublishUserId(),info.getNearCircleMessageContent());
+                    UITransfer.toNearCommentPublishActivity(activity, info.getInfo().getNearCircleId(), info.getInfo().getPublishUserId(), info.getNearCircleMessageContent());
                 }
 
                 @Override

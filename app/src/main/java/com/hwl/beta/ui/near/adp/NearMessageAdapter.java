@@ -17,13 +17,11 @@ import com.hwl.beta.ui.near.holder.NearMessageItemViewHolder;
 import java.util.List;
 
 public class NearMessageAdapter extends RecyclerView.Adapter<NearMessageItemViewHolder> {
-    private Context context;
     private List<NearCircleMessage> messages;
     private INearMessageItemListener itemListener;
     private LayoutInflater inflater;
 
     public NearMessageAdapter(Context context, List<NearCircleMessage> messages,INearMessageItemListener itemListener) {
-        this.context = context;
         this.messages = messages;
         this.itemListener = itemListener;
         inflater = LayoutInflater.from(context);

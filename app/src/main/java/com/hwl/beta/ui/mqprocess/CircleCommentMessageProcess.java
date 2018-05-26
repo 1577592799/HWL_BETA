@@ -29,6 +29,8 @@ public class CircleCommentMessageProcess implements IMessageProcess<CircleCommen
             model.setType(DBConstant.CIRCLE_TYPE_COMMENT);
             model.setStatus(DBConstant.STATUS_UNREAD);
             model.setComment(message.getComment());
+            model.setReplyUserId(message.getReplyUserId());
+            model.setReplyUserName(message.getReplyUserName());
             model.setActionTime(message.getActionTime());
             if (!DaoUtils.getCircleMessageManagerInstance().save(model)) return;
             MessageCountSP.setCircleMessageCountIncrease();

@@ -15,6 +15,7 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dp_5"
         android:text="孙悟空"
         android:textColor="@color/color_b2b2b2"
         android:textSize="@dimen/dp_13" />

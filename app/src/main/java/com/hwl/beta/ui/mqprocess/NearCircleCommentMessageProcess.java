@@ -29,6 +29,9 @@ public class NearCircleCommentMessageProcess implements IMessageProcess<NearCirc
             model.setType(DBConstant.CIRCLE_TYPE_COMMENT);
             model.setStatus(DBConstant.STATUS_UNREAD);
             model.setComment(message.getComment());
+            model.setCommentId(message.getCommentId());
+            model.setReplyUserId(message.getReplyUserId());
+            model.setReplyUserName(message.getReplyUserName());
             model.setActionTime(message.getActionTime());
             if (!DaoUtils.getNearCircleMessageManagerInstance().save(model)) return;
             MessageCountSP.setNearCircleMessageCountIncrease();

@@ -18,6 +18,9 @@ public class NearCircleMessage {
     private long userId;
     private String userName;
     private String comment;
+    private int commentId;
+    private long replyUserId;
+    private String replyUserName;
     private String content;
     private String userImage;
     private Date actionTime;
@@ -29,16 +32,20 @@ public class NearCircleMessage {
         return null;
     }
 
-    @Generated(hash = 1426049643)
+    @Generated(hash = 1279912755)
     public NearCircleMessage(Long id, int type, long nearCircleId, long userId,
-            String userName, String comment, String content, String userImage,
-            Date actionTime, int status) {
+            String userName, String comment, int commentId, long replyUserId,
+            String replyUserName, String content, String userImage, Date actionTime,
+            int status) {
         this.id = id;
         this.type = type;
         this.nearCircleId = nearCircleId;
         this.userId = userId;
         this.userName = userName;
         this.comment = comment;
+        this.commentId = commentId;
+        this.replyUserId = replyUserId;
+        this.replyUserName = replyUserName;
         this.content = content;
         this.userImage = userImage;
         this.actionTime = actionTime;
@@ -127,5 +134,29 @@ public class NearCircleMessage {
 
     public void setNearCircleId(long nearCircleId) {
         this.nearCircleId = nearCircleId;
+    }
+
+    public int getCommentId() {
+        return this.commentId;
+    }
+
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
+    }
+
+    public long getReplyUserId() {
+        return this.replyUserId;
+    }
+
+    public void setReplyUserId(long replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
+    public String getReplyUserName() {
+        return this.replyUserName;
+    }
+
+    public void setReplyUserName(String replyUserName) {
+        this.replyUserName = replyUserName;
     }
 }

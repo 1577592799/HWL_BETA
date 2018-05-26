@@ -58,16 +58,20 @@ public class CircleMessageSend {
 
 
     public static Observable<Boolean> sendAddCommentMessage(long circleId, long toUserId, int commentId, String comment, String content) {
-        return sendCircleCommentMessage(circleId, toUserId, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
+        return sendCircleCommentMessage(circleId, toUserId, 0, null, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
+    }
+
+    public static Observable<Boolean> sendAddCommentMessage(long nearCircleId, long toUserId, long replyUserId, String replyUserName, int commentId, String comment, String content) {
+        return sendCircleCommentMessage(nearCircleId, toUserId, replyUserId, replyUserName, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
     }
 
     public static Observable<Boolean> sendDeleteCommentDeleteMessage(long circleId, long toUserId, int commentId, String comment, String content) {
-        return sendCircleCommentMessage(circleId, toUserId, MQConstant.CIRCLE_MESSAGE_ACTION_DELETE, commentId, comment, content);
+        return sendCircleCommentMessage(circleId, toUserId, 0, null, MQConstant.CIRCLE_MESSAGE_ACTION_DELETE, commentId, comment, content);
     }
 
-    private static Observable<Boolean> sendCircleCommentMessage(long circleId, long toUserId, int actionType, int commentId, String comment, String content) {
+    private static Observable<Boolean> sendCircleCommentMessage(long circleId, long toUserId, long replyUserId, String replyUserName, int actionType, int commentId, String comment, String content) {
         if (circleId <= 0) return Observable.just(false);
-        long myUserId = UserSP.getUserId();
+        final long myUserId = UserSP.getUserId();
         if (myUserId == toUserId) return Observable.just(false);
 
         CircleCommentMessageBean bean = new CircleCommentMessageBean();
@@ -80,6 +84,8 @@ public class CircleMessageSend {
         bean.setContent(StringUtils.cutString(content, 40));
         bean.setCommentId(commentId);
         bean.setComment(comment);
+        bean.setReplyUserId(replyUserId);
+        bean.setReplyUserName(replyUserName);
         bean.setActionTime(new Date());
 
         return Observable.just(bean)
@@ -90,6 +96,12 @@ public class CircleMessageSend {
                                 MessageReceive.getMessageQueueName(messageBean.getToUserId()),
                                 ByteUtils.mergeToStart(MQConstant.CIRCLE_COMMENT_MESSAGE, MessageReceive.convertToBytes(messageBean))
                         );
+                        if (messageBean.getReplyUserId() > 0 && messageBean.getReplyUserId() != myUserId) {
+                            MQManager.sendMessage(
+                                    MessageReceive.getMessageQueueName(messageBean.getReplyUserId()),
+                                    ByteUtils.mergeToStart(MQConstant.CIRCLE_COMMENT_MESSAGE, MessageReceive.convertToBytes(messageBean))
+                            );
+                        }
                         return true;
                     }
                 })

@@ -56,18 +56,21 @@ public class NearCircleMessageSend {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-
     public static Observable<Boolean> sendAddCommentMessage(long nearCircleId, long toUserId, int commentId, String comment, String content) {
-        return sendNearCircleCommentMessage(nearCircleId, toUserId, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
+        return sendNearCircleCommentMessage(nearCircleId, toUserId, 0, null, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
+    }
+
+    public static Observable<Boolean> sendAddCommentMessage(long nearCircleId, long toUserId, long replyUserId, String replyUserName, int commentId, String comment, String content) {
+        return sendNearCircleCommentMessage(nearCircleId, toUserId, replyUserId, replyUserName, MQConstant.CIRCLE_MESSAGE_ACTION_ADD, commentId, comment, content);
     }
 
     public static Observable<Boolean> sendDeleteCommentDeleteMessage(long nearCircleId, long toUserId, int commentId, String comment, String content) {
-        return sendNearCircleCommentMessage(nearCircleId, toUserId, MQConstant.CIRCLE_MESSAGE_ACTION_DELETE, commentId, comment, content);
+        return sendNearCircleCommentMessage(nearCircleId, toUserId, 0, null, MQConstant.CIRCLE_MESSAGE_ACTION_DELETE, commentId, comment, content);
     }
 
-    private static Observable<Boolean> sendNearCircleCommentMessage(long nearCircleId, long toUserId, int actionType, int commentId, String comment, String content) {
+    private static Observable<Boolean> sendNearCircleCommentMessage(long nearCircleId, long toUserId, long replyUserId, String replyUserName, int actionType, int commentId, String comment, String content) {
         if (nearCircleId <= 0) return Observable.just(false);
-        long myUserId = UserSP.getUserId();
+        final long myUserId = UserSP.getUserId();
         if (myUserId == toUserId) return Observable.just(false);
 
         NearCircleCommentMessageBean bean = new NearCircleCommentMessageBean();
@@ -80,6 +83,8 @@ public class NearCircleMessageSend {
         bean.setContent(StringUtils.cutString(content, 40));
         bean.setCommentId(commentId);
         bean.setComment(comment);
+        bean.setReplyUserId(replyUserId);
+        bean.setReplyUserName(replyUserName);
         bean.setActionTime(new Date());
 
         return Observable.just(bean)
@@ -90,6 +95,14 @@ public class NearCircleMessageSend {
                                 MessageReceive.getMessageQueueName(messageBean.getToUserId()),
                                 ByteUtils.mergeToStart(MQConstant.NEAR_CIRCLE_COMMENT_MESSAGE, MessageReceive.convertToBytes(messageBean))
                         );
+
+                        if (messageBean.getReplyUserId() > 0 && messageBean.getReplyUserId() != myUserId) {
+                            MQManager.sendMessage(
+                                    MessageReceive.getMessageQueueName(messageBean.getReplyUserId()),
+                                    ByteUtils.mergeToStart(MQConstant.NEAR_CIRCLE_COMMENT_MESSAGE, MessageReceive.convertToBytes(messageBean))
+                            );
+                        }
+
                         return true;
                     }
                 })

@@ -10,9 +10,27 @@ public class CircleCommentMessageBean {
     private long toUserId;
     private String content;
     private int commentId;
+    private long replyUserId;
+    private String replyUserName;
     private String comment;
     private int actionType;
     private Date actionTime;
+
+    public long getReplyUserId() {
+        return replyUserId;
+    }
+
+    public void setReplyUserId(long replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
+    public String getReplyUserName() {
+        return replyUserName;
+    }
+
+    public void setReplyUserName(String replyUserName) {
+        this.replyUserName = replyUserName;
+    }
 
     public long getCircleId() {
         return circleId;

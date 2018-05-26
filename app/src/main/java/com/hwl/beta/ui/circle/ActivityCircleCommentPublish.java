@@ -27,8 +27,8 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
     Activity activity;
     EmotionDefaultPannel edpEmotion;
     long circleId = 0;
-    long publishUserId=0;
-    String circleContent="";
+    long publishUserId = 0;
+    String circleContent = "";
     long replyUserId = 0;
     String replyUserName = "";
     boolean isRuning = false;
@@ -83,7 +83,14 @@ public class ActivityCircleCommentPublish extends FragmentActivity {
                         if (res.getCommentInfo() != null && res.getCommentInfo().getCommentId() > 0) {
                             Toast.makeText(activity, "发布成功", Toast.LENGTH_SHORT).show();
                             EventBus.getDefault().post(new EventActionCircleComment(EventBusConstant.EB_TYPE_ACTINO_ADD, DBCircleAction.convertToCircleCommentInfo(res.getCommentInfo())));
-                            CircleMessageSend.sendAddCommentMessage(circleId,publishUserId,res.getCommentInfo().getCommentId(),res.getCommentInfo().getContent(),circleContent).subscribe();
+                            CircleMessageSend.sendAddCommentMessage(
+                                    circleId,
+                                    publishUserId,
+                                    replyUserId,
+                                    replyUserName,
+                                    res.getCommentInfo().getCommentId(),
+                                    res.getCommentInfo().getContent(),
+                                    circleContent).subscribe();
                             finish();
                         } else {
                             onError("发布失败");

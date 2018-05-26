@@ -139,10 +139,15 @@ public class ActivityCircleDetail extends BaseActivity {
     private void bindData() {
         ImageViewBean.loadImage(binding.ivHeader, info.getInfo().getPublishUserImage());
         binding.tvUsername.setText(info.getInfo().getPublishUserName());
-        binding.tvContent.setText(info.getInfo().getContent());
         binding.tvPosDesc.setText(info.getInfo().getFromPosDesc());
         binding.tvPublicTime.setText(info.getInfo().getShowTime());
 
+        if (StringUtils.isBlank(info.getInfo().getContent())) {
+            binding.tvContent.setVisibility(View.GONE);
+        } else {
+            binding.tvContent.setVisibility(View.VISIBLE);
+            binding.tvContent.setText(info.getInfo().getContent());
+        }
         if (info.getInfo().getPublishUserId() == myUserId) {
             binding.ivDelete.setVisibility(View.VISIBLE);
         } else {

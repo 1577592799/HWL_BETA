@@ -4,13 +4,16 @@ import android.content.Context;
 
 import com.hwl.beta.db.BaseDao;
 import com.hwl.beta.db.DBConstant;
+import com.hwl.beta.db.DaoUtils;
 import com.hwl.beta.db.dao.NearCircleDao;
 import com.hwl.beta.db.dao.NearCircleMessageDao;
+import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.NearCircleMessage;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
@@ -19,10 +22,43 @@ public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
     }
 
     public List<NearCircleMessage> getAll() {
-        return daoSession.getNearCircleMessageDao()
+        List<NearCircleMessage> messages = daoSession.getNearCircleMessageDao()
                 .queryBuilder()
                 .orderDesc(NearCircleMessageDao.Properties.Id)
                 .list();
+
+        List<Friend> friends = DaoUtils.getFriendManagerInstance().getList(getCommentUserIds(messages));
+        setCircleMessageFriendInfo(messages, friends);
+
+        if (messages == null) {
+            messages = new ArrayList<>();
+        }
+        return messages;
+    }
+
+    public void setCircleMessageFriendInfo(List<NearCircleMessage> messages, List<Friend> friends) {
+        if (messages == null || messages.size() <= 0) return;
+        if (friends == null || friends.size() <= 0) return;
+        for (int i = 0; i < friends.size(); i++) {
+            for (int j = 0; j < messages.size(); j++) {
+                if (friends.get(i).getId() == messages.get(j).getUserId()) {
+                    messages.get(j).setUserName(friends.get(i).getShowName());
+                }
+                if (messages.get(j).getReplyUserId() > 0 && friends.get(i).getId() == messages.get(j).getReplyUserId()) {
+                    messages.get(j).setReplyUserName(friends.get(i).getShowName());
+                }
+            }
+        }
+    }
+
+    public List<Long> getCommentUserIds(List<NearCircleMessage> messages) {
+        List<Long> userIds = new ArrayList<>();
+        for (int i = 0; i < messages.size(); i++) {
+            userIds.add(messages.get(i).getUserId());
+            if (messages.get(i).getReplyUserId() > 0)
+                userIds.add(messages.get(i).getReplyUserId());
+        }
+        return userIds;
     }
 
     public boolean save(NearCircleMessage message) {
@@ -33,13 +69,13 @@ public class NearCircleMessageManager extends BaseDao<NearCircleMessage> {
         return false;
     }
 
-    public boolean deleteMessage(NearCircleMessage message){
-        if(message==null) return false;
+    public boolean deleteMessage(NearCircleMessage message) {
+        if (message == null) return false;
         daoSession.getNearCircleMessageDao().delete(message);
         return true;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         daoSession.getNearCircleMessageDao().deleteAll();
     }
 
