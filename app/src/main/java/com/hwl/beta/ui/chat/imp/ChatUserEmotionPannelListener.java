@@ -29,6 +29,7 @@ import com.hwl.beta.ui.imgcompress.CompressChatImage;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
 import com.hwl.beta.utils.FileUtils;
+import com.hwl.beta.utils.StorageUtils;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,7 +54,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
 
     Activity activity;
     Friend user;
-    File cameraTempFile;
+//    File cameraTempFile;
     AudioPlay audioPlay;
 
     public ChatUserEmotionPannelListener(Activity activity, Friend user) {
@@ -91,10 +92,11 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
 
     @Override
     public void onCameraClick() {
-        cameraTempFile = new File(ActivityImageSelect.getTempFileName());
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraTempFile));
-        activity.startActivityForResult(cameraIntent, 2);
+//        cameraTempFile = new File(ActivityImageSelect.getTempFileName());
+//        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraTempFile));
+//        activity.startActivityForResult(cameraIntent, 2);
+        UITransfer.toSystemCamera(activity,2);
     }
 
     @Override
@@ -117,10 +119,11 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
     }
 
     public void sendChatUserImageMessage() {
-        if (cameraTempFile != null && cameraTempFile.exists()) {
-            sendChatUserImageMessage(cameraTempFile.getPath());
-        }
-        cameraTempFile = null;
+        sendChatUserImageMessage(StorageUtils.getTempImageFilePath());
+//        if (cameraTempFile != null && cameraTempFile.exists()) {
+//            sendChatUserImageMessage(cameraTempFile.getPath());
+//        }
+//        cameraTempFile = null;
     }
 
     public void sendChatUserImageMessage(String localPath) {

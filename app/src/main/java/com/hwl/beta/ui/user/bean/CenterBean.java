@@ -43,7 +43,7 @@ public class CenterBean extends BaseObservable {
 
     @Bindable
     public String getSymbol() {
-        return symbol;
+        return "标识号: "+symbol;
     }
 
     public void setSymbol(String symbol) {

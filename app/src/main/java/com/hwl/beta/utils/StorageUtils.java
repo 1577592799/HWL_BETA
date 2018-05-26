@@ -49,7 +49,10 @@ public final class StorageUtils {
     }
 
     public static String getTempImageFilePath() {
-        return HWLApp.getContext().getCacheDir() + File.separator + TEMP_IMAGE_FILE_NAME;
+        if (Build.VERSION.SDK_INT >= 24)
+            return HWLApp.getContext().getCacheDir() + File.separator + TEMP_IMAGE_FILE_NAME;
+
+        return getCacheDirectory() + File.separator + TEMP_IMAGE_FILE_NAME;
     }
 
     public static Uri getUriForTempFile() {

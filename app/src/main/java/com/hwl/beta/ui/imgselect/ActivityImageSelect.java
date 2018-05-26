@@ -49,7 +49,7 @@ public class ActivityImageSelect extends BaseActivity {
     private static final String TAG = "ActivityImageSelect";
     private static final int PHOTO_REQUEST_CAMERA = 1;// 拍照
     private static final int PHOTO_REQUEST_CUT = 2;// 结果
-    private static final String TEMP_FILE_NAME = "temp.jpg";
+//    private static final String TEMP_FILE_NAME = "temp.jpg";
 
     ActivityImageSelectBinding binding;
     Activity activity;
@@ -119,9 +119,9 @@ public class ActivityImageSelect extends BaseActivity {
         binding.rvImageList.setLayoutManager(new GridLayoutManager(this, 3));
     }
 
-    public static String getTempFileName() {
-        return Environment.getExternalStorageDirectory() + File.separator + TEMP_FILE_NAME;
-    }
+//    public static String getTempFileName() {
+//        return Environment.getExternalStorageDirectory() + File.separator + TEMP_FILE_NAME;
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -224,7 +224,7 @@ public class ActivityImageSelect extends BaseActivity {
             String firstImage = null;
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));// 获取图片的路径
-                if (path.endsWith(TEMP_FILE_NAME)) continue;
+//                if (path.endsWith(TEMP_FILE_NAME)) continue;
                 images.add(new ImageBean(path));
                 if (firstImage == null) firstImage = path;// 拿到第一张图片的路径
 
@@ -274,20 +274,21 @@ public class ActivityImageSelect extends BaseActivity {
         options.setToolbarColor(activity.getResources().getColor(R.color.main));
         options.setHideBottomControls(true);
         options.setShowCropGrid(false);
-//        options.setCompressionQuality(60);
 //        options.setFreeStyleCropEnabled(true);
 //        uCrop.withAspectRatio(0.1f,0.1f);
 
         switch (selectBean.getSelectType()) {
             case ImageSelectType.USER_HEAD:
+                options.setCompressionQuality(60);
                 options.withAspectRatio(1, 1);
-                options.withMaxResultSize(150, 150);
+                options.withMaxResultSize(300, 300);
                 uCrop.withOptions(options);
                 uCrop.start(activity);
                 break;
             case ImageSelectType.CIRCLE_BACK_IMAGE:
+                options.setCompressionQuality(90);
                 options.withAspectRatio(4, 3);
-                options.withMaxResultSize(400, 300);
+                options.withMaxResultSize(800, 600);
                 uCrop.withOptions(options);
                 uCrop.start(activity);
                 break;
@@ -300,7 +301,6 @@ public class ActivityImageSelect extends BaseActivity {
         public void onCameraClick() {
 //            tempFile = new File(getTempFileName());
 //            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//            // 下面这句指定调用相机拍照后的照片存储的路径
 //            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, StorageUtils.getUriForTempFile());
 //            startActivityForResult(cameraIntent, PHOTO_REQUEST_CAMERA);// CAMERA_OK是用作判断返回结果的标识
             UITransfer.toSystemCamera(activity, PHOTO_REQUEST_CAMERA);

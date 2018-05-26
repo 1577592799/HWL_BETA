@@ -75,7 +75,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="标识" />
+                android:text="标识号" />
 
             <TextView
                 android:id="@+id/tv_symbol"

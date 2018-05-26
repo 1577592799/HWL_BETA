@@ -31,6 +31,7 @@ import com.hwl.beta.ui.imgcompress.CompressChatImage;
 import com.hwl.beta.ui.imgselect.ActivityImageSelect;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
 import com.hwl.beta.utils.FileUtils;
+import com.hwl.beta.utils.StorageUtils;
 import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +56,7 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
 
     Activity activity;
     GroupInfo groupInfo;
-    File cameraTempFile;
+//    File cameraTempFile;
     AudioPlay audioPlay;
 
     public ChatGroupEmotionPannelListener(Activity activity, GroupInfo groupInfo) {
@@ -97,10 +98,11 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
 
     @Override
     public void onCameraClick() {
-        cameraTempFile = new File(ActivityImageSelect.getTempFileName());
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraTempFile));
-        activity.startActivityForResult(cameraIntent, 2);
+//        cameraTempFile = new File(ActivityImageSelect.getTempFileName());
+//        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraTempFile));
+//        activity.startActivityForResult(cameraIntent, 2);
+        UITransfer.toSystemCamera(activity, 2);
     }
 
     @Override
@@ -123,10 +125,11 @@ public class ChatGroupEmotionPannelListener implements IEmotionPannelListener {
     }
 
     public void sendChatGroupImageMessage() {
-        if (cameraTempFile != null && cameraTempFile.exists()) {
-            sendChatGroupImageMessage(cameraTempFile.getPath());
-        }
-        cameraTempFile = null;
+        sendChatGroupImageMessage(StorageUtils.getTempImageFilePath());
+//        if (cameraTempFile != null && cameraTempFile.exists()) {
+//            sendChatGroupImageMessage(cameraTempFile.getPath());
+//        }
+//        cameraTempFile = null;
     }
 
     public void sendChatGroupImageMessage(String localPath) {

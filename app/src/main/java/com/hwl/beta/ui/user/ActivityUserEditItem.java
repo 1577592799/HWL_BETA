@@ -169,11 +169,10 @@ public class ActivityUserEditItem extends BaseActivity {
 
         @Override
         public void init() {
-            if (StringUtils.isBlank(itemBean.getEditContent())) return;
-            if (itemBean.getEditContent().equals(SexAction.MAN)) {
+            if (SexAction.MAN.equals(itemBean.getEditContent())) {
                 setSelect(binding.rbSex1);
                 setUnSelect(binding.rbSex0);
-            } else if (itemBean.getEditContent().equals(SexAction.WOMAN)) {
+            } else if (SexAction.WOMAN.equals(itemBean.getEditContent())) {
                 setSelect(binding.rbSex0);
                 setUnSelect(binding.rbSex1);
             } else {
