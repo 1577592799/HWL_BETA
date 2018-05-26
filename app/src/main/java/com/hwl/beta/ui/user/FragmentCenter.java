@@ -29,6 +29,7 @@ import com.hwl.beta.ui.user.action.ICenterListener;
 import com.hwl.beta.ui.user.bean.CenterBean;
 import com.hwl.beta.ui.user.bean.ImageViewBean;
 import com.hwl.beta.utils.AppUtils;
+import com.hwl.beta.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,6 +59,7 @@ public class FragmentCenter extends Fragment {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        setView();
         return binding.getRoot();
     }
 
@@ -65,6 +67,7 @@ public class FragmentCenter extends Fragment {
     public void onEventMainThread(Integer ebType) {
         if (ebType == EventBusConstant.EB_TYPE_USER_UPDATE) {
             setCenterBean();
+            setView();
         } else if (ebType == EventBusConstant.EB_TYPE_USER_HEAD_UPDATE) {
             ImageViewBean.loadImage(binding.ivHeader, UserSP.getUserHeadImage());
         }
@@ -75,6 +78,14 @@ public class FragmentCenter extends Fragment {
         centerBean.setName(netUser.getName() + " - " + netUser.getId());
         centerBean.setHeadImage(netUser.getHeadImage());
         centerBean.setSymbol(netUser.getSymbol());
+    }
+
+    private void setView(){
+        if (StringUtils.isBlank(centerBean.getSymbol())) {
+            binding.llSymbolContainer.setVisibility(View.GONE);
+        } else {
+            binding.llSymbolContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

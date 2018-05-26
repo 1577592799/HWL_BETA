@@ -50,17 +50,17 @@ public class EmotionTextView extends android.support.v7.widget.AppCompatTextView
             while (matcher.find()) {
                 if (EmotionUtils.getDefaultEmotionMap().containsKey(matcher.group())) {
                     int id = EmotionUtils.getDefaultEmotionMap().get(matcher.group());
-                    Drawable drawable = getResources().getDrawable(id);
-                    drawable.setBounds(0, 0, 25, 25);
-                    builder.setSpan(new ImageSpan(drawable), matcher.start(), matcher.end(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    Bitmap bitmap = BitmapFactory.decodeResource(
-//                            getResources(), id);
-//                    if (bitmap != null) {
-//                        ImageSpan span = new ImageSpan(getContext(), bitmap);
-//                        builder.setSpan(span, matcher.start(), matcher.end(),
-//                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    }
+//                    Drawable drawable = getResources().getDrawable(id);
+//                    drawable.setBounds(0, 0, 25, 25);
+//                    builder.setSpan(new ImageSpan(drawable), matcher.start(), matcher.end(),
+//                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Bitmap bitmap = BitmapFactory.decodeResource(
+                            getResources(), id);
+                    if (bitmap != null) {
+                        ImageSpan span = new ImageSpan(getContext(), bitmap);
+                        builder.setSpan(span, matcher.start(), matcher.end(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
             }
             return builder;

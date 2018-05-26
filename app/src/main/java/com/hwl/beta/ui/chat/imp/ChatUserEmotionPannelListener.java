@@ -54,7 +54,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
 
     Activity activity;
     Friend user;
-//    File cameraTempFile;
+    //    File cameraTempFile;
     AudioPlay audioPlay;
 
     public ChatUserEmotionPannelListener(Activity activity, Friend user) {
@@ -96,7 +96,7 @@ public class ChatUserEmotionPannelListener implements IEmotionPannelListener {
 //        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraTempFile));
 //        activity.startActivityForResult(cameraIntent, 2);
-        UITransfer.toSystemCamera(activity,2);
+        UITransfer.toSystemCamera(activity, 2);
     }
 
     @Override
