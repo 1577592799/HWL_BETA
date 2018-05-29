@@ -54,4 +54,16 @@ public class DisplayUtils {
         context.getWindowManager().getDefaultDisplay().getMetrics(metric);
         return metric.heightPixels;
     }
+
+    /**
+     * 根据屏幕宽度与密度计算GridView显示的列数， 最少为三列，并获取Item宽度
+     */
+    public static int getImageItemWidth(Activity context) {
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
+        int cols = screenWidth / densityDpi;
+        cols = cols < 3 ? 3 : cols;
+        int columnSpace = (int) (2 * context.getResources().getDisplayMetrics().density);
+        return (screenWidth - columnSpace * (cols - 1)) / cols;
+    }
 }

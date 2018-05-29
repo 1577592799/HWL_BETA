@@ -329,7 +329,7 @@ public class FragmentNear extends BaseFragment {
                     public void onError(Throwable e) {
                         //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         showResult();
-                        if (e.getMessage().equals(NetConstant.RESPONSE_RELOGIN)) {
+                        if (NetConstant.RESPONSE_RELOGIN.equals(e.getMessage())) {
                             UITransfer.toReloginDialog((FragmentActivity) activity);
                         }
                     }

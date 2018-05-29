@@ -12,15 +12,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.hwl.beta.HWLApp;
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityImageSelectBinding;
 import com.hwl.beta.ui.common.BaseActivity;
@@ -28,10 +27,14 @@ import com.hwl.beta.ui.common.UITransfer;
 import com.hwl.beta.ui.imgselect.action.IImageSelectItemListener;
 import com.hwl.beta.ui.imgselect.action.IImageSelectListener;
 import com.hwl.beta.ui.imgselect.adp.ImageAdapter;
+import com.hwl.beta.ui.imgselect.adp.ImageDirAdapter;
+import com.hwl.beta.ui.imgselect.bean.DirPopupWindow;
 import com.hwl.beta.ui.imgselect.bean.ImageBean;
 import com.hwl.beta.ui.imgselect.bean.ImageDirBean;
+import com.hwl.beta.ui.imgselect.bean.ImageLoadManage;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectBean;
 import com.hwl.beta.ui.imgselect.bean.ImageSelectType;
+import com.hwl.beta.utils.DisplayUtils;
 import com.hwl.beta.utils.StorageUtils;
 import com.yalantis.ucrop.UCrop;
 
@@ -39,7 +42,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -49,40 +51,34 @@ public class ActivityImageSelect extends BaseActivity {
     private static final String TAG = "ActivityImageSelect";
     private static final int PHOTO_REQUEST_CAMERA = 1;// 拍照
     private static final int PHOTO_REQUEST_CUT = 2;// 结果
-//    private static final String TEMP_FILE_NAME = "temp.jpg";
 
     ActivityImageSelectBinding binding;
     Activity activity;
     ImageSelectBean selectBean;
-    ImageSelectListener selectListener;
-    List<ImageBean> images;
-    List<ImageDirBean> imageDirs;
+    //    List<ImageBean> images;
+//    List<ImageDirBean> imageDirs;
     ArrayList<ImageBean> selectImages;
     int maxImageCount = 1;
-    int imageTotalCount = 0;
-    ImageFilter imageFilter;
     ImageAdapter imageAdapter;
-//    File tempFile;
+    ImageDirAdapter dirAdapter;
+    ImageLoadManage imageLoadManage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
-        images = new ArrayList<>();
-        imageDirs = new ArrayList<>();
-        imageFilter = new ImageFilter();
         selectImages = new ArrayList<>();
 
         maxImageCount = getIntent().getIntExtra("selectcount", 1);
         selectBean = new ImageSelectBean(getIntent().getIntExtra("selecttype", 0));
-        selectListener = new ImageSelectListener();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_image_select);
         binding.setBean(selectBean);
-        binding.setAction(selectListener);
+        binding.setAction(new ImageSelectListener());
 
-        selectListener.onInit();
-        selectBean.setImageCount(imageTotalCount + "张");
+        initView();
+    }
 
+    private void initView() {
         binding.tbTitle.setTitleRightShow()
                 .setTitle("图片选择器")
                 .setImageRightHide()
@@ -92,7 +88,7 @@ public class ActivityImageSelect extends BaseActivity {
                         onBackPressed();
                     }
                 });
-        if (selectBean.getSelectType() == ImageSelectType.USER_HEAD || selectBean.getSelectType() == ImageSelectType.CIRCLE_BACK_IMAGE) {
+        if (selectBean.isShowCamera()) {
             binding.tbTitle.setTitleRightHide();
         } else {
             binding.tbTitle
@@ -113,15 +109,91 @@ public class ActivityImageSelect extends BaseActivity {
                     });
         }
 
+        imageLoadManage = new ImageLoadManage(activity, new ImageLoadManage.IImageLoadListener() {
+            @Override
+            public void onLoadComplete() {
+                imageAdapter.refreshData(imageLoadManage.getAllImages());
+                dirAdapter.refreshData(imageLoadManage.getDirs());
+                selectBean.setDirName("所有图片");
+                selectBean.setImageCount(imageLoadManage.getAllImages().size() + "张");
+            }
+        });
 
-        imageAdapter = new ImageAdapter(activity, images, selectBean.getSelectType(), new ImageSelectItemListener());
+        dirAdapter = new ImageDirAdapter(activity, imageLoadManage.getDirs());
+        imageAdapter = new ImageAdapter(activity, imageLoadManage.getAllImages(), selectBean
+                .isShowCamera(), new
+                IImageSelectItemListener() {
+                    @Override
+                    public void onCameraClick() {
+                        UITransfer.toSystemCamera(activity, PHOTO_REQUEST_CAMERA);
+                    }
+
+                    @Override
+                    public void onImageClick(ImageBean image) {
+                        toUCropActivity(Uri.fromFile(new File(image.getPath())), StorageUtils
+                                .getUriForTempFile());
+                    }
+
+                    @Override
+                    public void onCheckBoxClick(CheckBox cb, ImageBean image) {
+                        if (image == null) return;
+                        if (cb.isChecked()) {
+                            if (selectImages.size() >= maxImageCount) {
+                                cb.setChecked(false);
+                                Toast.makeText(getApplicationContext(), "只能选择" + maxImageCount +
+                                                "张图片！",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                image.setSelect(true);
+                                if (!selectImages.contains(image)) {
+                                    selectImages.add(image);
+                                }
+                            }
+                        } else {
+                            image.setSelect(false);
+                            if (selectImages.contains(image)) {
+                                selectImages.remove(image);
+                            }
+                        }
+                        binding.tbTitle.setTitleRightText(selectImages.size() + "/" +
+                                maxImageCount + " " +
+                                "确定");
+                    }
+                });
         binding.rvImageList.setAdapter(imageAdapter);
         binding.rvImageList.setLayoutManager(new GridLayoutManager(this, 3));
-    }
 
-//    public static String getTempFileName() {
-//        return Environment.getExternalStorageDirectory() + File.separator + TEMP_FILE_NAME;
-//    }
+        binding.rlDir.setOnClickListener(new View.OnClickListener() {
+            DirPopupWindow dirPopupWindow;
+
+            @Override
+            public void onClick(View v) {
+                if (dirAdapter.getCount() <= 0 || dirPopupWindow != null && dirPopupWindow
+                        .isShowing())
+                    return;
+                dirPopupWindow = new DirPopupWindow(activity, dirAdapter);
+                dirPopupWindow.setOnItemClickListener(new DirPopupWindow.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position,
+                                            long l) {
+                        dirAdapter.setSelectIndex(position);
+                        dirPopupWindow.dismiss();
+                        ImageDirBean dirBean = (ImageDirBean) adapterView.getAdapter().getItem
+                                (position);
+                        if (dirBean != null) {
+                            imageAdapter.refreshData(dirBean.getImages());
+                            selectBean.setDirName(dirBean.getName());
+                            selectBean.setImageCount(dirBean.getImages().size() + "张");
+                        }
+                    }
+                });
+                dirPopupWindow.setMargin(binding.llImageDirs.getHeight());
+                dirPopupWindow.showAtLocation(binding.llImageDirs, Gravity.NO_GRAVITY, 0, 0);
+            }
+        });
+        imageLoadManage.init();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -198,66 +270,68 @@ public class ActivityImageSelect extends BaseActivity {
 
     public class ImageSelectListener implements IImageSelectListener {
 
-        String[] exts = new String[]{"image/png", "image/jpeg", "image/jpg"};
-        HashSet<String> dirPaths = new HashSet<>();//临时的辅助类，用于防止同一个文件夹的多次扫描
-
-        private Cursor getImageCursor() {
-            //获取内存卡路径
-            Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            //通过内容解析器解析出png,jpeg,jpg格式的图片
-            ContentResolver contentResolver = activity.getContentResolver();
-            Cursor cursor = contentResolver.query(imageUri, null,
-                    MediaStore.Images.Media.MIME_TYPE + "=? or "
-                            + MediaStore.Images.Media.MIME_TYPE + "=? or "
-                            + MediaStore.Images.Media.MIME_TYPE + "=?", exts,
-                    MediaStore.Images.Media.DATE_MODIFIED);
-            return cursor;
-        }
-
-        @Override
-        public void onInit() {
-            Cursor cursor = getImageCursor();
-            if (cursor == null || cursor.getCount() <= 0) {
-                setCamera();
-                return;
-            }
-            String firstImage = null;
-            while (cursor.moveToNext()) {
-                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));// 获取图片的路径
-//                if (path.endsWith(TEMP_FILE_NAME)) continue;
-                images.add(new ImageBean(path));
-                if (firstImage == null) firstImage = path;// 拿到第一张图片的路径
-
-                File parentFile = new File(path).getParentFile();// 获取该图片的文件名
-                if (parentFile == null || !parentFile.exists())
-                    continue;
-
-                String dirPath = parentFile.getAbsolutePath();
-                ImageDirBean imageDirBean = null;
-                if (dirPaths.contains(dirPath)) {
-                    continue;
-                } else {
-                    dirPaths.add(dirPath);
-                    imageDirBean = new ImageDirBean();
-                    imageDirBean.setDir(dirPath);
-                    imageDirBean.setImagePath(path);
-                }
-
-                File[] files = parentFile.listFiles(imageFilter);//获取当前目录下面图片的数量
-                if (files == null) continue;
-
-                imageTotalCount += files.length;
-                imageDirBean.setImageCount(files.length);
-                imageDirs.add(imageDirBean);
-            }
-            cursor.close();
-            dirPaths.clear();
-        }
+//        String[] exts = new String[]{"image/png", "image/jpeg", "image/jpg"};
+//        HashSet<String> dirPaths = new HashSet<>();//临时的辅助类，用于防止同一个文件夹的多次扫描
+//
+//        private Cursor getImageCursor() {
+//            //获取内存卡路径
+//            Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//            //通过内容解析器解析出png,jpeg,jpg格式的图片
+//            ContentResolver contentResolver = activity.getContentResolver();
+//            Cursor cursor = contentResolver.query(imageUri, null,
+//                    MediaStore.Images.Media.MIME_TYPE + "=? or "
+//                            + MediaStore.Images.Media.MIME_TYPE + "=? or "
+//                            + MediaStore.Images.Media.MIME_TYPE + "=?", exts,
+//                    MediaStore.Images.Media.DATE_MODIFIED);
+//            return cursor;
+//        }
+//
+//        @Override
+//        public void onInit() {
+//            Cursor cursor = getImageCursor();
+//            if (cursor == null || cursor.getCount() <= 0) {
+//                setCamera();
+//                return;
+//            }
+//            String firstImage = null;
+//            while (cursor.moveToNext()) {
+//                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media
+//                        .DATA));// 获取图片的路径
+////                if (path.endsWith(TEMP_FILE_NAME)) continue;
+//                images.add(new ImageBean(path));
+//                if (firstImage == null) firstImage = path;// 拿到第一张图片的路径
+//
+//                File parentFile = new File(path).getParentFile();// 获取该图片的文件名
+//                if (parentFile == null || !parentFile.exists())
+//                    continue;
+//
+//                String dirPath = parentFile.getAbsolutePath();
+//                ImageDirBean imageDirBean = null;
+//                if (dirPaths.contains(dirPath)) {
+//                    continue;
+//                } else {
+//                    dirPaths.add(dirPath);
+//                    imageDirBean = new ImageDirBean();
+//                    imageDirBean.setDir(dirPath);
+//                    imageDirBean.setImagePath(path);
+//                }
+//
+//                File[] files = parentFile.listFiles(imageFilter);//获取当前目录下面图片的数量
+//                if (files == null) continue;
+//
+//                imageTotalCount += files.length;
+//                imageDirBean.setImageCount(files.length);
+//                imageDirs.add(imageDirBean);
+//            }
+//            cursor.close();
+//            dirPaths.clear();
+//        }
 
         private void setCamera() {
-            if (selectBean.getSelectType() == ImageSelectType.USER_HEAD || selectBean.getSelectType() == ImageSelectType.CIRCLE_BACK_IMAGE) {
-                images.add(0, new ImageBean());
-            }
+//            if (selectBean.getSelectType() == ImageSelectType.USER_HEAD || selectBean
+//                    .getSelectType() == ImageSelectType.CIRCLE_BACK_IMAGE) {
+//                images.add(0, new ImageBean());
+//            }
         }
 
         @Override
@@ -310,31 +384,33 @@ public class ActivityImageSelect extends BaseActivity {
         public void onImageClick(ImageBean image) {
 //            Uri source = Uri.fromFile(new File(image.getPath()));
 //            Uri temp = Uri.fromFile(new File(getTempFileName()));
-            toUCropActivity(Uri.fromFile(new File(image.getPath())), StorageUtils.getUriForTempFile());
+            toUCropActivity(Uri.fromFile(new File(image.getPath())), StorageUtils
+                    .getUriForTempFile());
 //            Toast.makeText(activity, image.getPath(), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCheckBoxClick(CheckBox cb, ImageBean image) {
-            if (image == null) return;
-            if (cb.isChecked()) {
-                if (selectImages.size() >= maxImageCount) {
-                    cb.setChecked(false);
-                    Toast.makeText(getApplicationContext(), "只能选择" + maxImageCount + "张图片！", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    image.setSelect(true);
-                    if (!selectImages.contains(image)) {
-                        selectImages.add(image);
-                    }
-                }
-            } else {
-                image.setSelect(false);
-                if (selectImages.contains(image)) {
-                    selectImages.remove(image);
-                }
-            }
-            binding.tbTitle.setTitleRightText(selectImages.size() + "/" + maxImageCount + " 确定");
+//            if (image == null) return;
+//            if (cb.isChecked()) {
+//                if (selectImages.size() >= maxImageCount) {
+//                    cb.setChecked(false);
+//                    Toast.makeText(getApplicationContext(), "只能选择" + maxImageCount + "张图片！",
+//                            Toast.LENGTH_SHORT).show();
+//                    return;
+//                } else {
+//                    image.setSelect(true);
+//                    if (!selectImages.contains(image)) {
+//                        selectImages.add(image);
+//                    }
+//                }
+//            } else {
+//                image.setSelect(false);
+//                if (selectImages.contains(image)) {
+//                    selectImages.remove(image);
+//                }
+//            }
+//            binding.tbTitle.setTitleRightText(selectImages.size() + "/" + maxImageCount + " 确定");
         }
     }
 }

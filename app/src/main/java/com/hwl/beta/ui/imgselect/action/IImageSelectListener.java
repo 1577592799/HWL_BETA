@@ -5,6 +5,5 @@ package com.hwl.beta.ui.imgselect.action;
  */
 
 public interface IImageSelectListener {
-    void onInit();
     void onDirNameClick(String dirFullName);
 }

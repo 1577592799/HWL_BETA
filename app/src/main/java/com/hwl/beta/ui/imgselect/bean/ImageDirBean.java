@@ -1,60 +1,61 @@
 package com.hwl.beta.ui.imgselect.bean;
 
+import java.util.ArrayList;
+
 /**
  * Created by Administrator on 2018/1/20.
  */
 
 public class ImageDirBean {
-    //文件夹路径
-    private String dir;
-    //图片路径
-    private String imagePath;
-    //图片名称
-    private String imageName;
-    //文件夹下的图片数量
-    private int imageCount;
+    private String name;  //当前文件夹的名字
+    private String path;  //当前文件夹的路径
+    private ImageBean firstImage;   //当前文件夹需要要显示的缩略图，默认为最近的一次图片
+    private ArrayList<ImageBean> images;  //当前文件夹下所有图片的集合
 
-    public String getDir() {
-        return dir;
+    public String getName() {
+        return name;
     }
 
-    public void setDir(String dir) {
-        this.dir = dir;
-        int lastIndexOf = this.dir.lastIndexOf("/");
-        this.imageName = this.dir.substring(lastIndexOf + 1);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getPath() {
+        return path;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public String getImageName() {
-        return imageName;
+    public ImageBean getFirstImage() {
+        return firstImage;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
+    public void setFirstImage(ImageBean firstImage) {
+        this.firstImage = firstImage;
     }
 
-    public int getImageCount() {
-        return imageCount;
+    public ArrayList<ImageBean> getImages() {
+        return images;
     }
 
-    public void setImageCount(int imageCount) {
-        this.imageCount = imageCount;
+    public void setImages(ArrayList<ImageBean> images) {
+        this.images = images;
     }
 
+    /**
+     * 只要文件夹的路径和名字相同，就认为是相同的文件夹
+     */
     @Override
-    public String toString() {
-        return "ImageDirBean{" +
-                "dir='" + dir + '\'' +
-                ", imagePath='" + imagePath + '\'' +
-                ", imageName='" + imageName + '\'' +
-                ", imageCount=" + imageCount +
-                '}';
+    public boolean equals(Object o) {
+        try {
+            ImageDirBean other = (ImageDirBean) o;
+            return this.path.equalsIgnoreCase(other.getPath()) && this.name.equalsIgnoreCase
+                    (other.getName());
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return super.equals(o);
     }
 }

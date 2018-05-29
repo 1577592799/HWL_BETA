@@ -1,14 +1,26 @@
 package com.hwl.beta.ui.imgselect.bean;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.hwl.beta.BR;
+
 /**
  * Created by Administrator on 2018/4/4.
  */
 
-public class ImageSelectBean {
+public class ImageSelectBean extends BaseObservable {
     private int selectType;
     private String dirName;
-    private String dirFullName;
+    public String dirFullName;
     private String imageCount;
+
+    public ImageSelectBean() {
+    }
+
+    public boolean isShowCamera() {
+        return ImageSelectType.isShowCamera(this.selectType);
+    }
 
     public ImageSelectBean(int selectType) {
         this.selectType = selectType;
@@ -22,27 +34,23 @@ public class ImageSelectBean {
         this.selectType = selectType;
     }
 
+    @Bindable
     public String getDirName() {
         return dirName;
     }
 
     public void setDirName(String dirName) {
         this.dirName = dirName;
+        notifyPropertyChanged(BR.dirName);
     }
 
-    public String getDirFullName() {
-        return dirFullName;
-    }
-
-    public void setDirFullName(String dirFullName) {
-        this.dirFullName = dirFullName;
-    }
-
+    @Bindable
     public String getImageCount() {
         return imageCount;
     }
 
     public void setImageCount(String imageCount) {
         this.imageCount = imageCount;
+        notifyPropertyChanged(BR.imageCount);
     }
 }
