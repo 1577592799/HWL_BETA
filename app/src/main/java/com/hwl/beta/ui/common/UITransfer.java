@@ -107,10 +107,12 @@ public class UITransfer {
     }
 
     public static void toLogout(Activity context) {
+        String userAccount = UserSP.getAccount();
         UserSP.clearUserInfo();
         UserPosSP.clearPosInfo();
         DaoUtils.closeDB();
         toWelcomeActivity(context);
+        UserSP.setAccount(userAccount);
     }
 
     public static void toMainActivity(Activity context) {
@@ -138,7 +140,8 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toUserIndexActivity(Activity context, long userId, String userName, String userImage) {
+    public static void toUserIndexActivity(Activity context, long userId, String userName, String
+            userImage) {
         Intent intent = new Intent(context, ActivityUserIndex.class);
         intent.putExtra("userid", userId);
         intent.putExtra("username", userName);
@@ -161,11 +164,13 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toUserEditItemActivity(Activity context, int actoinType, String editContent) {
+    public static void toUserEditItemActivity(Activity context, int actoinType, String
+            editContent) {
         toUserEditItemActivity(context, actoinType, editContent, 0);
     }
 
-    public static void toUserEditItemActivity(Activity context, int actoinType, String editContent, long friendId) {
+    public static void toUserEditItemActivity(Activity context, int actoinType, String
+            editContent, long friendId) {
         Intent intent = new Intent(context, ActivityUserEditItem.class);
         intent.putExtra("actiontype", actoinType);
         intent.putExtra("editcontent", editContent);
@@ -184,15 +189,18 @@ public class UITransfer {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent
+                .FLAG_GRANT_WRITE_URI_PERMISSION);
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void toImageSelectActivity(final Activity context, final int selectType, final int requestCode) {
+    public static void toImageSelectActivity(final Activity context, final int selectType, final
+    int requestCode) {
         toImageSelectActivity(context, selectType, 1, requestCode);
     }
 
-    public static void toImageSelectActivity(Activity context, int selectType, int selectCount, int requestCode) {
+    public static void toImageSelectActivity(Activity context, int selectType, int selectCount,
+                                             int requestCode) {
         if (!PermissionsAction.checkCamera(context)) {
             return;
         }
@@ -211,7 +219,8 @@ public class UITransfer {
         toImageBrowseActivity(context, ActivityImageBrowse.MODE_VIEW, 0, imgs);
     }
 
-    public static void toImageBrowseActivity(Activity context, int mode, int position, List<String> imageUrls) {
+    public static void toImageBrowseActivity(Activity context, int mode, int position,
+                                             List<String> imageUrls) {
         if (imageUrls == null || imageUrls.size() <= 0) return;
         Intent intent = new Intent(context, ActivityImageBrowse.class);
         intent.putExtra("mode", mode);
@@ -220,11 +229,13 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toChatUserActivity(Activity context, long userId, String userName, String userImage) {
+    public static void toChatUserActivity(Activity context, long userId, String userName, String
+            userImage) {
         toChatUserActivity(context, userId, userName, userImage, 0);
     }
 
-    public static void toChatUserActivity(Activity context, long userId, String userName, String userImage, long recordId) {
+    public static void toChatUserActivity(Activity context, long userId, String userName, String
+            userImage, long recordId) {
         Intent intent = new Intent(context, ActivityChatUser.class);
         intent.putExtra("userid", userId);
         intent.putExtra("username", userName);
@@ -242,7 +253,8 @@ public class UITransfer {
         toVideoPlayActivity(context, videoMode, videoPath, 0);
     }
 
-    public static void toVideoPlayActivity(Activity context, int videoMode, String videoPath, int requestCode) {
+    public static void toVideoPlayActivity(Activity context, int videoMode, String videoPath, int
+            requestCode) {
         Intent intent = new Intent(context, ActivityVideoPlay.class);
         intent.putExtra("videopath", videoPath);
         intent.putExtra("videomode", videoMode);
@@ -288,11 +300,13 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, String content) {
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long
+            publishUserId, String content) {
         toNearCommentPublishActivity(context, nearCircleId, publishUserId, 0, null, content);
     }
 
-    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long publishUserId, long replyUserId, String replyUserName, String content) {
+    public static void toNearCommentPublishActivity(Activity context, long nearCircleId, long
+            publishUserId, long replyUserId, String replyUserName, String content) {
         Intent intent = new Intent(context, ActivityCommentPublish.class);
         intent.putExtra("nearcircleid", nearCircleId);
         intent.putExtra("publishuserid", publishUserId);
@@ -312,11 +326,13 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, String content) {
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long
+            publishUserId, String content) {
         toCircleCommentPublishActivity(context, circleId, publishUserId, 0, null, content);
     }
 
-    public static void toCircleCommentPublishActivity(Activity context, long circleId, long publishUserId, long replyUserId, String replyUserName, String content) {
+    public static void toCircleCommentPublishActivity(Activity context, long circleId, long
+            publishUserId, long replyUserId, String replyUserName, String content) {
         Intent intent = new Intent(context, ActivityCircleCommentPublish.class);
         intent.putExtra("circleid", circleId);
         intent.putExtra("publishuserid", publishUserId);
@@ -326,7 +342,9 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toCircleUserIndexActivity(Activity context, long viewUserId, String viewUserName, String viewUserImage, String viewCircleBackImage, String viewUserLifeNotes) {
+    public static void toCircleUserIndexActivity(Activity context, long viewUserId, String
+            viewUserName, String viewUserImage, String viewCircleBackImage, String
+            viewUserLifeNotes) {
         Intent intent = new Intent(context, ActivityCircleUserIndex.class);
         intent.putExtra("viewuserid", viewUserId);
         intent.putExtra("viewusername", viewUserName);
@@ -372,7 +390,8 @@ public class UITransfer {
         toReloginDialog(fragmentActivity, null);
     }
 
-    public static void toReloginDialog(final FragmentActivity fragmentActivity, String hintContent) {
+    public static void toReloginDialog(final FragmentActivity fragmentActivity, String
+            hintContent) {
         final ReloginDialogFragment reloginFragment = new ReloginDialogFragment();
         if (StringUtils.isNotBlank(hintContent)) {
             reloginFragment.setHintText(hintContent);
@@ -400,7 +419,8 @@ public class UITransfer {
         context.startActivity(intent);
     }
 
-    public static void toChatGroupSettingEditActivity(Activity context, String groupGuid, int editType, String content) {
+    public static void toChatGroupSettingEditActivity(Activity context, String groupGuid, int
+            editType, String content) {
         Intent intent = new Intent(context, ActivityChatGroupSettingEdit.class);
         intent.putExtra("groupguid", groupGuid);
         intent.putExtra("edittype", editType);
@@ -408,7 +428,8 @@ public class UITransfer {
         context.startActivityForResult(intent, editType);
     }
 
-    public static void toChatUserSettingActivity(Activity context, long userId, String userName, String userImage) {
+    public static void toChatUserSettingActivity(Activity context, long userId, String userName,
+                                                 String userImage) {
         Intent intent = new Intent(context, ActivityChatUserSetting.class);
         intent.putExtra("userid", userId);
         intent.putExtra("username", userName);

@@ -65,7 +65,8 @@ public class FragmentUser extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
+            Bundle savedInstanceState) {
         activity = getActivity();
         pinyinComparator = new FriendComparator();
         users = new ArrayList<>();
@@ -115,9 +116,11 @@ public class FragmentUser extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateFriendCount(Integer ebType) {
         if (ebType == EventBusConstant.EB_TYPE_FRIEND_REQUEST_UPDATE) {
-            Friend user = users.get(2);
-            if (user == null) return;
-            user.setMessageCount(MessageCountSP.getFriendRequestCountDesc());
+            if (users.size() >= 3) {
+                Friend user = users.get(2);
+                if (user == null) return;
+                user.setMessageCount(MessageCountSP.getFriendRequestCountDesc());
+            }
         } else if (ebType == EventBusConstant.EB_TYPE_CIRCLE_MESSAGE_UPDATE) {
             Friend user = users.get(0);
             if (user == null) return;
@@ -212,7 +215,8 @@ public class FragmentUser extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Friend friend = users.get(position);
                 if (friend.getId() > 0) {
-                    UITransfer.toUserIndexActivity(activity, friend.getId(), friend.getName(), friend.getHeadImage());
+                    UITransfer.toUserIndexActivity(activity, friend.getId(), friend.getName(),
+                            friend.getHeadImage());
                 } else {
                     transfer(friend.getId());
                 }
@@ -233,7 +237,8 @@ public class FragmentUser extends BaseFragment {
             }
         });
         binding.sidrbarLetter.setTextView(binding.tvLetter);
-        binding.sidrbarLetter.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+        binding.sidrbarLetter.setOnTouchingLetterChangedListener(new SideBar
+                .OnTouchingLetterChangedListener() {
             @Override
             public void onTouchingLetterChanged(String letter) {
                 //Toast.makeText(getContext(), letter, Toast.LENGTH_SHORT);
@@ -247,15 +252,21 @@ public class FragmentUser extends BaseFragment {
     }
 
     private void loadServerFriendInfo() {
-//        Log.d("FragmentUser", "friendCount:" + friendCount + "  UserSP:" + UserSP.getFriendCount());
+//        Log.d("FragmentUser", "friendCount:" + friendCount + "  UserSP:" + UserSP
+// .getFriendCount());
         if (friendCount < UserSP.getFriendCount()) {
             binding.pbLoading.setVisibility(View.VISIBLE);
             UserService.getFriends()
-                    .flatMap(new Function<ResponseBase<GetFriendsResponse>, ObservableSource<NetUserFriendInfo>>() {
+                    .flatMap(new Function<ResponseBase<GetFriendsResponse>,
+                            ObservableSource<NetUserFriendInfo>>() {
                         @Override
-                        public ObservableSource<NetUserFriendInfo> apply(ResponseBase<GetFriendsResponse> response) throws Exception {
-                            if (response != null && response.getResponseBody() != null && response.getResponseBody().getUserFriendInfos() != null && response.getResponseBody().getUserFriendInfos().size() > 0) {
-                                return Observable.fromIterable(response.getResponseBody().getUserFriendInfos());
+                        public ObservableSource<NetUserFriendInfo> apply
+                                (ResponseBase<GetFriendsResponse> response) throws Exception {
+                            if (response != null && response.getResponseBody() != null &&
+                                    response.getResponseBody().getUserFriendInfos() != null &&
+                                    response.getResponseBody().getUserFriendInfos().size() > 0) {
+                                return Observable.fromIterable(response.getResponseBody()
+                                        .getUserFriendInfos());
                             }
                             return null;
                         }

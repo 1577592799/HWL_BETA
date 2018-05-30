@@ -41,10 +41,10 @@ public class ActivityRegister extends BaseActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register);
         registerBean = new RegisterBean();
-        registerBean.setAccount("253621965@qq.com");
+//        registerBean.setAccount("253621965@qq.com");
         registerBean.setCheckCode("888888");
-        registerBean.setPassword("123456");
-        registerBean.setPasswordOK("123456");
+//        registerBean.setPassword("123456");
+//        registerBean.setPasswordOK("123456");
         binding.setRegisterBean(registerBean);
         binding.setAction(new RegisterListener());
 
@@ -66,7 +66,8 @@ public class ActivityRegister extends BaseActivity {
             case NetConstant.SEND_STATUS_PROGRESSING:
                 binding.btnCodeSend.setClickable(false);
                 binding.btnCodeSend.setText("正在发送...");
-                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color.color_b2b2b2));
+                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color
+                        .color_b2b2b2));
                 break;
             case NetConstant.SEND_STATUS_SUCCESS:
                 timeCount.start();
@@ -75,13 +76,15 @@ public class ActivityRegister extends BaseActivity {
             case NetConstant.SEND_STATUS_FAILED:
                 binding.btnCodeSend.setClickable(true);
                 binding.btnCodeSend.setText("获取验证码");
-                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color.main));
+                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color
+                        .main));
                 break;
         }
     }
 
     private void initTime() {
-        timeCount = new TimeCount(CODETIMESECONDS * 1000, 1000, binding.btnCodeSend, new TimeCount.TimeCountInterface() {
+        timeCount = new TimeCount(CODETIMESECONDS * 1000, 1000, binding.btnCodeSend, new
+                TimeCount.TimeCountInterface() {
             @Override
             public void onFinishViewChange(int resId) {
                 setSendViewStatus(NetConstant.SEND_STATUS_COMPLETE);
@@ -91,7 +94,8 @@ public class ActivityRegister extends BaseActivity {
             @Override
             public void onTickViewChange(long millisUntilFinished, int resId) {
                 binding.btnCodeSend.setClickable(false);
-                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color.main));
+                binding.btnCodeSend.setBackgroundColor(activity.getResources().getColor(R.color
+                        .main));
                 binding.btnCodeSend.setText(millisUntilFinished / 1000 + "秒后再试");
             }
         });

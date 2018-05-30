@@ -37,6 +37,25 @@ public class UserSP {
         return getSP().getLong(USER_ID, 0);
     }
 
+    public static String getAccount() {
+        String account = getSP().getString(USER_EMAIL, null);
+        if (StringUtils.isBlank(account)) {
+            account = getSP().getString(USER_MOBILE, null);
+        }
+        return account;
+    }
+
+    public static void setAccount(String account) {
+        if (StringUtils.isBlank(account)) return;
+        final SharedPreferences.Editor editor = getSP().edit();
+        if (account.contains("@")) {
+            editor.putString(USER_EMAIL, account);
+        } else {
+            editor.putString(USER_MOBILE, account);
+        }
+        editor.commit();
+    }
+
     public static String getUserHeadImage() {
         return getSP().getString(USER_HEADIMAGE, null);
     }

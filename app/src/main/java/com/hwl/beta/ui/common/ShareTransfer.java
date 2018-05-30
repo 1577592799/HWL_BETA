@@ -7,7 +7,7 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class ShareTransfer {
 
-    public static final String APP_DOWNLOAD_URL = "http://192.168.1.4:8032/home/shareapp";
+    public static final String APP_DOWNLOAD_URL = "http://115.29.179.171:8016/home/shareapp";
 
     public static void shareApp() {
         OnekeyShare oks = new OnekeyShare();

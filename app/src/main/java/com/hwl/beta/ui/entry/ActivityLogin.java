@@ -36,7 +36,7 @@ public class ActivityLogin extends FragmentActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginBean = new LoginBean();
-        loginBean.setAccount("44@qq.com");
+        loginBean.setAccount( UserSP.getAccount());
         loginBean.setPassword("123456");
         binding.setLoginBean(loginBean);
         binding.setAction(new LoginListener());
@@ -107,18 +107,18 @@ public class ActivityLogin extends FragmentActivity {
 
         @Override
         public void onWechatClick() {
-
+            Toast.makeText(activity, "WeChat登录后期开放...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onQQClick() {
-
+            Toast.makeText(activity, "QQ登录后期开放...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onSinaClick() {
-            Toast.makeText(activity, "跳转中...", Toast.LENGTH_SHORT).show();
-            SinaAction.login();
+            Toast.makeText(activity, "SINA微博登录后期开放...", Toast.LENGTH_SHORT).show();
+//            SinaAction.login();
         }
     }
 }
