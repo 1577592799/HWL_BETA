@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -187,10 +188,11 @@ public class UITransfer {
     public static void toSystemCamera(Activity activity, Uri saveUri, int requestCode) {
         if (!PermissionsAction.checkCamera(activity)) return;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent
+                    .FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
         intent.putExtra(MediaStore.EXTRA_OUTPUT, saveUri);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent
-                .FLAG_GRANT_WRITE_URI_PERMISSION);
         activity.startActivityForResult(intent, requestCode);
     }
 
@@ -344,7 +346,7 @@ public class UITransfer {
 
     public static void toCircleUserIndexActivity(Activity context, long viewUserId, String
             viewUserName, String viewUserImage, String viewCircleBackImage, String
-            viewUserLifeNotes) {
+                                                         viewUserLifeNotes) {
         Intent intent = new Intent(context, ActivityCircleUserIndex.class);
         intent.putExtra("viewuserid", viewUserId);
         intent.putExtra("viewusername", viewUserName);

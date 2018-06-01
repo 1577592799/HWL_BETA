@@ -73,9 +73,11 @@ public class LocationService {
                 client.registerLocationListener(new BDAbstractLocationListener() {
                     @Override
                     public void onReceiveLocation(BDLocation location) {
-                        Log.d("当前定位信息：", new com.google.gson.Gson().toJson(location));
+//                        Log.d("当前定位信息：", new com.google.gson.Gson().toJson(location));
 
-                        if (location != null && BDLocation.TypeNetWorkLocation == location.getLocType() && location.getLatitude() > 0 && location.getLongitude() > 0) {
+                        if (location != null && BDLocation.TypeNetWorkLocation == location
+                                .getLocType() && location.getLatitude() > 0 && location
+                                .getLongitude() > 0) {
                             currentLocationStatus = LocationService.COMPLETE_SUCCESS;
                             ResultModel model = new ResultModel();
                             model.radius = location.getRadius();
@@ -101,7 +103,7 @@ public class LocationService {
                             model.city = "上海市";
                             model.district = "闵行区";
                             model.street = "浦晓南路";
-                            model.addr = "中国上海市闵行区浦晓南路59弄";
+                            model.addr = "Location failed,here is a fix value";
                             model.describe = "在世博家园十三街坊附近";
                             onLocationListener.onSuccess(model);
 
@@ -148,9 +150,12 @@ public class LocationService {
             mOption.setIsNeedLocationDescribe(true);//可选，设置是否需要地址描述
             mOption.setNeedDeviceDirect(false);//可选，设置是否需要设备方向结果
             mOption.setLocationNotify(false);//可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
-            mOption.setIgnoreKillProcess(true);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-            mOption.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-            mOption.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
+            mOption.setIgnoreKillProcess(true);
+            //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
+            mOption.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation
+            // .getLocationDescribe里得到，结果类似于“在北京天安门附近”
+            mOption.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation
+            // .getPoiList里得到
             mOption.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
             mOption.setOpenGps(true);//可选，默认false，设置是否开启Gps定位
             mOption.setIsNeedAltitude(false);//可选，默认false，设置定位时是否需要海拔信息，默认不需要，除基础定位版本都可用

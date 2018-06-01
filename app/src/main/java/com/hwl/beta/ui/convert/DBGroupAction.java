@@ -3,6 +3,7 @@ package com.hwl.beta.ui.convert;
 import com.hwl.beta.db.entity.Friend;
 import com.hwl.beta.db.entity.GroupInfo;
 import com.hwl.beta.db.entity.GroupUserInfo;
+import com.hwl.beta.mq.bean.ChatGroupMessageBean;
 import com.hwl.beta.mq.bean.MQGroupUserInfo;
 import com.hwl.beta.net.group.NetGroupInfo;
 import com.hwl.beta.net.user.NetGroupUserInfo;
@@ -73,6 +74,16 @@ public class DBGroupAction {
         userInfo.setUserName(groupUserInfo.getUserName());
         userInfo.setUserHeadImage(groupUserInfo.getUserHeadImage());
         userInfo.setGroupGuid(groupUserInfo.getGroupGuid());
+        userInfo.setAddTime(new Date());
+        return userInfo;
+    }
+
+    public static GroupUserInfo convertToGroupUserInfo(ChatGroupMessageBean groupMessageBean) {
+        GroupUserInfo userInfo = new GroupUserInfo();
+        userInfo.setUserId(groupMessageBean.getFromUserId());
+        userInfo.setUserName(groupMessageBean.getFromUserName());
+        userInfo.setUserHeadImage(groupMessageBean.getFromUserHeadImage());
+        userInfo.setGroupGuid(groupMessageBean.getGroupGuid());
         userInfo.setAddTime(new Date());
         return userInfo;
     }

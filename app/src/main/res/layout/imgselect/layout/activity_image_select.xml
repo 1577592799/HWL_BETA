@@ -7,10 +7,6 @@
         <variable
             name="bean"
             type="com.hwl.beta.ui.imgselect.bean.ImageSelectBean"></variable>
-
-        <variable
-            name="action"
-            type="com.hwl.beta.ui.imgselect.action.IImageSelectListener"></variable>
     </data>
 
     <RelativeLayout

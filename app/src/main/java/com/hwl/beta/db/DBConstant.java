@@ -7,4 +7,7 @@ public class DBConstant {
 
     public final static int CIRCLE_TYPE_LIKE = 1;
     public final static int CIRCLE_TYPE_COMMENT = 2;
+
+
+    public final static int GROUP_IMAGE_COUNT= 9;
 }

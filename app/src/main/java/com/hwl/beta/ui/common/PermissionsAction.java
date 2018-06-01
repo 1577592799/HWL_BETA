@@ -13,9 +13,12 @@ public class PermissionsAction {
 
     public static boolean checkCamera(Activity activity) {
         isHas = false;
+//        , Manifest.permission
+//                .MOUNT_UNMOUNT_FILESYSTEMS
         RxPermissions rxPermissions = new RxPermissions(activity);
         rxPermissions
-                .request(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .request(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
