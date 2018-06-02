@@ -53,10 +53,7 @@
 	<Wechat
 		Id="4"
 		SortId="1"
-		AppId="wxec3447a989ac662d"
-		AppSecret="8852ad6cb65c62768f840c0c8f4b554f"
-		UserName="gh_afb25ac019c9"
-		Path="pages/index/index.html?id=1"
+		AppSecret="502eb616f0a1ddf5de4e8885cc8b458f"
 		BypassApproval="false"
 		WithShareTicket = "true"
 		MiniprogramType = "0"
@@ -65,8 +62,8 @@
 	<QQ
 		Id="7"
 		SortId="2"
-		AppId="1106902946"
-		AppKey="37rKmiDC3NEga23Y"
+		AppId="1106901970"
+		AppKey="RnYg5InntyUpHH56"
 		BypassApproval="false"
 		ShareByAppClient="true"
 		Enable="true" />
@@ -74,8 +71,8 @@
     <SinaWeibo
         Id="1"
         SortId="3"
-        AppKey="2726039871"
-        AppSecret="95d63555432077dc762533c1b5b86940"
+        AppKey="3292898002"
+        AppSecret="bb027c66afe1e9c956ac8d3aabe3f1aa"
         RedirectUrl="http://sns.whalecloud.com/sina2/callback"
         ShareByAppClient="false"
         Enable="true" />
