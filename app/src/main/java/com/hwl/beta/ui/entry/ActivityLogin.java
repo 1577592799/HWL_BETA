@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.hwl.beta.R;
 import com.hwl.beta.databinding.ActivityLoginBinding;
-import com.hwl.beta.mobshare.SinaAction;
 import com.hwl.beta.net.user.UserService;
 import com.hwl.beta.net.user.body.UserLoginResponse;
 import com.hwl.beta.sp.UserSP;
